@@ -1,46 +1,87 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
 import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+
+import {
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
+
+import {
+  FiAlertTriangle,
   FiArrowLeft,
   FiArrowRight,
   FiCheck,
   FiImage,
   FiPlus,
+  FiRefreshCw,
   FiTrash2,
   FiUploadCloud,
-  FiAlertTriangle,
-  FiRefreshCw,
 } from "react-icons/fi";
 
 import api from "../../services/api";
 import "./PhotoUploadPage.css";
 
+const MIN_PHOTOS = 6;
+const MAX_PHOTOS = 12;
+
+const MAX_FILE_SIZE =
+  8 * 1024 * 1024;
+
+const ALLOWED_TYPES = [
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+];
+
 function PhotoUploadPage() {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const token = searchParams.get("token");
 
-  const fileInputRef = useRef(null);
+  const [searchParams] =
+    useSearchParams();
 
-  const [photos, setPhotos] = useState([]);
-  const [loading, setLoading] = useState(() => Boolean(token));
-  const [uploading, setUploading] = useState(false);
-  const [deletingPhotoId, setDeletingPhotoId] = useState(null);
-  const [locked, setLocked] = useState(false);
-  const [error, setError] = useState("");
+  const token =
+    searchParams.get("token");
 
-  const MIN_PHOTOS = 6;
-  const MAX_PHOTOS = 12;
-  const MAX_FILE_SIZE = 8 * 1024 * 1024;
+  const fileInputRef =
+    useRef(null);
+
+  const [photos, setPhotos] =
+    useState([]);
+
+  const [loading, setLoading] =
+    useState(Boolean(token));
+
+  const [uploading, setUploading] =
+    useState(false);
+
+  const [
+    deletingPhotoId,
+    setDeletingPhotoId,
+  ] = useState(null);
+
+  const [locked, setLocked] =
+    useState(false);
+
+  const [error, setError] =
+    useState("");
+
+  const [
+    brokenPhotos,
+    setBrokenPhotos,
+  ] = useState(
+    () => new Set()
+  );
 
   /*
-   * Base URL utilisée pour afficher
-   * les photos privées via le backend.
+   * =========================================================
+   * CALCULS
+   * =========================================================
    */
-  const apiBaseUrl = (
-    api.defaults.baseURL ||
-    "http://localhost:5001"
-  ).replace(/\/$/, "");
 
   const canContinue =
     photos.length >= MIN_PHOTOS &&
@@ -48,295 +89,385 @@ function PhotoUploadPage() {
     !uploading &&
     !locked;
 
-  const remainingPhotos = useMemo(() => {
-    return Math.max(MAX_PHOTOS - photos.length, 0);
-  }, [photos.length]);
+  const remainingPhotos =
+    useMemo(
+      () =>
+        Math.max(
+          MAX_PHOTOS -
+            photos.length,
+          0
+        ),
+      [photos.length]
+    );
 
   /*
    * =========================================================
-   * CHARGEMENT DES PHOTOS EXISTANTES
+   * FETCH PHOTOS
    * =========================================================
    *
-   * Les photos sont récupérées depuis la base.
-   * Un refresh ne les fait donc plus disparaître.
+   * Important :
+   * cette fonction ne fait AUCUN setState.
+   *
+   * Elle retourne seulement les données API.
+   *
+   * Ça évite le warning :
+   * react-hooks/set-state-in-effect
+   */
+  const fetchPhotos =
+    useCallback(
+      async ({ signal } = {}) => {
+        if (!token) {
+          return {
+            photos: [],
+            locked: false,
+          };
+        }
+
+        const response =
+          await api.get(
+            `/participant/invitations/${encodeURIComponent(
+              token
+            )}/photos`,
+            signal
+              ? {
+                  signal,
+                }
+              : undefined
+          );
+
+        const data =
+          response.data?.data ||
+          {};
+
+        return {
+          photos:
+            Array.isArray(
+              data.photos
+            )
+              ? data.photos
+              : [],
+
+          locked:
+            Boolean(
+              data.locked
+            ),
+        };
+      },
+      [token]
+    );
+
+  /*
+   * =========================================================
+   * APPLICATION DES DONNÉES
+   * =========================================================
+   */
+  const applyPhotosData =
+    useCallback((data) => {
+      setPhotos(
+        Array.isArray(
+          data?.photos
+        )
+          ? data.photos
+          : []
+      );
+
+      setLocked(
+        Boolean(
+          data?.locked
+        )
+      );
+
+      setBrokenPhotos(
+        new Set()
+      );
+    }, []);
+
+  /*
+   * =========================================================
+   * CHARGEMENT INITIAL
+   * =========================================================
    */
   useEffect(() => {
     if (!token) {
-      return;
+      return undefined;
     }
 
-    console.log("GET PHOTOS START :", token);
+    const controller =
+      new AbortController();
 
-    const controller = new AbortController();
+    let active = true;
 
-    api
-      .get(
-        `/participant/invitations/${token}/photos`,
-        {
-          signal: controller.signal,
-        }
-      )
-      .then((response) => {
-        console.log(
-          "GET PHOTOS SUCCESS :",
-          response.data
-        );
-
-        const data = response.data?.data || {};
-
-        setPhotos(
-          Array.isArray(data.photos)
-            ? data.photos
-            : []
-        );
-
-        setLocked(Boolean(data.locked));
-        setError("");
-      })
-      .catch((error) => {
-        if (
-          error.code === "ERR_CANCELED" ||
-          error.name === "CanceledError"
-        ) {
+    fetchPhotos({
+      signal:
+        controller.signal,
+    })
+      .then((data) => {
+        if (!active) {
           return;
         }
 
-        console.error(
-          "GET PHOTOS ERROR :",
-          error
-        );
+        applyPhotosData(data);
 
-        console.error(
-          "GET PHOTOS ERROR RESPONSE :",
-          error.response?.data
-        );
-
-        setError(
-          error.response?.data?.message ||
-          "Impossible de charger vos photos."
-        );
+        setError("");
       })
+      .catch(
+        (requestError) => {
+          if (
+            requestError.code ===
+              "ERR_CANCELED" ||
+            requestError.name ===
+              "CanceledError"
+          ) {
+            return;
+          }
+
+          console.error(
+            "GET PHOTOS ERROR :",
+            requestError
+          );
+
+          if (!active) {
+            return;
+          }
+
+          setError(
+            requestError.response
+              ?.data?.message ||
+              "Impossible de charger vos photos."
+          );
+        }
+      )
       .finally(() => {
-        if (!controller.signal.aborted) {
+        if (active) {
           setLoading(false);
         }
       });
 
     return () => {
+      active = false;
       controller.abort();
     };
-  }, [token]);
+  }, [
+    token,
+    fetchPhotos,
+    applyPhotosData,
+  ]);
 
   /*
-   * URL sécurisée d'une photo.
+   * =========================================================
+   * REFRESH APRÈS UPLOAD / DELETE
+   * =========================================================
    */
-  const getPhotoUrl = (photoId) => {
-    return `${apiBaseUrl}/participant/invitations/${encodeURIComponent(
-      token
-    )}/photos/${photoId}/file`;
-  };
+  const refreshPhotos =
+    useCallback(async () => {
+      const data =
+        await fetchPhotos();
+
+      applyPhotosData(data);
+
+      return data;
+    }, [
+      fetchPhotos,
+      applyPhotosData,
+    ]);
 
   /*
    * =========================================================
    * NAVIGATION
    * =========================================================
    */
+
   const handleBack = () => {
     navigate(
-      `/invitation/guide-photo?token=${token}`
+      `/invitation/guide-photo?token=${encodeURIComponent(
+        token
+      )}`
     );
   };
 
   const handleNext = () => {
-    if (photos.length < MIN_PHOTOS) {
+    if (
+      photos.length <
+      MIN_PHOTOS
+    ) {
       setError(
         `Ajoutez au moins ${MIN_PHOTOS} photos pour continuer.`
       );
+
       return;
     }
 
-    if (photos.length > MAX_PHOTOS) {
+    if (
+      photos.length >
+      MAX_PHOTOS
+    ) {
       setError(
         `${MAX_PHOTOS} photos maximum sont autorisées.`
       );
+
       return;
     }
 
     navigate(
-      `/invitation/validation?token=${token}`
+      `/invitation/validation?token=${encodeURIComponent(
+        token
+      )}`
     );
   };
 
   /*
    * =========================================================
-   * OUVERTURE DU SÉLECTEUR
+   * FILE PICKER
    * =========================================================
    */
-  const openFilePicker = () => {
-    if (locked || uploading) {
-      return;
-    }
 
-    fileInputRef.current?.click();
-  };
+  const openFilePicker =
+    () => {
+      if (
+        locked ||
+        uploading
+      ) {
+        return;
+      }
+
+      fileInputRef.current?.click();
+    };
 
   /*
    * =========================================================
-   * VRAI UPLOAD API
+   * UPLOAD
    * =========================================================
-   *
-   * Les fichiers arrivent ici déjà copiés
-   * dans un tableau JavaScript.
    */
-  const handleFiles = async (fileList) => {
-    if (locked || uploading) {
+
+  const handleFiles = async (
+    fileList
+  ) => {
+    if (
+      locked ||
+      uploading
+    ) {
       return;
     }
 
-    /*
-     * IMPORTANT :
-     * on transforme immédiatement le FileList
-     * en Array afin qu'il ne soit plus lié
-     * à l'input HTML.
-     */
-    const selectedFiles = Array.from(
-      fileList || []
-    );
+    const selectedFiles =
+      Array.from(
+        fileList || []
+      );
 
-    console.log(
-      "SELECTED FILES :",
-      selectedFiles
-    );
-
-    if (selectedFiles.length === 0) {
+    if (
+      selectedFiles.length ===
+      0
+    ) {
       return;
     }
 
     setError("");
 
     const availableSlots =
-      MAX_PHOTOS - photos.length;
+      MAX_PHOTOS -
+      photos.length;
 
-    if (availableSlots <= 0) {
+    if (
+      availableSlots <= 0
+    ) {
       setError(
         `Vous pouvez envoyer jusqu'à ${MAX_PHOTOS} photos maximum.`
       );
+
       return;
     }
 
-    const allowedTypes = [
-      "image/jpeg",
-      "image/png",
-      "image/webp",
-    ];
+    const filesToCheck =
+      selectedFiles.slice(
+        0,
+        availableSlots
+      );
 
     const acceptedFiles = [];
 
     for (
-      const file of selectedFiles.slice(
-        0,
-        availableSlots
-      )
+      const file
+      of filesToCheck
     ) {
-      console.log(
-        "CHECK FILE :",
-        {
-          name: file.name,
-          type: file.type,
-          size: file.size,
-        }
-      );
-
-      if (!allowedTypes.includes(file.type)) {
+      if (
+        !ALLOWED_TYPES.includes(
+          file.type
+        )
+      ) {
         setError(
           "Seuls les fichiers JPG, PNG et WEBP sont acceptés."
         );
+
         continue;
       }
 
-      if (file.size > MAX_FILE_SIZE) {
+      if (
+        file.size >
+        MAX_FILE_SIZE
+      ) {
         setError(
           "Chaque photo doit faire moins de 8 Mo."
         );
+
         continue;
       }
 
-      acceptedFiles.push(file);
+      acceptedFiles.push(
+        file
+      );
     }
 
-    console.log(
-      "ACCEPTED FILES :",
-      acceptedFiles
-    );
-
-    if (acceptedFiles.length === 0) {
+    if (
+      acceptedFiles.length ===
+      0
+    ) {
       return;
     }
 
-    const formData = new FormData();
+    const formData =
+      new FormData();
 
-    acceptedFiles.forEach((file) => {
-      formData.append(
-        "photos",
-        file
-      );
-    });
-
-    const uploadUrl =
-      `/participant/invitations/${token}/photos`;
-
-    console.log(
-      "UPLOAD URL :",
-      uploadUrl
+    acceptedFiles.forEach(
+      (file) => {
+        formData.append(
+          "photos",
+          file
+        );
+      }
     );
 
     try {
       setUploading(true);
 
-      const response = await api.post(
-        uploadUrl,
+      await api.post(
+        `/participant/invitations/${encodeURIComponent(
+          token
+        )}/photos`,
         formData
       );
 
-      console.log(
-        "UPLOAD SUCCESS :",
-        response.data
-      );
-
-      const createdPhotos =
-        response.data?.data?.photos || [];
-
-      if (!Array.isArray(createdPhotos)) {
-        throw new Error(
-          "Réponse upload invalide"
-        );
-      }
-
-      setPhotos((currentPhotos) => [
-        ...currentPhotos,
-        ...createdPhotos,
-      ]);
+      /*
+       * On recharge immédiatement
+       * les données serveur.
+       *
+       * Le backend renverra alors :
+       * photo.imageUrl
+       *
+       * avec la signed URL Supabase.
+       */
+      await refreshPhotos();
 
       setError("");
-    } catch (error) {
+    } catch (uploadError) {
       console.error(
         "UPLOAD ERROR :",
-        error
-      );
-
-      console.error(
-        "UPLOAD ERROR STATUS :",
-        error.response?.status
-      );
-
-      console.error(
-        "UPLOAD ERROR RESPONSE :",
-        error.response?.data
+        uploadError
       );
 
       setError(
-        error.response?.data?.message ||
-        "Impossible d'envoyer les photos."
+        uploadError.response
+          ?.data?.message ||
+          "Impossible d'envoyer les photos."
       );
     } finally {
       setUploading(false);
@@ -345,122 +476,150 @@ function PhotoUploadPage() {
 
   /*
    * =========================================================
-   * INPUT FILE
+   * INPUT
    * =========================================================
-   *
-   * CORRECTION IMPORTANTE :
-   *
-   * On copie d'abord event.target.files
-   * dans un vrai Array.
-   *
-   * Ensuite seulement on vide l'input.
-   *
-   * Avant, l'input était vidé avant l'upload,
-   * ce qui transformait le FileList en liste vide.
    */
-  const handleInputChange = async (event) => {
-    const files = Array.from(
-      event.target.files || []
-    );
 
-    console.log(
-      "INPUT CHANGE FILES :",
-      files
-    );
-
-    /*
-     * On peut maintenant vider l'input
-     * sans perdre les fichiers.
-     */
-    event.target.value = "";
-
-    await handleFiles(files);
-  };
-
-  /*
-   * Drag & drop.
-   */
-  const handleDrop = async (event) => {
-    event.preventDefault();
-
-    const files = Array.from(
-      event.dataTransfer.files || []
-    );
-
-    console.log(
-      "DROP FILES :",
-      files
-    );
-
-    await handleFiles(files);
-  };
-
-  const handleDragOver = (event) => {
-    event.preventDefault();
-  };
-
-  /*
-   * =========================================================
-   * VRAIE SUPPRESSION API
-   * =========================================================
-   *
-   * La corbeille supprime réellement :
-   * - la ligne input_photos
-   * - le fichier physique
-   */
-  const removePhoto = async (photoId) => {
-    if (
-      locked ||
-      deletingPhotoId !== null
-    ) {
-      return;
-    }
-
-    try {
-      setDeletingPhotoId(photoId);
-      setError("");
-
-      const response =
-        await api.delete(
-          `/participant/invitations/${token}/photos/${photoId}`
+  const handleInputChange =
+    async (event) => {
+      /*
+       * On copie d'abord
+       * le FileList.
+       *
+       * Puis seulement
+       * on vide l'input.
+       */
+      const files =
+        Array.from(
+          event.target.files ||
+            []
         );
 
-      console.log(
-        "DELETE SUCCESS :",
-        response.data
-      );
+      event.target.value =
+        "";
 
-      setPhotos((currentPhotos) =>
-        currentPhotos.filter(
-          (photo) =>
-            photo.id !== photoId
-        )
+      await handleFiles(
+        files
       );
-    } catch (error) {
-      console.error(
-        "DELETE ERROR :",
-        error
-      );
+    };
 
-      console.error(
-        "DELETE ERROR RESPONSE :",
-        error.response?.data
-      );
+  /*
+   * =========================================================
+   * DRAG & DROP
+   * =========================================================
+   */
 
-      setError(
-        error.response?.data?.message ||
-        "Impossible de supprimer cette photo."
+  const handleDrop =
+    async (event) => {
+      event.preventDefault();
+
+      if (
+        locked ||
+        uploading
+      ) {
+        return;
+      }
+
+      const files =
+        Array.from(
+          event.dataTransfer
+            .files || []
+        );
+
+      await handleFiles(
+        files
       );
-    } finally {
-      setDeletingPhotoId(null);
-    }
-  };
+    };
+
+  const handleDragOver =
+    (event) => {
+      event.preventDefault();
+    };
+
+  /*
+   * =========================================================
+   * SUPPRESSION PHOTO
+   * =========================================================
+   *
+   * Le backend devra supprimer :
+   *
+   * - fichier Supabase Storage
+   * - ligne PostgreSQL
+   */
+  const removePhoto =
+    async (photoId) => {
+      if (
+        locked ||
+        deletingPhotoId !==
+          null
+      ) {
+        return;
+      }
+
+      try {
+        setDeletingPhotoId(
+          photoId
+        );
+
+        setError("");
+
+        await api.delete(
+          `/participant/invitations/${encodeURIComponent(
+            token
+          )}/photos/${photoId}`
+        );
+
+        /*
+         * Recharge serveur
+         * après suppression.
+         */
+        await refreshPhotos();
+      } catch (deleteError) {
+        console.error(
+          "DELETE PHOTO ERROR :",
+          deleteError
+        );
+
+        setError(
+          deleteError.response
+            ?.data?.message ||
+            "Impossible de supprimer cette photo."
+        );
+      } finally {
+        setDeletingPhotoId(
+          null
+        );
+      }
+    };
+
+  /*
+   * =========================================================
+   * IMAGE ERROR
+   * =========================================================
+   */
+
+  const handleImageError =
+    (photoId) => {
+      setBrokenPhotos(
+        (current) => {
+          const next =
+            new Set(current);
+
+          next.add(
+            photoId
+          );
+
+          return next;
+        }
+      );
+    };
 
   /*
    * =========================================================
    * TOKEN ABSENT
    * =========================================================
    */
+
   if (!token) {
     return (
       <div className="photo-upload-page photo-upload-centered">
@@ -472,7 +631,9 @@ function PhotoUploadPage() {
           </h1>
 
           <p>
-            Le token d'invitation est manquant.
+            Le token
+            d'invitation est
+            manquant.
           </p>
         </div>
       </div>
@@ -481,32 +642,41 @@ function PhotoUploadPage() {
 
   /*
    * =========================================================
-   * CHARGEMENT
+   * LOADING
    * =========================================================
    */
+
   if (loading) {
     return (
       <div className="photo-upload-page photo-upload-centered">
         <div className="photo-upload-error-card">
-          <FiRefreshCw />
+          <FiRefreshCw className="photo-upload-loading-icon" />
 
           <h1>
             Chargement...
           </h1>
 
           <p>
-            Nous récupérons vos photos.
+            Nous récupérons vos
+            photos.
           </p>
         </div>
       </div>
     );
   }
 
+  /*
+   * =========================================================
+   * PAGE
+   * =========================================================
+   */
+
   return (
     <div className="photo-upload-page">
       <div className="photo-upload-shell">
 
         {/* BRAND */}
+
         <header className="photo-upload-brand">
           <div className="photo-upload-brand-mark">
             P
@@ -520,6 +690,7 @@ function PhotoUploadPage() {
         <main className="photo-upload-card">
 
           {/* PROGRESS */}
+
           <div className="participant-progress">
             <div className="participant-progress-item completed">
               <div className="participant-progress-number">
@@ -557,6 +728,7 @@ function PhotoUploadPage() {
           </div>
 
           {/* HEADING */}
+
           <div className="photo-upload-heading">
             <span className="photo-upload-kicker">
               ÉTAPE 2 SUR 3
@@ -567,21 +739,33 @@ function PhotoUploadPage() {
             </h1>
 
             <p>
-              Importez entre 6 et 12 photos récentes. Choisissez des images
-              nettes, naturelles et suffisamment différentes pour permettre
-              la création d'un portrait fidèle et cohérent.
+              Importez entre 6 et
+              12 photos récentes.
+              Choisissez des images
+              nettes, naturelles et
+              suffisamment
+              différentes pour
+              permettre la création
+              d'un portrait fidèle et
+              cohérent.
             </p>
           </div>
 
           <div className="photo-upload-layout">
 
             {/* LEFT */}
+
             <section className="photo-upload-main">
 
               {/* DROPZONE */}
+
               {!locked && (
                 <div
-                  className="photo-upload-dropzone"
+                  className={`photo-upload-dropzone ${
+                    uploading
+                      ? "uploading"
+                      : ""
+                  }`}
                   onClick={
                     openFilePicker
                   }
@@ -593,47 +777,64 @@ function PhotoUploadPage() {
                   }
                   role="button"
                   tabIndex={0}
-                  onKeyDown={(event) => {
+                  onKeyDown={(
+                    event
+                  ) => {
                     if (
-                      event.key === "Enter" ||
-                      event.key === " "
+                      event.key ===
+                        "Enter" ||
+                      event.key ===
+                        " "
                     ) {
                       openFilePicker();
                     }
                   }}
                 >
                   <div className="photo-upload-dropzone-icon">
-                    <FiUploadCloud />
+                    {uploading ? (
+                      <FiRefreshCw className="photo-upload-spin" />
+                    ) : (
+                      <FiUploadCloud />
+                    )}
                   </div>
 
                   <strong>
                     {uploading
-                      ? "Envoi en cours..."
+                      ? "Envoi sécurisé en cours..."
                       : "Glissez vos photos ici"}
                   </strong>
 
                   {!uploading && (
                     <>
                       <span>
-                        ou cliquez pour parcourir vos fichiers
+                        ou cliquez pour
+                        parcourir vos
+                        fichiers
                       </span>
 
                       <button
                         type="button"
                         className="photo-upload-select-btn"
-                        onClick={(event) => {
+                        onClick={(
+                          event
+                        ) => {
                           event.stopPropagation();
+
                           openFilePicker();
                         }}
                       >
                         <FiPlus />
-                        Sélectionner des photos
+
+                        Sélectionner
+                        des photos
                       </button>
                     </>
                   )}
 
                   <small>
-                    JPG, JPEG, PNG ou WEBP • 8 Mo maximum par photo
+                    JPG, JPEG, PNG ou
+                    WEBP • 8 Mo maximum
+                    par photo
                   </small>
 
                   <input
@@ -655,17 +856,23 @@ function PhotoUploadPage() {
               )}
 
               {/* LOCKED */}
+
               {locked && (
-                <div className="photo-upload-message error">
-                  <FiAlertTriangle />
+                <div className="photo-upload-message locked">
+                  <FiCheck />
 
                   <span>
-                    Vos photos ont déjà été confirmées et ne peuvent plus être modifiées.
+                    Vos photos ont
+                    été confirmées.
+                    Elles ne peuvent
+                    plus être
+                    modifiées.
                   </span>
                 </div>
               )}
 
               {/* ERROR */}
+
               {error && (
                 <div className="photo-upload-message error">
                   <FiAlertTriangle />
@@ -677,7 +884,9 @@ function PhotoUploadPage() {
               )}
 
               {/* PHOTOS */}
-              {photos.length > 0 && (
+
+              {photos.length >
+                0 && (
                 <div className="photo-upload-selection">
 
                   <div className="photo-upload-selection-header">
@@ -687,13 +896,21 @@ function PhotoUploadPage() {
                       </strong>
 
                       <span>
-                        {photos.length} / {MAX_PHOTOS} ajoutées
+                        {
+                          photos.length
+                        }{" "}
+                        /{" "}
+                        {
+                          MAX_PHOTOS
+                        }{" "}
+                        ajoutées
                       </span>
                     </div>
 
                     {!locked &&
                       !uploading &&
-                      remainingPhotos > 0 && (
+                      remainingPhotos >
+                        0 && (
                         <button
                           type="button"
                           className="photo-upload-add-more"
@@ -702,6 +919,7 @@ function PhotoUploadPage() {
                           }
                         >
                           <FiPlus />
+
                           Ajouter
                         </button>
                       )}
@@ -713,65 +931,103 @@ function PhotoUploadPage() {
                       (
                         photo,
                         index
-                      ) => (
-                        <article
-                          className="photo-upload-preview-card"
-                          key={
+                      ) => {
+                        const broken =
+                          brokenPhotos.has(
                             photo.id
-                          }
-                        >
-                          <div className="photo-upload-preview">
+                          );
 
-                            <img
-                              src={getPhotoUrl(
-                                photo.id
+                        const imageAvailable =
+                          Boolean(
+                            photo.imageUrl
+                          ) &&
+                          !broken;
+
+                        return (
+                          <article
+                            className="photo-upload-preview-card"
+                            key={
+                              photo.id
+                            }
+                          >
+                            <div className="photo-upload-preview">
+
+                              {imageAvailable ? (
+                                <img
+                                  src={
+                                    photo.imageUrl
+                                  }
+                                  alt={`Photo ${
+                                    index +
+                                    1
+                                  }`}
+                                  loading="lazy"
+                                  onError={() =>
+                                    handleImageError(
+                                      photo.id
+                                    )
+                                  }
+                                />
+                              ) : (
+                                <div className="photo-upload-preview-unavailable">
+                                  <FiImage />
+
+                                  <span>
+                                    Image
+                                    indisponible
+                                  </span>
+                                </div>
                               )}
-                              alt={`Photo ${index + 1}`}
-                              onLoad={() => {
-                                console.log(
-                                  "PHOTO LOADED :",
-                                  photo.id
-                                );
-                              }}
-                              onError={() => {
-                                console.error(
-                                  "PHOTO DISPLAY ERROR :",
-                                  photo.id
-                                );
-                              }}
-                            />
 
-                            <span className="photo-upload-preview-number">
-                              {index + 1}
-                            </span>
+                              <span className="photo-upload-preview-number">
+                                {index +
+                                  1}
+                              </span>
 
-                            {!locked && (
-                              <button
-                                type="button"
-                                className="photo-upload-remove"
-                                onClick={() =>
-                                  removePhoto(
+                              {!locked && (
+                                <button
+                                  type="button"
+                                  className="photo-upload-remove"
+                                  onClick={() =>
+                                    removePhoto(
+                                      photo.id
+                                    )
+                                  }
+                                  disabled={
+                                    deletingPhotoId ===
                                     photo.id
-                                  )
-                                }
-                                disabled={
-                                  deletingPhotoId ===
-                                  photo.id
-                                }
-                                aria-label={`Supprimer la photo ${index + 1}`}
-                              >
-                                <FiTrash2 />
-                              </button>
-                            )}
+                                  }
+                                  aria-label={`Supprimer la photo ${
+                                    index +
+                                    1
+                                  }`}
+                                >
+                                  {deletingPhotoId ===
+                                  photo.id ? (
+                                    <FiRefreshCw className="photo-upload-spin" />
+                                  ) : (
+                                    <FiTrash2 />
+                                  )}
+                                </button>
+                              )}
 
-                          </div>
-                        </article>
-                      )
+                              {photo.storageProvider ===
+                                "SUPABASE" &&
+                                imageAvailable && (
+                                  <span className="photo-upload-storage-badge">
+                                    Sécurisée
+                                  </span>
+                                )}
+                            </div>
+                          </article>
+                        );
+                      }
                     )}
 
                     {!locked &&
                       !uploading &&
-                      remainingPhotos > 0 && (
+                      remainingPhotos >
+                        0 && (
                         <button
                           type="button"
                           className="photo-upload-empty-slot"
@@ -786,16 +1042,14 @@ function PhotoUploadPage() {
                           </span>
                         </button>
                       )}
-
                   </div>
                 </div>
               )}
-
             </section>
 
             {/* RIGHT */}
-            <aside className="photo-upload-sidebar">
 
+            <aside className="photo-upload-sidebar">
               <span className="photo-upload-sidebar-title">
                 Avant d'envoyer
               </span>
@@ -809,7 +1063,11 @@ function PhotoUploadPage() {
                   </strong>
 
                   <span>
-                    Plusieurs angles permettent d'obtenir un résultat plus fidèle.
+                    Plusieurs angles
+                    permettent
+                    d'obtenir un
+                    résultat plus
+                    fidèle.
                   </span>
                 </div>
               </div>
@@ -819,11 +1077,14 @@ function PhotoUploadPage() {
 
                 <div>
                   <strong>
-                    Visage bien visible
+                    Visage bien
+                    visible
                   </strong>
 
                   <span>
-                    Le visage doit être net, dégagé et suffisamment grand.
+                    Le visage doit être
+                    net, dégagé et
+                    suffisamment grand.
                   </span>
                 </div>
               </div>
@@ -837,7 +1098,11 @@ function PhotoUploadPage() {
                   </strong>
 
                   <span>
-                    Choisissez des photos qui correspondent à votre apparence actuelle.
+                    Choisissez des
+                    photos qui
+                    correspondent à
+                    votre apparence
+                    actuelle.
                   </span>
                 </div>
               </div>
@@ -851,7 +1116,10 @@ function PhotoUploadPage() {
                   </strong>
 
                   <span>
-                    Mélangez vue de face et légers angles, sans filtre.
+                    Mélangez vue de
+                    face et légers
+                    angles, sans
+                    filtre.
                   </span>
                 </div>
               </div>
@@ -862,7 +1130,12 @@ function PhotoUploadPage() {
                 </span>
 
                 <strong>
-                  {photos.length}/{MIN_PHOTOS} minimum
+                  {
+                    photos.length
+                  }
+                  /
+                  {MIN_PHOTOS}{" "}
+                  minimum
                 </strong>
 
                 <div className="photo-upload-count-progress">
@@ -880,18 +1153,21 @@ function PhotoUploadPage() {
                 </div>
 
                 <small>
-                  {photos.length >= MIN_PHOTOS
+                  {photos.length >=
+                  MIN_PHOTOS
                     ? "Vous pouvez continuer."
-                    : `${MIN_PHOTOS - photos.length} photo(s) minimum restante(s).`}
+                    : `${
+                        MIN_PHOTOS -
+                        photos.length
+                      } photo(s) minimum restante(s).`}
                 </small>
               </div>
-
             </aside>
           </div>
 
           {/* ACTIONS */}
-          <div className="photo-upload-actions">
 
+          <div className="photo-upload-actions">
             <button
               type="button"
               className="photo-upload-back"
@@ -903,6 +1179,7 @@ function PhotoUploadPage() {
               }
             >
               <FiArrowLeft />
+
               Retour
             </button>
 
@@ -917,11 +1194,10 @@ function PhotoUploadPage() {
               }
             >
               Continuer
+
               <FiArrowRight />
             </button>
-
           </div>
-
         </main>
 
         <footer className="photo-upload-footer">
@@ -930,10 +1206,10 @@ function PhotoUploadPage() {
           </span>
 
           <span>
-            Portraits professionnels pour les équipes.
+            Portraits professionnels
+            pour les équipes.
           </span>
         </footer>
-
       </div>
     </div>
   );
