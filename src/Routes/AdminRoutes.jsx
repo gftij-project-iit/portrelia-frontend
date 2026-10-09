@@ -4,11 +4,15 @@ import ProtectedRoute from "./ProtectedRoute";
 import RoleRoute from "./RoleRoute";
 
 import AdminDashboardLayout from "../layouts/AdminDashboardLayout";
-import AdminDashboardHomePage from "../pages/Admin/AdminDashboardHomePage";
-import AdminCompaniesPage from "../pages/Admin/AdminCompaniesPage";
-import AdminCompanyDetailsPage from "../pages/Admin/AdminCompanyDetailsPage";
-import AdminDemoRequestDetailsPage from "../pages/Admin/AdminDemoRequestDetailsPage";
-import AdminDemoRequestsPage from "../pages/Admin/AdminDemoRequestsPage";
+
+import AdminCompaniesPage from "../pages/Admin/companies/AdminCompaniesPage";
+import AdminCompanyDetailsPage from "../pages/Admin/companies/AdminCompanyDetailsPage";
+import AdminDemoRequestDetailsPage from "../pages/Admin/DemoRequest/AdminDemoRequestDetailsPage";
+import AdminDemoRequestsPage from "../pages/Admin/DemoRequest/AdminDemoRequestsPage";
+import AdminDashboardHomePage from "../pages/Admin/dashboard/AdminDashboardHomePage";
+import AdminCampaignsPage from "../pages/Admin/compagnes/AdminCampaignsPage";
+import AdminCampaignDetailsPage from "../pages/Admin/compagnes/AdminCampaignDetailsPage";
+import AdminParticipantDetailsPage from "../pages/Admin/compagnes/AdminParticipantDetailsPage";
 
 
 const AdminRoutes = (
@@ -44,6 +48,21 @@ const AdminRoutes = (
 <Route
   path="demandes-demo/:id"
   element={<AdminDemoRequestDetailsPage />}
+/>
+
+<Route
+  path="/admin/campagnes"
+  element={<AdminCampaignsPage />}
+/>
+
+<Route
+  path="/admin/campagnes/:campaignId"
+  element={<AdminCampaignDetailsPage />}
+/>
+
+<Route
+  path="/admin/participants/:participantId"
+  element={<AdminParticipantDetailsPage />}
 />
     </Route>
   </>

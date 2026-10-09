@@ -20,9 +20,10 @@ import {
   ClipLoader,
 } from "react-spinners";
 
-import api from "../../services/api";
+
 
 import "./AdminCompaniesPage.css";
+import api from "../../../services/api";
 
 function AdminCompaniesPage() {
   const navigate = useNavigate();

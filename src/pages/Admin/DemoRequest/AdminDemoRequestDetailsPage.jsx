@@ -25,9 +25,10 @@ import {
   ClipLoader,
 } from "react-spinners";
 
-import api from "../../services/api";
+
 
 import "./AdminDemoRequestDetailsPage.css";
+import api from "../../../services/api";
 
 function AdminDemoRequestDetailsPage() {
   const navigate = useNavigate();
