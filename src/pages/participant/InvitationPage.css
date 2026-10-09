@@ -1,0 +1,566 @@
+.invitation-page {
+  width: 100%;
+  min-height: 100vh;
+  box-sizing: border-box;
+  padding: 32px 24px;
+  background: #f7f7fa;
+  color: #111827;
+}
+
+.invitation-page-centered {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.invitation-shell {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+/* =========================================================
+   BRAND
+========================================================= */
+
+.invitation-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.invitation-brand-mark {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: #4f2e94;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.invitation-brand > span {
+  color: #111827;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.invitation-hero {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 30px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  box-shadow:
+    0 8px 30px
+    rgba(17, 24, 39, 0.04);
+}
+
+.invitation-hero-content {
+  min-width: 0;
+}
+
+.invitation-kicker {
+  display: block;
+  margin-bottom: 7px;
+  color: #4f2e94;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.invitation-hero h1 {
+  margin: 0;
+  color: #111827;
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+}
+
+.invitation-hero p {
+  max-width: 700px;
+  margin: 11px 0 0;
+  color: #667085;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.invitation-hero p strong {
+  color: #344054;
+}
+
+.invitation-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex-shrink: 0;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: #ecfdf3;
+  color: #067647;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* =========================================================
+   INFO GRID
+========================================================= */
+
+.invitation-info-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.invitation-info-card {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+}
+
+.invitation-info-card > svg {
+  width: 19px;
+  height: 19px;
+  flex-shrink: 0;
+  color: #4f2e94;
+}
+
+.invitation-info-card > div {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.invitation-info-card span {
+  color: #98a2b3;
+  font-size: 10px;
+}
+
+.invitation-info-card strong {
+  color: #111827;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+/* =========================================================
+   MAIN GRID
+========================================================= */
+
+.invitation-main-grid {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1.4fr)
+    minmax(340px, 0.8fr);
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.invitation-card {
+  min-width: 0;
+  padding: 26px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+}
+
+.invitation-card-header {
+  margin-bottom: 24px;
+}
+
+.invitation-step-label {
+  display: block;
+  margin-bottom: 6px;
+  color: #4f2e94;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.invitation-card-header h2 {
+  margin: 0;
+  color: #111827;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.invitation-card-header p {
+  margin: 7px 0 0;
+  color: #667085;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+/* =========================================================
+   STEPS
+========================================================= */
+
+.invitation-steps {
+  display: flex;
+  flex-direction: column;
+}
+
+.invitation-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px 0;
+  border-bottom: 1px solid #f0f1f3;
+}
+
+.invitation-step:first-child {
+  padding-top: 0;
+}
+
+.invitation-step:last-child {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.invitation-step-number {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #eee9f8;
+  color: #4f2e94;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.invitation-step > div:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.invitation-step strong {
+  color: #111827;
+  font-size: 13px;
+}
+
+.invitation-step span {
+  color: #667085;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+/* =========================================================
+   SIDE CARD
+========================================================= */
+
+.invitation-side-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.invitation-style-block {
+  padding: 18px;
+  background: #f8f6fc;
+  border-radius: 10px;
+}
+
+.invitation-style-block > span {
+  display: block;
+  margin-bottom: 6px;
+  color: #4f2e94;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+
+.invitation-style-block strong {
+  display: block;
+  color: #111827;
+  font-size: 15px;
+}
+
+.invitation-style-block p {
+  margin: 6px 0 0;
+  color: #667085;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.invitation-security-block {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  margin-top: 14px;
+  padding: 15px;
+  border: 1px solid #e4e7ec;
+  border-radius: 10px;
+}
+
+.invitation-security-block > svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  color: #4f2e94;
+}
+
+.invitation-security-block > div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.invitation-security-block strong {
+  color: #344054;
+  font-size: 11px;
+}
+
+.invitation-security-block span {
+  color: #667085;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+/* =========================================================
+   CONSENT
+========================================================= */
+
+.invitation-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 20px;
+  cursor: pointer;
+}
+
+.invitation-consent input {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  accent-color: #4f2e94;
+}
+
+.invitation-consent span {
+  color: #667085;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+/* =========================================================
+   BUTTON
+========================================================= */
+
+.invitation-primary-btn {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 17px;
+  border: none;
+  border-radius: 9px;
+  background: #4f2e94;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.invitation-primary-btn:hover:not(:disabled) {
+  background: #42247f;
+  transform: translateY(-1px);
+}
+
+.invitation-primary-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.invitation-start-btn {
+  width: 100%;
+  margin-top: 18px;
+}
+
+/* =========================================================
+   LOADING / ERROR
+========================================================= */
+
+.invitation-loading-card,
+.invitation-error-card {
+  width: min(480px, 100%);
+  padding: 34px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow:
+    0 12px 30px
+    rgba(17, 24, 39, 0.05);
+}
+
+.invitation-loading-card {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.invitation-loading-card strong {
+  margin-top: 5px;
+  color: #111827;
+  font-size: 14px;
+}
+
+.invitation-loading-card span {
+  color: #667085;
+  font-size: 11px;
+}
+
+.invitation-error-icon {
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 15px;
+  border-radius: 50%;
+  background: #fef3f2;
+  color: #b42318;
+}
+
+.invitation-error-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.invitation-error-card h1 {
+  margin: 0;
+  color: #111827;
+  font-size: 22px;
+}
+
+.invitation-error-card p {
+  margin: 9px 0 20px;
+  color: #667085;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.invitation-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 2px 0;
+  color: #98a2b3;
+  font-size: 10px;
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 950px) {
+  .invitation-info-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .invitation-main-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 650px) {
+  .invitation-page {
+    padding: 18px 14px;
+  }
+
+  .invitation-brand {
+    margin-bottom: 16px;
+  }
+
+  .invitation-hero {
+    flex-direction: column;
+    padding: 20px;
+  }
+
+  .invitation-hero h1 {
+    font-size: 27px;
+  }
+
+  .invitation-hero-badge {
+    width: fit-content;
+  }
+
+  .invitation-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .invitation-card {
+    padding: 19px;
+  }
+
+  .invitation-footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 420px) {
+  .invitation-page {
+    padding: 14px 10px;
+  }
+
+  .invitation-hero {
+    padding: 17px;
+    border-radius: 13px;
+  }
+
+  .invitation-hero h1 {
+    font-size: 24px;
+  }
+
+  .invitation-card {
+    padding: 16px;
+  }
+
+  .invitation-loading-card,
+  .invitation-error-card {
+    padding: 26px 18px;
+  }
+}

@@ -1,0 +1,463 @@
+.submission-page {
+  min-height: 100vh;
+  background: #f7f6fa;
+  color: #171429;
+  font-family: Inter, Arial, sans-serif;
+  padding: 28px 24px;
+}
+
+.submission-shell {
+  width: min(1000px, 100%);
+  margin: 0 auto;
+}
+
+.submission-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 22px;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.submission-brand-mark {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  background: #5632a8;
+  color: #fff;
+  font-size: 14px;
+}
+
+.submission-card {
+  background: #fff;
+  border: 1px solid #e8e5ef;
+  border-radius: 18px;
+  padding: 38px;
+  box-shadow: 0 8px 28px rgba(30, 20, 60, 0.04);
+}
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.submission-hero {
+  max-width: 670px;
+  margin: 0 auto 34px;
+  text-align: center;
+}
+
+.submission-success-icon {
+  width: 68px;
+  height: 68px;
+  margin: 0 auto 16px;
+  border-radius: 20px;
+  display: grid;
+  place-items: center;
+  background: #edf8f2;
+  color: #20a666;
+  font-size: 34px;
+}
+
+.submission-kicker {
+  color: #5632a8;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.submission-hero h1 {
+  margin: 8px 0 10px;
+  font-size: 30px;
+}
+
+.submission-hero p {
+  margin: 0;
+  color: #706b7f;
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.submission-status-card {
+  margin-bottom: 30px;
+  padding: 22px;
+  border: 1px solid #e7e3ec;
+  border-radius: 14px;
+  background: #fcfbfd;
+}
+
+.submission-status-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 26px;
+}
+
+.submission-status-header > div:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.submission-status-header span {
+  color: #8b8498;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+
+.submission-status-header strong {
+  font-size: 17px;
+}
+
+.submission-status-badge {
+  min-height: 34px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: #edf8f2;
+  color: #1c8b59;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.submission-status-progress {
+  display: flex;
+  align-items: center;
+}
+
+.submission-status-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  min-width: 84px;
+  text-align: center;
+}
+
+.submission-status-step > div {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+}
+
+.submission-status-step.completed > div {
+  background: #edf8f2;
+  color: #20a666;
+}
+
+.submission-status-step.pending > div {
+  background: #f1eef5;
+  color: #8d8699;
+}
+
+.submission-status-step span {
+  color: #696273;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.submission-status-line {
+  flex: 1;
+  height: 1px;
+  background: #dfdbe6;
+  margin: 0 4px 23px;
+}
+
+/* =========================================================
+   CONTENT
+========================================================= */
+
+.submission-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 28px;
+}
+
+.submission-next-card,
+.submission-info-card {
+  border: 1px solid #e7e3ec;
+  border-radius: 14px;
+}
+
+.submission-next-card {
+  padding: 26px;
+}
+
+.submission-section-label {
+  color: #5632a8;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+}
+
+.submission-next-card h2 {
+  margin: 7px 0 24px;
+  font-size: 19px;
+}
+
+.submission-next-item {
+  display: flex;
+  gap: 13px;
+  margin-bottom: 21px;
+}
+
+.submission-next-item:last-child {
+  margin-bottom: 0;
+}
+
+.submission-next-number {
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #f1ecfb;
+  color: #5632a8;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.submission-next-item > div:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.submission-next-item strong {
+  font-size: 13px;
+}
+
+.submission-next-item span {
+  color: #706b7f;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* =========================================================
+   INFO
+========================================================= */
+
+.submission-info-card {
+  align-self: start;
+  padding: 24px;
+  background: #fbfaff;
+}
+
+.submission-info-title {
+  display: block;
+  margin-bottom: 18px;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.submission-info-row {
+  padding: 12px 0;
+  border-bottom: 1px solid #ebe7f0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.submission-info-row span {
+  color: #8c8597;
+  font-size: 11px;
+}
+
+.submission-info-row strong {
+  font-size: 13px;
+}
+
+.submission-private {
+  margin-top: 20px;
+  display: flex;
+  gap: 11px;
+}
+
+.submission-private > svg {
+  flex: 0 0 auto;
+  color: #5632a8;
+  font-size: 19px;
+}
+
+.submission-private div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.submission-private strong {
+  font-size: 12px;
+}
+
+.submission-private span {
+  color: #706b7f;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+/* =========================================================
+   FINAL MESSAGE
+========================================================= */
+
+.submission-final-message {
+  margin-top: 28px;
+  padding: 18px;
+  border-radius: 12px;
+  background: #f8f5ff;
+  border: 1px solid #e7defa;
+  display: flex;
+  gap: 13px;
+}
+
+.submission-final-message > svg {
+  flex: 0 0 auto;
+  color: #5632a8;
+  font-size: 21px;
+}
+
+.submission-final-message div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.submission-final-message strong {
+  font-size: 13px;
+}
+
+.submission-final-message span {
+  color: #706b7f;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.submission-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 28px;
+}
+
+.submission-secondary-button {
+  min-width: 210px;
+  height: 48px;
+  padding: 0 18px;
+  border-radius: 9px;
+  border: 1px solid #d8d4e0;
+  background: #fff;
+  color: #332a41;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.submission-secondary-button:hover {
+  background: #f8f7fa;
+}
+
+/* =========================================================
+   FOOTER / ERROR
+========================================================= */
+
+.submission-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  padding: 0 3px;
+  color: #aaa5b4;
+  font-size: 11px;
+}
+
+.submission-centered {
+  display: grid;
+  place-items: center;
+}
+
+.submission-error {
+  width: min(440px, 100%);
+  padding: 36px;
+  border: 1px solid #e5e2ea;
+  border-radius: 16px;
+  background: #fff;
+  text-align: center;
+}
+
+.submission-error > svg {
+  margin-bottom: 10px;
+  color: #5632a8;
+  font-size: 30px;
+}
+
+.submission-error h1 {
+  margin: 0 0 9px;
+  font-size: 23px;
+}
+
+.submission-error p {
+  margin: 0 0 18px;
+  color: #706b7f;
+  font-size: 13px;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 800px) {
+  .submission-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 650px) {
+  .submission-page {
+    padding: 18px 14px;
+  }
+
+  .submission-card {
+    padding: 24px 16px;
+  }
+
+  .submission-hero h1 {
+    font-size: 25px;
+  }
+
+  .submission-status-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .submission-status-progress {
+    overflow-x: auto;
+    padding-bottom: 5px;
+  }
+
+  .submission-status-step {
+    min-width: 70px;
+  }
+
+  .submission-footer {
+    flex-direction: column;
+    gap: 5px;
+  }
+}

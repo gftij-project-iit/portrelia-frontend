@@ -1,0 +1,523 @@
+.photo-upload-page {
+  min-height: 100vh;
+  background: #f7f6fa;
+  color: #171429;
+  font-family: Inter, Arial, sans-serif;
+  padding: 28px 24px;
+}
+
+.photo-upload-shell {
+  width: min(1180px, 100%);
+  margin: 0 auto;
+}
+
+.photo-upload-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 22px;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.photo-upload-brand-mark {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  background: #5632a8;
+  color: #fff;
+  font-size: 14px;
+}
+
+.photo-upload-card {
+  background: #fff;
+  border: 1px solid #e8e5ef;
+  border-radius: 18px;
+  padding: 34px;
+  box-shadow: 0 8px 28px rgba(30, 20, 60, 0.04);
+}
+
+.participant-progress {
+  max-width: 610px;
+  margin: 0 auto 38px;
+  display: flex;
+  align-items: center;
+}
+
+.participant-progress-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #8e8a9c;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.participant-progress-number {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  border: 1px solid #dedbe7;
+  background: #f5f4f8;
+  color: #5f5a6d;
+}
+
+.participant-progress-item.active {
+  color: #24164f;
+}
+
+.participant-progress-item.active .participant-progress-number {
+  color: #fff;
+  background: #4e2b9b;
+  border-color: #4e2b9b;
+}
+
+.participant-progress-item.completed {
+  color: #24164f;
+}
+
+.participant-progress-item.completed .participant-progress-number {
+  background: #efeafd;
+  border-color: #d9cef7;
+  color: #5632a8;
+}
+
+.participant-progress-item.completed .participant-progress-number svg {
+  width: 16px;
+  height: 16px;
+  stroke-width: 3;
+}
+
+.participant-progress-line {
+  flex: 1;
+  height: 1px;
+  margin: 0 16px;
+  background: #e3e0e9;
+}
+
+.participant-progress-line.completed {
+  background: #b7a4e8;
+}
+
+.photo-upload-heading {
+  margin-bottom: 28px;
+}
+
+.photo-upload-kicker {
+  color: #5632a8;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.photo-upload-heading h1 {
+  margin: 8px 0;
+  font-size: 27px;
+  line-height: 1.2;
+}
+
+.photo-upload-heading p {
+  max-width: 760px;
+  margin: 0;
+  color: #706b7f;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.photo-upload-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 285px;
+  gap: 32px;
+}
+
+.photo-upload-dropzone {
+  min-height: 260px;
+  border: 1.5px dashed #cfc6e6;
+  border-radius: 16px;
+  background: #faf9fd;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 9px;
+  padding: 30px;
+  text-align: center;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.photo-upload-dropzone:hover {
+  background: #f6f2ff;
+  border-color: #9279cf;
+}
+
+.photo-upload-dropzone-icon {
+  width: 58px;
+  height: 58px;
+  border-radius: 16px;
+  background: #eee8fb;
+  display: grid;
+  place-items: center;
+  color: #5632a8;
+  font-size: 27px;
+}
+
+.photo-upload-dropzone strong {
+  font-size: 16px;
+}
+
+.photo-upload-dropzone > span {
+  color: #7c7688;
+  font-size: 13px;
+}
+
+.photo-upload-dropzone small {
+  color: #aaa5b4;
+  font-size: 11px;
+}
+
+.photo-upload-select-btn {
+  min-height: 42px;
+  margin-top: 8px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 9px;
+  background: #5632a8;
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.photo-upload-input {
+  display: none;
+}
+
+.photo-upload-message {
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 13px;
+}
+
+.photo-upload-message.error {
+  border: 1px solid #f0c9c7;
+  background: #fff5f4;
+  color: #a63b35;
+}
+
+.photo-upload-selection {
+  margin-top: 28px;
+}
+
+.photo-upload-selection-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.photo-upload-selection-header > div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.photo-upload-selection-header strong {
+  font-size: 15px;
+}
+
+.photo-upload-selection-header span {
+  color: #8b8597;
+  font-size: 12px;
+}
+
+.photo-upload-add-more {
+  border: 1px solid #ddd7e9;
+  background: #fff;
+  color: #4c357e;
+  min-height: 38px;
+  padding: 0 13px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.photo-upload-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.photo-upload-preview {
+  position: relative;
+  height: 180px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #f1eff4;
+  border: 1px solid #e3dfe9;
+}
+
+.photo-upload-preview img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center;
+}
+
+.photo-upload-preview-number {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgba(31, 23, 48, 0.82);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.photo-upload-remove {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.92);
+  color: #b7433d;
+  cursor: pointer;
+}
+
+.photo-upload-empty-slot {
+  min-height: 180px;
+  border: 1.5px dashed #d6d0df;
+  border-radius: 12px;
+  background: #fcfbfd;
+  color: #806da9;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.photo-upload-sidebar {
+  align-self: start;
+  padding: 24px;
+  border: 1px solid #e6e2ed;
+  border-radius: 14px;
+  background: #fbfaff;
+}
+
+.photo-upload-sidebar-title {
+  display: block;
+  margin-bottom: 22px;
+  color: #272037;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.photo-upload-rule {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 21px;
+}
+
+.photo-upload-rule > svg {
+  flex: 0 0 auto;
+  margin-top: 2px;
+  color: #5632a8;
+  font-size: 18px;
+}
+
+.photo-upload-rule div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.photo-upload-rule strong {
+  font-size: 13px;
+}
+
+.photo-upload-rule span {
+  color: #706b7f;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.photo-upload-count-card {
+  margin-top: 24px;
+  padding: 16px;
+  border-radius: 11px;
+  background: #fff;
+  border: 1px solid #e6e2ed;
+}
+
+.photo-upload-count-card > span {
+  color: #8b8498;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.photo-upload-count-card > strong {
+  display: block;
+  margin-top: 5px;
+  font-size: 13px;
+}
+
+.photo-upload-count-progress {
+  height: 6px;
+  border-radius: 999px;
+  background: #ece8f2;
+  overflow: hidden;
+  margin: 11px 0 8px;
+}
+
+.photo-upload-count-progress-value {
+  height: 100%;
+  background: #5632a8;
+  border-radius: inherit;
+  transition: width 0.2s ease;
+}
+
+.photo-upload-count-card small {
+  color: #8b8498;
+  font-size: 11px;
+}
+
+.photo-upload-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  margin-top: 34px;
+  padding-top: 26px;
+  border-top: 1px solid #ece9f0;
+}
+
+.photo-upload-back,
+.photo-upload-next {
+  min-width: 180px;
+  height: 50px;
+  border-radius: 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.photo-upload-back {
+  background: #fff;
+  color: #272037;
+  border: 1px solid #d8d4e0;
+}
+
+.photo-upload-next {
+  background: #4f2b9c;
+  color: #fff;
+  border: 1px solid #4f2b9c;
+}
+
+.photo-upload-next:disabled {
+  background: #c9c2da;
+  border-color: #c9c2da;
+  cursor: not-allowed;
+}
+
+.photo-upload-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  padding: 0 3px;
+  color: #aaa5b4;
+  font-size: 11px;
+}
+
+.photo-upload-centered {
+  display: grid;
+  place-items: center;
+}
+
+.photo-upload-error-card {
+  width: min(440px, 100%);
+  background: #fff;
+  border: 1px solid #e5e2ea;
+  border-radius: 16px;
+  padding: 36px;
+  text-align: center;
+}
+
+@media (max-width: 950px) {
+  .photo-upload-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .photo-upload-page {
+    padding: 18px 14px;
+  }
+
+  .photo-upload-card {
+    padding: 22px 16px;
+  }
+
+  .photo-upload-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .photo-upload-actions {
+    flex-direction: column-reverse;
+  }
+
+  .photo-upload-back,
+  .photo-upload-next {
+    width: 100%;
+  }
+
+  .photo-upload-footer {
+    flex-direction: column;
+    gap: 5px;
+  }
+}
+
+@media (max-width: 460px) {
+  .photo-upload-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .photo-upload-preview,
+  .photo-upload-empty-slot {
+    min-height: 220px;
+    height: 220px;
+  }
+}

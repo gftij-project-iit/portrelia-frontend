@@ -1,0 +1,195 @@
+.account-activation-page {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 20px;
+  background: #f7f7fa;
+}
+
+.account-activation-card {
+  width: 100%;
+  max-width: 460px;
+  padding: 34px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+  box-shadow:
+    0 16px 40px rgba(17, 24, 39, 0.08);
+}
+
+.account-activation-header {
+  margin-bottom: 28px;
+}
+
+.account-activation-header > span {
+  display: block;
+  margin-bottom: 8px;
+  color: #4f2e94;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+}
+
+.account-activation-header h1,
+.account-activation-card h1 {
+  margin: 0;
+  color: #111827;
+  font-size: 26px;
+  line-height: 1.25;
+}
+
+.account-activation-header p,
+.account-activation-card > p {
+  margin: 10px 0 0;
+  color: #6b7280;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.account-activation-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.account-activation-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.account-activation-field label {
+  color: #374151;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.account-activation-password {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.account-activation-password input {
+  width: 100%;
+  height: 46px;
+  padding: 0 44px 0 14px;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 9px;
+  outline: none;
+  color: #111827;
+  font-size: 14px;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.account-activation-password input:focus {
+  border-color: #4f2e94;
+  box-shadow:
+    0 0 0 3px
+    rgba(79, 46, 148, 0.1);
+}
+
+.account-activation-password input:disabled {
+  background: #f9fafb;
+  cursor: not-allowed;
+}
+
+.account-activation-password button {
+  position: absolute;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #6b7280;
+  cursor: pointer;
+}
+
+.account-activation-password button svg {
+  width: 18px;
+  height: 18px;
+}
+
+.account-activation-submit,
+.account-activation-login-btn {
+  width: 100%;
+  min-height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  border: none;
+  border-radius: 9px;
+  background: #4f2e94;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.account-activation-submit:hover:not(:disabled),
+.account-activation-login-btn:hover {
+  background: #42247f;
+}
+
+.account-activation-submit:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.account-activation-error {
+  margin-bottom: 20px;
+  padding: 12px 14px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 9px;
+  color: #dc2626;
+  font-size: 13px;
+}
+
+.account-activation-success-icon {
+  width: 54px;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  border-radius: 50%;
+  background: #ecfdf3;
+  color: #15803d;
+}
+
+.account-activation-success-icon svg {
+  width: 27px;
+  height: 27px;
+}
+
+.account-activation-login-btn {
+  margin-top: 26px;
+}
+
+@media (max-width: 520px) {
+  .account-activation-page {
+    padding: 20px 14px;
+  }
+
+  .account-activation-card {
+    padding: 26px 20px;
+    border-radius: 14px;
+  }
+
+  .account-activation-header h1,
+  .account-activation-card h1 {
+    font-size: 23px;
+  }
+}
