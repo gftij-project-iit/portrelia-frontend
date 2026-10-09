@@ -26,7 +26,8 @@ const MIN_PHOTOS = 6;
 const MAX_PHOTOS = 12;
 
 function PhotoValidationPage() {
-  const navigate = useNavigate();
+  const navigate =
+    useNavigate();
 
   const [searchParams] =
     useSearchParams();
@@ -34,24 +35,32 @@ function PhotoValidationPage() {
   const token =
     searchParams.get("token");
 
-  const [photos, setPhotos] =
-    useState([]);
+  const [
+    photos,
+    setPhotos,
+  ] = useState([]);
 
   const [
     participant,
     setParticipant,
   ] = useState(null);
 
-  const [loading, setLoading] =
-    useState(Boolean(token));
+  const [
+    loading,
+    setLoading,
+  ] = useState(
+    Boolean(token)
+  );
 
   const [
     submitting,
     setSubmitting,
   ] = useState(false);
 
-  const [error, setError] =
-    useState("");
+  const [
+    error,
+    setError,
+  ] = useState("");
 
   const [
     brokenPhotos,
@@ -60,20 +69,27 @@ function PhotoValidationPage() {
     () => new Set()
   );
 
+  /*
+   * =========================================================
+   * VALIDATION DU NOMBRE DE PHOTOS
+   * =========================================================
+   */
   const validPhotoCount =
-    photos.length >= MIN_PHOTOS &&
-    photos.length <= MAX_PHOTOS;
+    photos.length >=
+      MIN_PHOTOS &&
+    photos.length <=
+      MAX_PHOTOS;
 
   /*
    * =========================================================
    * CHARGEMENT DES PHOTOS
    * =========================================================
    *
-   * L'API renvoie maintenant directement :
+   * Le backend retourne maintenant :
    *
    * photo.imageUrl
    *
-   * avec une signed URL Supabase privée.
+   * contenant une signed URL Supabase.
    */
   useEffect(() => {
     if (!token) {
@@ -95,36 +111,48 @@ function PhotoValidationPage() {
             controller.signal,
         }
       )
-      .then((response) => {
-        if (!active) {
-          return;
+      .then(
+        (response) => {
+          if (!active) {
+            return;
+          }
+
+          const data =
+            response.data
+              ?.data || {};
+
+          const receivedPhotos =
+            Array.isArray(
+              data.photos
+            )
+              ? data.photos
+              : [];
+
+          console.log(
+            "PHOTOS VALIDATION :",
+            receivedPhotos
+          );
+
+          setPhotos(
+            receivedPhotos
+          );
+
+          setParticipant(
+            data.participant ||
+              null
+          );
+
+          setBrokenPhotos(
+            new Set()
+          );
+
+          setError("");
         }
-
-        const data =
-          response.data?.data ||
-          {};
-
-        setPhotos(
-          Array.isArray(
-            data.photos
-          )
-            ? data.photos
-            : []
-        );
-
-        setParticipant(
-          data.participant ||
-            null
-        );
-
-        setBrokenPhotos(
-          new Set()
-        );
-
-        setError("");
-      })
+      )
       .catch(
-        (requestError) => {
+        (
+          requestError
+        ) => {
           if (
             requestError.code ===
               "ERR_CANCELED" ||
@@ -144,37 +172,51 @@ function PhotoValidationPage() {
           }
 
           setError(
-            requestError.response
-              ?.data?.message ||
+            requestError
+              .response
+              ?.data
+              ?.message ||
               "Impossible de charger vos photos."
           );
         }
       )
       .finally(() => {
         if (active) {
-          setLoading(false);
+          setLoading(
+            false
+          );
         }
       });
 
     return () => {
       active = false;
+
       controller.abort();
     };
   }, [token]);
 
   /*
    * =========================================================
-   * IMAGE ERROR
+   * IMAGE CASSÉE
    * =========================================================
    */
   const handleImageError =
     (photoId) => {
+      console.error(
+        "IMAGE ERROR :",
+        photoId
+      );
+
       setBrokenPhotos(
         (current) => {
           const next =
-            new Set(current);
+            new Set(
+              current
+            );
 
-          next.add(photoId);
+          next.add(
+            photoId
+          );
 
           return next;
         }
@@ -208,7 +250,9 @@ function PhotoValidationPage() {
         return;
       }
 
-      if (!validPhotoCount) {
+      if (
+        !validPhotoCount
+      ) {
         setError(
           "Vous devez avoir entre 6 et 12 photos pour confirmer."
         );
@@ -217,13 +261,22 @@ function PhotoValidationPage() {
       }
 
       try {
-        setSubmitting(true);
+        setSubmitting(
+          true
+        );
+
         setError("");
 
-        await api.post(
-          `/participant/invitations/${encodeURIComponent(
-            token
-          )}/photos/submit`
+        const response =
+          await api.post(
+            `/participant/invitations/${encodeURIComponent(
+              token
+            )}/photos/submit`
+          );
+
+        console.log(
+          "SUBMIT PHOTOS SUCCESS :",
+          response.data
         );
 
         navigate(
@@ -239,13 +292,24 @@ function PhotoValidationPage() {
           submitError
         );
 
+        console.error(
+          "Erreur validation réponse :",
+          submitError
+            .response
+            ?.data
+        );
+
         setError(
-          submitError.response
-            ?.data?.message ||
+          submitError
+            .response
+            ?.data
+            ?.message ||
             "Impossible de confirmer l'envoi de vos photos."
         );
       } finally {
-        setSubmitting(false);
+        setSubmitting(
+          false
+        );
       }
     };
 
@@ -276,7 +340,7 @@ function PhotoValidationPage() {
 
   /*
    * =========================================================
-   * LOADING
+   * CHARGEMENT
    * =========================================================
    */
   if (loading) {
@@ -290,8 +354,8 @@ function PhotoValidationPage() {
           </h1>
 
           <p>
-            Nous récupérons vos
-            photos.
+            Nous récupérons
+            vos photos.
           </p>
         </div>
       </div>
@@ -319,6 +383,7 @@ function PhotoValidationPage() {
           {/* PROGRESS */}
 
           <div className="participant-progress">
+
             <div className="participant-progress-item completed">
               <div className="participant-progress-number">
                 <FiCheckCircle />
@@ -352,11 +417,13 @@ function PhotoValidationPage() {
                 Validation
               </span>
             </div>
+
           </div>
 
           {/* HERO */}
 
           <section className="photo-validation-hero">
+
             <div className="photo-validation-icon">
               <FiCheckCircle />
             </div>
@@ -366,35 +433,42 @@ function PhotoValidationPage() {
             </span>
 
             <h1>
-              Vérifiez avant l'envoi
+              Vérifiez avant
+              l'envoi
             </h1>
 
             <p>
-              Vérifiez une dernière
-              fois vos photos avant
-              de confirmer. Après
-              validation, elles seront
-              contrôlées par Portrélia
-              avant le lancement de
-              la génération de vos
+              Vérifiez une
+              dernière fois vos
+              photos avant de
+              confirmer. Après
+              validation, elles
+              seront contrôlées
+              par Portrélia avant
+              le lancement de la
+              génération de vos
               portraits.
             </p>
 
-            {participant?.firstName && (
+            {participant
+              ?.firstName && (
               <span className="photo-validation-participant">
                 Parcours de{" "}
 
                 <strong>
                   {
-                    participant.firstName
+                    participant
+                      .firstName
                   }{" "}
                   {
-                    participant.lastName ||
+                    participant
+                      .lastName ||
                     ""
                   }
                 </strong>
               </span>
             )}
+
           </section>
 
           {/* ERROR */}
@@ -412,21 +486,32 @@ function PhotoValidationPage() {
           {/* PHOTOS */}
 
           <section className="photo-validation-photos">
+
             <div className="photo-validation-photos-header">
+
               <div>
                 <span className="photo-validation-section-label">
                   VOS PHOTOS
                 </span>
 
                 <h2>
-                  {photos.length} photo
-                  {photos.length > 1
-                    ? "s"
-                    : ""}{" "}
+                  {
+                    photos.length
+                  }{" "}
+                  photo
+                  {
+                    photos.length >
+                    1
+                      ? "s"
+                      : ""
+                  }{" "}
                   sélectionnée
-                  {photos.length > 1
-                    ? "s"
-                    : ""}
+                  {
+                    photos.length >
+                    1
+                      ? "s"
+                      : ""
+                  }
                 </h2>
               </div>
 
@@ -444,14 +529,23 @@ function PhotoValidationPage() {
                 )}
 
                 <span>
-                  {photos.length}/
-                  {MIN_PHOTOS} minimum
+                  {
+                    photos.length
+                  }
+                  /
+                  {
+                    MIN_PHOTOS
+                  }{" "}
+                  minimum
                 </span>
               </div>
+
             </div>
 
-            {photos.length > 0 ? (
+            {photos.length >
+            0 ? (
               <div className="photo-validation-photo-grid">
+
                 {photos.map(
                   (
                     photo,
@@ -462,12 +556,20 @@ function PhotoValidationPage() {
                         photo.id
                       );
 
+                    /*
+                     * IMPORTANT :
+                     *
+                     * Même logique que
+                     * PhotoUploadPage.
+                     *
+                     * Si imageUrl existe,
+                     * on essaie de
+                     * l'afficher.
+                     */
                     const imageAvailable =
                       Boolean(
                         photo.imageUrl
                       ) &&
-                      photo.fileAvailable !==
-                        false &&
                       !broken;
 
                     return (
@@ -497,18 +599,22 @@ function PhotoValidationPage() {
                             />
                           ) : (
                             <div className="photo-validation-photo-unavailable">
+
                               <FiImage />
 
                               <span>
                                 Image
                                 indisponible
                               </span>
+
                             </div>
                           )}
 
                           <span className="photo-validation-photo-number">
-                            {index +
-                              1}
+                            {
+                              index +
+                              1
+                            }
                           </span>
 
                           {photo.storageProvider ===
@@ -518,14 +624,17 @@ function PhotoValidationPage() {
                                 Sécurisée
                               </span>
                             )}
+
                         </div>
                       </article>
                     );
                   }
                 )}
+
               </div>
             ) : (
               <div className="photo-validation-no-photos">
+
                 <FiImage />
 
                 <strong>
@@ -534,12 +643,16 @@ function PhotoValidationPage() {
                 </strong>
 
                 <span>
-                  Revenez à l'étape
-                  précédente pour
-                  ajouter vos photos.
+                  Revenez à
+                  l'étape
+                  précédente
+                  pour ajouter
+                  vos photos.
                 </span>
+
               </div>
             )}
+
           </section>
 
           {/* CONTENT */}
@@ -549,11 +662,13 @@ function PhotoValidationPage() {
             {/* LEFT */}
 
             <section className="photo-validation-summary">
+
               <h2>
                 Votre parcours
               </h2>
 
               <div className="photo-validation-row">
+
                 <div className="photo-validation-row-icon completed">
                   <FiCheckCircle />
                 </div>
@@ -566,14 +681,17 @@ function PhotoValidationPage() {
 
                   <span>
                     Vous avez pris
-                    connaissance des
+                    connaissance
+                    des
                     recommandations
                     Portrélia.
                   </span>
                 </div>
+
               </div>
 
               <div className="photo-validation-row">
+
                 <div
                   className={`photo-validation-row-icon ${
                     validPhotoCount
@@ -590,27 +708,45 @@ function PhotoValidationPage() {
 
                 <div>
                   <strong>
-                    Photos sélectionnées
+                    Photos
+                    sélectionnées
                   </strong>
 
                   <span>
-                    {photos.length} photo
-                    {photos.length > 1
-                      ? "s"
-                      : ""}{" "}
+                    {
+                      photos.length
+                    }{" "}
+                    photo
+                    {
+                      photos.length >
+                      1
+                        ? "s"
+                        : ""
+                    }{" "}
                     enregistrée
-                    {photos.length > 1
-                      ? "s"
-                      : ""}
+                    {
+                      photos.length >
+                      1
+                        ? "s"
+                        : ""
+                    }
                     . Entre{" "}
-                    {MIN_PHOTOS} et{" "}
-                    {MAX_PHOTOS} sont
+                    {
+                      MIN_PHOTOS
+                    }{" "}
+                    et{" "}
+                    {
+                      MAX_PHOTOS
+                    }{" "}
+                    sont
                     nécessaires.
                   </span>
                 </div>
+
               </div>
 
               <div className="photo-validation-row">
+
                 <div className="photo-validation-row-icon pending">
                   <FiClock />
                 </div>
@@ -622,134 +758,179 @@ function PhotoValidationPage() {
                   </strong>
 
                   <span>
-                    Après confirmation,
-                    les photos seront
-                    vérifiées avant le
-                    lancement de la
-                    génération.
+                    Après
+                    confirmation,
+                    les photos
+                    seront
+                    vérifiées
+                    avant le
+                    lancement de
+                    la génération.
                   </span>
                 </div>
+
               </div>
 
               <div className="photo-validation-row">
+
                 <div className="photo-validation-row-icon pending">
                   <FiShield />
                 </div>
 
                 <div>
                   <strong>
-                    Génération et QA
-                    Portrélia
+                    Génération et
+                    QA Portrélia
                   </strong>
 
                   <span>
-                    Les portraits seront
-                    générés dans le style
-                    choisi puis contrôlés
-                    avant publication.
+                    Les portraits
+                    seront générés
+                    dans le style
+                    choisi puis
+                    contrôlés
+                    avant
+                    publication.
                   </span>
                 </div>
+
               </div>
+
             </section>
 
             {/* RIGHT */}
 
             <aside className="photo-validation-info">
+
               <span className="photo-validation-info-title">
-                Après votre envoi
+                Après votre
+                envoi
               </span>
 
               <div className="photo-validation-info-item">
+
                 <strong>
-                  1. Contrôle des
-                  photos
+                  1. Contrôle
+                  des photos
                 </strong>
 
                 <span>
-                  Nous vérifions que vos
-                  photos sont suffisamment
-                  nettes et exploitables.
+                  Nous vérifions
+                  que vos photos
+                  sont
+                  suffisamment
+                  nettes et
+                  exploitables.
                 </span>
+
               </div>
 
               <div className="photo-validation-info-item">
+
                 <strong>
                   2. Génération
                 </strong>
 
                 <span>
-                  Vos portraits sont
-                  générés selon le style
-                  défini par votre
+                  Vos portraits
+                  sont générés
+                  selon le style
+                  défini par
+                  votre
                   entreprise.
                 </span>
+
               </div>
 
               <div className="photo-validation-info-item">
+
                 <strong>
-                  3. Contrôle qualité
+                  3. Contrôle
+                  qualité
                 </strong>
 
                 <span>
-                  L'équipe Portrélia
-                  vérifie la ressemblance,
-                  les artefacts, le teint
-                  et la cohérence.
+                  L'équipe
+                  Portrélia
+                  vérifie la
+                  ressemblance,
+                  les artefacts,
+                  le teint et la
+                  cohérence.
                 </span>
+
               </div>
 
               <div className="photo-validation-info-item">
+
                 <strong>
-                  4. Galerie privée
+                  4. Galerie
+                  privée
                 </strong>
 
                 <span>
-                  Seuls les portraits
-                  validés par le QA seront
-                  publiés dans votre
-                  galerie privée.
+                  Seuls les
+                  portraits
+                  validés par le
+                  QA seront
+                  publiés dans
+                  votre galerie
+                  privée.
                 </span>
+
               </div>
 
               <div className="photo-validation-info-item">
+
                 <strong>
                   5. Choix final
                 </strong>
 
                 <span>
-                  Vous choisirez ensuite
-                  votre portrait final
-                  parmi les propositions
+                  Vous choisirez
+                  ensuite votre
+                  portrait final
+                  parmi les
+                  propositions
                   validées.
                 </span>
+
               </div>
+
             </aside>
+
           </div>
 
           {/* PRIVACY */}
 
           <div className="photo-validation-notice">
+
             <FiShield />
 
             <div>
               <strong>
-                Vos photos restent
-                privées
+                Vos photos
+                restent privées
               </strong>
 
               <span>
-                Elles sont utilisées
-                uniquement pour la
-                création, le contrôle
-                et la livraison de vos
-                portraits Portrélia.
+                Elles sont
+                utilisées
+                uniquement pour
+                la création, le
+                contrôle et la
+                livraison de vos
+                portraits
+                Portrélia.
               </span>
             </div>
+
           </div>
 
           {/* ACTIONS */}
 
           <div className="photo-validation-actions">
+
             <button
               type="button"
               className="photo-validation-back"
@@ -762,7 +943,8 @@ function PhotoValidationPage() {
             >
               <FiArrowLeft />
 
-              Modifier mes photos
+              Modifier mes
+              photos
             </button>
 
             <button
@@ -784,19 +966,25 @@ function PhotoValidationPage() {
                 <FiArrowRight />
               )}
             </button>
+
           </div>
+
         </main>
 
         <footer className="photo-validation-footer">
+
           <span>
             © 2026 Portrélia
           </span>
 
           <span>
-            Portraits professionnels
+            Portraits
+            professionnels
             pour les équipes.
           </span>
+
         </footer>
+
       </div>
     </div>
   );
