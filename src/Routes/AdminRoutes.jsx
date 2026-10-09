@@ -13,6 +13,7 @@ import AdminDashboardHomePage from "../pages/Admin/dashboard/AdminDashboardHomeP
 import AdminCampaignsPage from "../pages/Admin/compagnes/AdminCampaignsPage";
 import AdminCampaignDetailsPage from "../pages/Admin/compagnes/AdminCampaignDetailsPage";
 import AdminParticipantDetailsPage from "../pages/Admin/compagnes/AdminParticipantDetailsPage";
+import AdminQaParticipantPage from "../pages/Admin/adminQA/AdminQaParticipantPage";
 
 
 const AdminRoutes = (
@@ -63,6 +64,12 @@ const AdminRoutes = (
 <Route
   path="/admin/participants/:participantId"
   element={<AdminParticipantDetailsPage />}
+/>
+<Route
+  path="/admin/qa/participants/:participantId"
+  element={
+    <AdminQaParticipantPage />
+  }
 />
     </Route>
   </>

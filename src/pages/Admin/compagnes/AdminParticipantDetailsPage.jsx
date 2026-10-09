@@ -1,8 +1,20 @@
-import { useEffect, useState } from "react";
+import {
+  useEffect,
+  useState,
+} from "react";
+
 import {
   useNavigate,
   useParams,
 } from "react-router-dom";
+
+import {
+  FiArrowLeft,
+  FiImage,
+  FiShield,
+  FiPlay,
+  FiExternalLink,
+} from "react-icons/fi";
 
 import "./AdminParticipantDetailsPage.css";
 import api from "../../../services/api";
@@ -12,34 +24,50 @@ const STATUS_LABELS = {
   CONSENT_PENDING: "Consentement",
   PHOTOS_PENDING: "Photos attendues",
   PHOTOS_RECEIVED: "Photos reçues",
-  GENERATION_PENDING: "Génération à lancer",
-  GENERATION_IN_PROGRESS: "Génération en cours",
-  QA_PENDING: "QA en attente",
-  GALLERY_READY: "Galerie prête",
-  VALIDATED: "Portrait validé",
-  REVISION_REQUESTED: "Reprise demandée",
-  DELIVERED: "Livré",
+  GENERATION_PENDING:
+    "Génération à lancer",
+  GENERATION_IN_PROGRESS:
+    "Génération en cours",
+  QA_PENDING:
+    "QA portraits en attente",
+  GALLERY_READY:
+    "Galerie prête",
+  VALIDATED:
+    "Portrait validé",
+  REVISION_REQUESTED:
+    "Reprise demandée",
+  DELIVERED:
+    "Livré",
 };
 
 const PHOTO_STATUS_LABELS = {
-  UPLOADED: "Reçue",
+  UPLOADED: "À contrôler",
   ACCEPTED: "Acceptée",
   REJECTED: "Rejetée",
 };
 
 const STORAGE_PROVIDER_LABELS = {
-  SUPABASE: "Supabase Storage",
-  LOCAL: "Stockage local",
+  SUPABASE:
+    "Supabase Storage",
+  LOCAL:
+    "Stockage local",
 };
 
-const formatDate = (value) => {
+const formatDate = (
+  value
+) => {
   if (!value) {
     return "—";
   }
 
-  const date = new Date(value);
+  const date =
+    new Date(value);
 
-  if (Number.isNaN(date.getTime())) {
+  if (
+    Number.isNaN(
+      date.getTime()
+    )
+  ) {
     return "—";
   }
 
@@ -55,21 +83,31 @@ const formatDate = (value) => {
   ).format(date);
 };
 
-const formatBytes = (bytes) => {
-  const value = Number(bytes);
+const formatBytes = (
+  bytes
+) => {
+  const value =
+    Number(bytes);
 
   if (
-    !Number.isFinite(value) ||
+    !Number.isFinite(
+      value
+    ) ||
     value <= 0
   ) {
     return "—";
   }
 
-  if (value < 1024) {
+  if (
+    value < 1024
+  ) {
     return `${value} o`;
   }
 
-  if (value < 1024 * 1024) {
+  if (
+    value <
+    1024 * 1024
+  ) {
     return `${Math.round(
       value / 1024
     )} Ko`;
@@ -82,10 +120,12 @@ const formatBytes = (bytes) => {
 };
 
 function AdminParticipantDetailsPage() {
-  const { participantId } =
-    useParams();
+  const {
+    participantId,
+  } = useParams();
 
-  const navigate = useNavigate();
+  const navigate =
+    useNavigate();
 
   const [
     participant,
@@ -124,26 +164,17 @@ function AdminParticipantDetailsPage() {
     setSelectedPhoto,
   ] = useState(null);
 
-  /*
-   * Permet de masquer proprement
-   * une signed URL devenue invalide
-   * ou une image qui ne charge pas.
-   */
   const [
     brokenPhotos,
     setBrokenPhotos,
-  ] = useState(() => new Set());
+  ] = useState(
+    () => new Set()
+  );
 
   /*
    * =========================================================
-   * CHARGEMENT PARTICIPANT + PHOTOS
+   * LOAD PARTICIPANT
    * =========================================================
-   *
-   * Une seule API :
-   *
-   * GET /api/v1/admin/participants/:participantId
-   *
-   * Le backend génère les signed URLs Supabase.
    */
   useEffect(() => {
     let mounted = true;
@@ -151,8 +182,12 @@ function AdminParticipantDetailsPage() {
     const loadParticipant =
       async () => {
         try {
-          setLoading(true);
+          setLoading(
+            true
+          );
+
           setError("");
+
           setBrokenPhotos(
             new Set()
           );
@@ -167,10 +202,12 @@ function AdminParticipantDetailsPage() {
           }
 
           const data =
-            response.data?.data;
+            response.data
+              ?.data;
 
           if (
-            !data?.participant
+            !data
+              ?.participant
           ) {
             throw new Error(
               "Participant introuvable."
@@ -190,60 +227,77 @@ function AdminParticipantDetailsPage() {
           );
 
           setPhotoStats({
-            total: Number(
-              data.photoCount ||
-                0
-            ),
+            total:
+              Number(
+                data.photoCount ||
+                  0
+              ),
 
-            available: Number(
-              data.availablePhotoCount ||
-                0
-            ),
+            available:
+              Number(
+                data.availablePhotoCount ||
+                  0
+              ),
 
-            accepted: Number(
-              data.acceptedPhotoCount ||
-                0
-            ),
+            accepted:
+              Number(
+                data.acceptedPhotoCount ||
+                  0
+              ),
 
-            rejected: Number(
-              data.rejectedPhotoCount ||
-                0
-            ),
+            rejected:
+              Number(
+                data.rejectedPhotoCount ||
+                  0
+              ),
 
-            minimum: Number(
-              data
-                .photoRequirements
-                ?.minimum || 6
-            ),
+            minimum:
+              Number(
+                data
+                  .photoRequirements
+                  ?.minimum ||
+                  6
+              ),
 
-            maximum: Number(
-              data
-                .photoRequirements
-                ?.maximum || 12
-            ),
+            maximum:
+              Number(
+                data
+                  .photoRequirements
+                  ?.maximum ||
+                  12
+              ),
           });
-        } catch (err) {
+        } catch (
+          requestError
+        ) {
           console.error(
             "Erreur participant admin :",
-            err
+            requestError
           );
 
           if (!mounted) {
             return;
           }
 
-          setParticipant(null);
+          setParticipant(
+            null
+          );
+
           setPhotos([]);
 
           setError(
-            err.response?.data
+            requestError
+              .response
+              ?.data
               ?.message ||
-              err.message ||
+              requestError.message ||
               "Impossible de charger le participant."
           );
         } finally {
           if (mounted) {
-            setLoading(false);
+            setLoading(
+              false
+            );
           }
         }
       };
@@ -257,33 +311,35 @@ function AdminParticipantDetailsPage() {
 
   /*
    * =========================================================
-   * FERMETURE MODALE AVEC ESCAPE
+   * ESC MODAL
    * =========================================================
    */
   useEffect(() => {
-    if (!selectedPhoto) {
+    if (
+      !selectedPhoto
+    ) {
       return undefined;
     }
 
-    const handleKeyDown = (
-      event
-    ) => {
-      if (
-        event.key ===
-        "Escape"
-      ) {
-        setSelectedPhoto(
-          null
-        );
-      }
-    };
+    const handleKeyDown =
+      (event) => {
+        if (
+          event.key ===
+          "Escape"
+        ) {
+          setSelectedPhoto(
+            null
+          );
+        }
+      };
 
     document.addEventListener(
       "keydown",
       handleKeyDown
     );
 
-    document.body.style.overflow =
+    document.body.style
+      .overflow =
       "hidden";
 
     return () => {
@@ -292,37 +348,67 @@ function AdminParticipantDetailsPage() {
         handleKeyDown
       );
 
-      document.body.style.overflow =
+      document.body.style
+        .overflow =
         "";
     };
   }, [selectedPhoto]);
 
   /*
    * =========================================================
-   * PHOTO CASSÉE
+   * IMAGE ERROR
    * =========================================================
    */
-  const handlePhotoError = (
-    photoId
-  ) => {
-    setBrokenPhotos(
-      (current) => {
-        const next =
-          new Set(current);
+  const handlePhotoError =
+    (photoId) => {
+      setBrokenPhotos(
+        (current) => {
+          const next =
+            new Set(
+              current
+            );
 
-        next.add(photoId);
+          next.add(
+            photoId
+          );
 
-        return next;
+          return next;
+        }
+      );
+
+      if (
+        selectedPhoto
+          ?.id ===
+        photoId
+      ) {
+        setSelectedPhoto(
+          null
+        );
       }
-    );
+    };
 
-    if (
-      selectedPhoto?.id ===
-      photoId
-    ) {
-      setSelectedPhoto(null);
-    }
+  /*
+   * =========================================================
+   * QA
+   * =========================================================
+   */
+  const openQa = () => {
+    navigate(
+      `/admin/qa/participants/${participant.id}`
+    );
   };
+
+  /*
+   * =========================================================
+   * GENERATION
+   * =========================================================
+   */
+  const openGeneration =
+    () => {
+      navigate(
+        `/admin/generations/participants/${participant.id}`
+      );
+    };
 
   /*
    * =========================================================
@@ -333,19 +419,22 @@ function AdminParticipantDetailsPage() {
     return (
       <div className="admin-participant-detail-page">
         <div className="admin-participant-loading">
+
           <div className="admin-participant-spinner" />
 
           <div>
             <strong>
-              Chargement du participant
+              Chargement du
+              participant
             </strong>
 
             <p>
               Récupération des
-              informations et des
-              photos...
+              informations et
+              des photos...
             </p>
           </div>
+
         </div>
       </div>
     );
@@ -362,6 +451,7 @@ function AdminParticipantDetailsPage() {
   ) {
     return (
       <div className="admin-participant-detail-page">
+
         <button
           type="button"
           className="admin-participant-back"
@@ -371,10 +461,13 @@ function AdminParticipantDetailsPage() {
             )
           }
         >
-          ← Retour
+          <FiArrowLeft />
+
+          Retour
         </button>
 
         <div className="admin-participant-error">
+
           <strong>
             Participant
             indisponible
@@ -384,15 +477,18 @@ function AdminParticipantDetailsPage() {
             {error ||
               "Participant introuvable."}
           </p>
+
         </div>
+
       </div>
     );
   }
 
   return (
     <div className="admin-participant-detail-page">
+
       {/* =====================================================
-          RETOUR
+          BACK
       ====================================================== */}
 
       <button
@@ -404,7 +500,10 @@ function AdminParticipantDetailsPage() {
           )
         }
       >
-        ← Retour à la campagne
+        <FiArrowLeft />
+
+        Retour à la
+        campagne
       </button>
 
       {/* =====================================================
@@ -412,7 +511,9 @@ function AdminParticipantDetailsPage() {
       ====================================================== */}
 
       <section className="admin-participant-hero">
+
         <div className="admin-participant-identity">
+
           <div className="admin-participant-big-avatar">
             {participant.firstName
               ?.charAt(0)
@@ -424,6 +525,7 @@ function AdminParticipantDetailsPage() {
           </div>
 
           <div>
+
             <span className="admin-participant-eyebrow">
               PARTICIPANT
             </span>
@@ -442,7 +544,9 @@ function AdminParticipantDetailsPage() {
                 participant.email
               }
             </p>
+
           </div>
+
         </div>
 
         <span
@@ -453,6 +557,7 @@ function AdminParticipantDetailsPage() {
           ] ||
             participant.status}
         </span>
+
       </section>
 
       {/* =====================================================
@@ -460,6 +565,7 @@ function AdminParticipantDetailsPage() {
       ====================================================== */}
 
       <section className="admin-participant-info-grid">
+
         <article>
           <span>
             Entreprise
@@ -503,13 +609,14 @@ function AdminParticipantDetailsPage() {
           <strong>
             {
               photoStats.total
-            }{" "}
-            /{" "}
+            }
+            /
             {
               photoStats.maximum
             }
           </strong>
         </article>
+
       </section>
 
       {/* =====================================================
@@ -517,8 +624,11 @@ function AdminParticipantDetailsPage() {
       ====================================================== */}
 
       <section className="admin-participant-workspace">
+
         <div className="admin-participant-section-title">
+
           <div>
+
             <span>
               PHOTOS SOURCE
             </span>
@@ -528,14 +638,16 @@ function AdminParticipantDetailsPage() {
             </h2>
 
             <p>
-              Contrôlez les photos
-              transmises avant la
-              génération des
-              portraits.
+              Ces photos seront
+              contrôlées par
+              l'équipe QA avant
+              toute génération.
             </p>
+
           </div>
 
           <div className="admin-participant-photo-total">
+
             <strong>
               {
                 photoStats.total
@@ -549,16 +661,19 @@ function AdminParticipantDetailsPage() {
                 ? "s"
                 : ""}
             </span>
+
           </div>
+
         </div>
 
         {/* =================================================
-            STATS PHOTOS
+            STATS
         ================================================== */}
 
         {photos.length >
           0 && (
           <div className="admin-photo-review-summary">
+
             <div>
               <span>
                 Disponibles
@@ -594,37 +709,39 @@ function AdminParticipantDetailsPage() {
                 }
               </strong>
             </div>
+
           </div>
         )}
 
         {/* =================================================
-            AUCUNE PHOTO
+            PHOTOS EMPTY
         ================================================== */}
 
         {photos.length ===
         0 ? (
           <div className="admin-participant-no-photos">
-            <div>
-              P
-            </div>
+
+            <FiImage />
 
             <strong>
               Aucune photo reçue
             </strong>
 
             <p>
-              Le participant n’a
-              pas encore envoyé
-              ses photos.
+              Le participant
+              n'a pas encore
+              envoyé ses photos.
             </p>
+
           </div>
         ) : (
           /*
            * ===============================================
-           * GRILLE PHOTOS
+           * PHOTOS GRID
            * ===============================================
            */
           <div className="admin-source-photo-grid">
+
             {photos.map(
               (
                 photo,
@@ -635,12 +752,15 @@ function AdminParticipantDetailsPage() {
                     photo.id
                   );
 
+                /*
+                 * Une signed URL Supabase
+                 * suffit pour afficher
+                 * l'image.
+                 */
                 const isAvailable =
                   Boolean(
                     photo.imageUrl
                   ) &&
-                  photo.fileAvailable !==
-                    false &&
                   !isBroken;
 
                 return (
@@ -650,6 +770,9 @@ function AdminParticipantDetailsPage() {
                       photo.id
                     }
                   >
+
+                    {/* IMAGE */}
+
                     <button
                       type="button"
                       className="admin-source-photo-visual"
@@ -666,6 +789,7 @@ function AdminParticipantDetailsPage() {
                         }
                       }}
                     >
+
                       {isAvailable ? (
                         <>
                           <img
@@ -693,27 +817,25 @@ function AdminParticipantDetailsPage() {
                         </>
                       ) : (
                         <div className="admin-photo-unavailable">
+
+                          <FiImage />
+
                           <strong>
                             Image
                             indisponible
                           </strong>
 
-                          <span>
-                            {photo.storageProvider ===
-                            "LOCAL"
-                              ? "Ancien stockage local"
-                              : "Fichier inaccessible"}
-                          </span>
                         </div>
                       )}
+
                     </button>
 
-                    {/* =====================================
-                        NOM + STATUS
-                    ====================================== */}
+                    {/* NAME + STATUS */}
 
                     <div className="admin-source-photo-content">
+
                       <div>
+
                         <strong
                           title={
                             photo.originalFilename ||
@@ -732,6 +854,7 @@ function AdminParticipantDetailsPage() {
                             photo.sizeBytes
                           )}
                         </span>
+
                       </div>
 
                       <span
@@ -742,37 +865,31 @@ function AdminParticipantDetailsPage() {
                         ] ||
                           photo.status}
                       </span>
+
                     </div>
 
-                    {/* =====================================
-                        META
-                    ====================================== */}
+                    {/* META */}
 
                     <div className="admin-source-photo-meta">
+
                       <span>
                         {photo.mimeType ||
                           "Image"}
                       </span>
 
-                      {photo.width &&
-                      photo.height ? (
-                        <span>
-                          {
-                            photo.width
-                          }{" "}
-                          ×{" "}
-                          {
-                            photo.height
-                          }
-                        </span>
-                      ) : (
-                        <span>
-                          Dimensions —
-                        </span>
-                      )}
+                      <span>
+                        {photo.width &&
+                        photo.height
+                          ? `${photo.width} × ${photo.height}`
+                          : "Dimensions —"}
+                      </span>
+
                     </div>
 
+                    {/* STORAGE / DATE */}
+
                     <div className="admin-source-photo-date">
+
                       <span>
                         {STORAGE_PROVIDER_LABELS[
                           photo.storageProvider
@@ -787,11 +904,14 @@ function AdminParticipantDetailsPage() {
                           photo.createdAt
                         )}
                       </span>
+
                     </div>
+
                   </article>
                 );
               }
             )}
+
           </div>
         )}
 
@@ -800,53 +920,129 @@ function AdminParticipantDetailsPage() {
         ================================================== */}
 
         <div className="admin-participant-process-card">
+
           <div className="admin-process-copy">
+
             <span>
               PROCHAINE ÉTAPE
             </span>
 
-            <h3>
-              Contrôle et
-              génération
-            </h3>
+            {/* PHOTOS REÇUES */}
 
             {participant.status ===
-            "PHOTOS_RECEIVED" ? (
-              <p>
-                Les photos ont bien
-                été reçues. Portrélia
-                peut maintenant
-                effectuer le contrôle
-                qualité avant de
-                lancer la génération.
-              </p>
-            ) : (
-              <p>
-                Statut actuel :{" "}
-                {STATUS_LABELS[
-                  participant.status
-                ] ||
-                  participant.status}
-                .
-              </p>
+              "PHOTOS_RECEIVED" && (
+              <>
+                <h3>
+                  Contrôle qualité
+                  des photos
+                </h3>
+
+                <p>
+                  Les photos ont
+                  été reçues.
+                  Elles doivent
+                  maintenant être
+                  contrôlées avant
+                  la génération.
+                </p>
+              </>
             )}
+
+            {/* QA TERMINÉ */}
+
+            {participant.status ===
+              "GENERATION_PENDING" && (
+              <>
+                <h3>
+                  Génération prête
+                  à démarrer
+                </h3>
+
+                <p>
+                  Le contrôle
+                  qualité des
+                  photos source
+                  est terminé.
+                </p>
+              </>
+            )}
+
+            {/* AUTRES STATUTS */}
+
+            {![
+              "PHOTOS_RECEIVED",
+              "GENERATION_PENDING",
+            ].includes(
+              participant.status
+            ) && (
+              <>
+                <h3>
+                  Suivi du
+                  participant
+                </h3>
+
+                <p>
+                  Statut actuel :{" "}
+
+                  {STATUS_LABELS[
+                    participant.status
+                  ] ||
+                    participant.status}
+                  .
+                </p>
+              </>
+            )}
+
           </div>
 
           <div className="admin-process-actions">
+
+            {/* START QA */}
+
             {participant.status ===
               "PHOTOS_RECEIVED" && (
               <button
                 type="button"
                 className="admin-generation-button"
-                disabled
+                onClick={
+                  openQa
+                }
               >
+                <FiShield />
+
+                Démarrer le
+                contrôle qualité
+
+                <FiExternalLink />
+              </button>
+            )}
+
+            {/* START GENERATION */}
+
+            {participant.status ===
+              "GENERATION_PENDING" && (
+              <button
+                type="button"
+                className="admin-generation-button"
+                onClick={
+                  openGeneration
+                }
+              >
+                <FiPlay />
+
                 Lancer la
                 génération
               </button>
             )}
 
-            {participant.status !==
-              "PHOTOS_RECEIVED" && (
+            {/* STATUS */}
+
+            {![
+              "PHOTOS_RECEIVED",
+              "GENERATION_PENDING",
+            ].includes(
+              participant.status
+            ) && (
               <span className="admin-process-status">
                 {STATUS_LABELS[
                   participant.status
@@ -854,12 +1050,15 @@ function AdminParticipantDetailsPage() {
                   participant.status}
               </span>
             )}
+
           </div>
+
         </div>
+
       </section>
 
       {/* =====================================================
-          MODALE IMAGE
+          PHOTO MODAL
       ====================================================== */}
 
       {selectedPhoto && (
@@ -874,14 +1073,14 @@ function AdminParticipantDetailsPage() {
             )
           }
         >
+
           <div
             className="admin-photo-modal-content"
-            onClick={(
-              event
-            ) =>
+            onClick={(event) =>
               event.stopPropagation()
             }
           >
+
             <button
               type="button"
               className="admin-photo-modal-close"
@@ -911,7 +1110,9 @@ function AdminParticipantDetailsPage() {
             />
 
             <div className="admin-photo-modal-footer">
+
               <div>
+
                 <strong>
                   {selectedPhoto.originalFilename ||
                     "Photo participant"}
@@ -924,6 +1125,7 @@ function AdminParticipantDetailsPage() {
                     selectedPhoto.storageProvider ||
                     ""}
                 </span>
+
               </div>
 
               <span>
@@ -931,10 +1133,14 @@ function AdminParticipantDetailsPage() {
                   selectedPhoto.sizeBytes
                 )}
               </span>
+
             </div>
+
           </div>
+
         </div>
       )}
+
     </div>
   );
 }

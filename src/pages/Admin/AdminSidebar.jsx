@@ -3,7 +3,6 @@ import {
   FiBriefcase,
   FiUsers,
   FiImage,
-  FiFileText,
   FiEdit3,
   FiCreditCard,
   FiSettings,
@@ -91,20 +90,10 @@ function AdminSidebar() {
           }
         >
           <FiImage />
-          <span>Campagnes</span>
+          <span>Campagnes & QA</span>
         </NavLink>
 
-        <NavLink
-          to="/admin/qa"
-          className={({ isActive }) =>
-            `admin-sidebar-link ${
-              isActive ? "admin-sidebar-link-active" : ""
-            }`
-          }
-        >
-          <FiFileText />
-          <span>QA</span>
-        </NavLink>
+      
 
         <NavLink
           to="/admin/retouches"
