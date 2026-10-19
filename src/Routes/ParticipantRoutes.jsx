@@ -6,6 +6,7 @@ import InvitationPage from "../pages/participant/InvitationPage";
 import PhotoUploadPage from "../pages/participant/PhotoUploadPage";
 import PhotoValidationPage from "../pages/participant/PhotoValidationPage";
 import SubmissionCompletePage from "../pages/participant/SubmissionCompletePage";
+import ParticipantGalleryPage from "../pages/participant/ParticipantGalleryPage";
 
 const ParticipantRoutes = (
   <>
@@ -20,6 +21,7 @@ const ParticipantRoutes = (
      {/* Étape 3 - Validation avant envoi */}
     <Route path="/invitation/validation" element={<PublicRoute><PhotoValidationPage /></PublicRoute>} />
     <Route path="/invitation/envoi-termine" element={<PublicRoute><SubmissionCompletePage /></PublicRoute>} />
+    <Route path="/gallery/:token" element={ <PublicRoute> <ParticipantGalleryPage /> </PublicRoute>} />
   </>
 );
 

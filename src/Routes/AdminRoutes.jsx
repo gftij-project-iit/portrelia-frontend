@@ -1,4 +1,6 @@
-import { Route } from "react-router-dom";
+import {
+  Route,
+} from "react-router-dom";
 
 import ProtectedRoute from "./ProtectedRoute";
 import RoleRoute from "./RoleRoute";
@@ -7,70 +9,143 @@ import AdminDashboardLayout from "../layouts/AdminDashboardLayout";
 
 import AdminCompaniesPage from "../pages/Admin/companies/AdminCompaniesPage";
 import AdminCompanyDetailsPage from "../pages/Admin/companies/AdminCompanyDetailsPage";
+
 import AdminDemoRequestDetailsPage from "../pages/Admin/DemoRequest/AdminDemoRequestDetailsPage";
 import AdminDemoRequestsPage from "../pages/Admin/DemoRequest/AdminDemoRequestsPage";
+
 import AdminDashboardHomePage from "../pages/Admin/dashboard/AdminDashboardHomePage";
+
 import AdminCampaignsPage from "../pages/Admin/compagnes/AdminCampaignsPage";
 import AdminCampaignDetailsPage from "../pages/Admin/compagnes/AdminCampaignDetailsPage";
 import AdminParticipantDetailsPage from "../pages/Admin/compagnes/AdminParticipantDetailsPage";
+
 import AdminQaParticipantPage from "../pages/Admin/adminQA/AdminQaParticipantPage";
+import AdminGenerationParticipantPage from "../pages/Admin/adminQA/AdminGenerationParticipantPage";
+import AdminQaPortraitsPage from "../pages/Admin/adminQA/AdminQaPortraitsPage";
 
 
 const AdminRoutes = (
   <>
-    {/* Admin */}
     <Route
       path="/admin"
       element={
         <ProtectedRoute>
-          <RoleRoute allowedRoles={["ADMIN"]}>
+          <RoleRoute
+            allowedRoles={[
+              "ADMIN",
+            ]}
+          >
             <AdminDashboardLayout />
           </RoleRoute>
         </ProtectedRoute>
       }
     >
+
+      {/* =====================================================
+          DASHBOARD
+      ====================================================== */}
+
       <Route
         index
-        element={<AdminDashboardHomePage />}
+        element={
+          <AdminDashboardHomePage />
+        }
       />
+
+      {/* =====================================================
+          ENTREPRISES
+      ====================================================== */}
+
       <Route
         path="entreprises"
-        element={<AdminCompaniesPage />}
+        element={
+          <AdminCompaniesPage />
+        }
       />
+
       <Route
         path="entreprises/:id"
-        element={<AdminCompanyDetailsPage />}
+        element={
+          <AdminCompanyDetailsPage />
+        }
+      />
+
+      {/* =====================================================
+          DEMANDES DEMO
+      ====================================================== */}
+
+      <Route
+        path="demandes-demo"
+        element={
+          <AdminDemoRequestsPage />
+        }
+      />
+
+      <Route
+        path="demandes-demo/:id"
+        element={
+          <AdminDemoRequestDetailsPage />
+        }
+      />
+
+      {/* =====================================================
+          CAMPAGNES
+      ====================================================== */}
+
+      <Route
+        path="campagnes"
+        element={
+          <AdminCampaignsPage />
+        }
+      />
+
+      <Route
+        path="campagnes/:campaignId"
+        element={
+          <AdminCampaignDetailsPage />
+        }
+      />
+
+      {/* =====================================================
+          PARTICIPANTS
+      ====================================================== */}
+
+      <Route
+        path="participants/:participantId"
+        element={
+          <AdminParticipantDetailsPage />
+        }
+      />
+
+      {/* =====================================================
+          QA PHOTOS SOURCE
+      ====================================================== */}
+
+      <Route
+        path="qa/participants/:participantId"
+        element={
+          <AdminQaParticipantPage />
+        }
+      />
+
+      {/* =====================================================
+          GENERATION
+      ====================================================== */}
+
+      <Route
+        path="generations/participants/:participantId"
+        element={
+          <AdminGenerationParticipantPage />
+        }
       />
       <Route
-  path="demandes-demo"
-  element={<AdminDemoRequestsPage />}
-/>
-
-<Route
-  path="demandes-demo/:id"
-  element={<AdminDemoRequestDetailsPage />}
-/>
-
-<Route
-  path="/admin/campagnes"
-  element={<AdminCampaignsPage />}
-/>
-
-<Route
-  path="/admin/campagnes/:campaignId"
-  element={<AdminCampaignDetailsPage />}
-/>
-
-<Route
-  path="/admin/participants/:participantId"
-  element={<AdminParticipantDetailsPage />}
-/>
-<Route
-  path="/admin/qa/participants/:participantId"
-  element={
-    <AdminQaParticipantPage />
+      path="qa-portraits/participants/:participantId"
+       element={
+    <AdminQaPortraitsPage />
   }
-/>
+      />
+      
+
     </Route>
   </>
 );

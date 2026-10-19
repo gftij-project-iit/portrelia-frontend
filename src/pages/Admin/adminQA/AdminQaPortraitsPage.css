@@ -1,0 +1,1078 @@
+.qa-portraits-page {
+  min-height: 100vh;
+  padding: 32px;
+  background: #f8f7fa;
+  color: #24102e;
+}
+
+/* =========================================================
+   CENTERED / LOADING
+========================================================= */
+
+.qa-portraits-centered {
+  display: flex;
+  min-height: 70vh;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 13px;
+  text-align: center;
+}
+
+.qa-portraits-spinner,
+.qa-portraits-spinner-small {
+  animation: qa-portraits-spin 0.9s linear infinite;
+}
+
+.qa-portraits-spinner {
+  font-size: 30px;
+}
+
+@keyframes qa-portraits-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.qa-portraits-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 25px;
+  margin-bottom: 22px;
+}
+
+.qa-portraits-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 20px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #776d7d;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.qa-portraits-back:hover {
+  color: #5632a8;
+}
+
+.qa-portraits-eyebrow {
+  display: block;
+  margin-bottom: 7px;
+  color: #7657b7;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.11em;
+}
+
+.qa-portraits-header h1 {
+  margin: 0;
+  color: #24102e;
+  font-size: 34px;
+  letter-spacing: -0.03em;
+}
+
+.qa-portraits-header p {
+  max-width: 600px;
+  margin: 8px 0 0;
+  color: #827987;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+/* =========================================================
+   PARTICIPANT
+========================================================= */
+
+.qa-portraits-participant {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 12px 15px;
+  background: #fff;
+  border: 1px solid #ebe7ef;
+  border-radius: 15px;
+}
+
+.qa-portraits-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  border-radius: 13px;
+  background: #eee8f8;
+  color: #5632a8;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.qa-portraits-participant > div:last-child {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.qa-portraits-participant strong {
+  font-size: 12px;
+}
+
+.qa-portraits-participant span {
+  max-width: 220px;
+  overflow: hidden;
+  color: #8e8592;
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* =========================================================
+   REGENERATION SUCCESS
+========================================================= */
+
+.qa-regeneration-success {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin-bottom: 18px;
+  padding: 13px 15px;
+  border: 1px solid #cee8d6;
+  border-radius: 13px;
+  background: #f0f9f3;
+  animation: qa-success-enter 0.28s ease;
+}
+
+@keyframes qa-success-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.qa-regeneration-success-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  border-radius: 50%;
+  background: #267344;
+  color: #fff;
+  font-size: 16px;
+}
+
+.qa-regeneration-success > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.qa-regeneration-success strong {
+  color: #225f3b;
+  font-size: 11px;
+}
+
+.qa-regeneration-success > div > span {
+  color: #64806e;
+  font-size: 10px;
+}
+
+/* =========================================================
+   STATS
+========================================================= */
+
+.qa-portraits-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.qa-portraits-stats article {
+  padding: 17px;
+  border: 1px solid #ebe7ef;
+  border-radius: 15px;
+  background: #fff;
+}
+
+.qa-portraits-stats span {
+  display: block;
+  color: #8d8592;
+  font-size: 10px;
+}
+
+.qa-portraits-stats strong {
+  display: block;
+  margin-top: 7px;
+  color: #370f56;
+  font-size: 25px;
+}
+
+.qa-portraits-stat-success strong {
+  color: #267344;
+}
+
+.qa-portraits-stat-danger strong {
+  color: #a64242;
+}
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+.qa-portraits-error {
+  margin-bottom: 18px;
+  padding: 13px 15px;
+  border: 1px solid #f0d4d4;
+  border-radius: 12px;
+  background: #fff3f3;
+  color: #8e3b3b;
+  font-size: 11px;
+}
+
+/* =========================================================
+   WORKSPACE
+========================================================= */
+
+.qa-portraits-workspace {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1.65fr)
+    minmax(320px, 0.72fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.qa-portraits-list,
+.qa-portrait-review-panel {
+  background: #fff;
+  border: 1px solid #ebe7ef;
+  border-radius: 18px;
+  box-shadow:
+    0 12px 34px
+    rgba(55, 15, 86, 0.04);
+}
+
+.qa-portraits-list {
+  padding: 22px;
+}
+
+/* =========================================================
+   SECTION HEADER
+========================================================= */
+
+.qa-portraits-section-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 18px;
+}
+
+.qa-portraits-section-head > div > span {
+  color: #7657b7;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+
+.qa-portraits-section-head h2 {
+  margin: 5px 0 0;
+  font-size: 20px;
+}
+
+.qa-portraits-section-head p {
+  margin: 6px 0 0;
+  color: #89818e;
+  font-size: 11px;
+}
+
+.qa-portraits-section-head > strong {
+  padding: 8px 11px;
+  border-radius: 999px;
+  background: #f2edf8;
+  color: #5632a8;
+  font-size: 10px;
+}
+
+/* =========================================================
+   BULK APPROVAL
+========================================================= */
+
+.qa-portraits-bulk {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 18px;
+  padding: 14px 15px;
+  border: 1px solid #e6e0eb;
+  border-radius: 13px;
+  background: #faf9fb;
+}
+
+.qa-portraits-bulk-copy {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+}
+
+.qa-portraits-bulk-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  border-radius: 10px;
+  background: #edf7f0;
+  color: #267344;
+  font-size: 17px;
+}
+
+.qa-portraits-bulk-copy > div {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.qa-portraits-bulk-copy strong {
+  color: #302636;
+  font-size: 11px;
+}
+
+.qa-portraits-bulk-copy > div > span {
+  color: #8d8592;
+  font-size: 10px;
+}
+
+.qa-portraits-approve-all {
+  display: inline-flex;
+  min-height: 39px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  flex-shrink: 0;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 10px;
+  background: #5632a8;
+  color: #ffffff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.qa-portraits-approve-all:hover:not(:disabled) {
+  background: #43227f;
+}
+
+.qa-portraits-approve-all:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   GRID
+========================================================= */
+
+.qa-portraits-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.qa-portrait-card {
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid #e9e5ec;
+  border-radius: 14px;
+  background: #fff;
+  cursor: pointer;
+  text-align: left;
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease;
+}
+
+.qa-portrait-card:hover:not(:disabled) {
+  border-color: #cfc1df;
+  transform: translateY(-1px);
+}
+
+.qa-portrait-card.selected {
+  border-color: #5632a8;
+  box-shadow:
+    0 0 0 2px
+    rgba(86, 50, 168, 0.08);
+}
+
+.qa-portrait-card.just-regenerated {
+  border-color: #80ba94;
+  box-shadow:
+    0 0 0 2px
+    rgba(38, 115, 68, 0.09);
+}
+
+.qa-portrait-card:disabled {
+  cursor: wait;
+}
+
+/* =========================================================
+   PORTRAIT IMAGE
+========================================================= */
+
+.qa-portrait-image {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 1 / 1;
+  background: #f4f1f6;
+}
+
+.qa-portrait-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.qa-portrait-no-image {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  color: #978d9c;
+  font-size: 30px;
+}
+
+/* =========================================================
+   REGENERATION OVERLAY
+========================================================= */
+
+.qa-regeneration-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  padding: 24px;
+  background:
+    rgba(
+      32,
+      15,
+      43,
+      0.86
+    );
+  color: #fff;
+  text-align: center;
+  backdrop-filter: blur(3px);
+}
+
+.qa-regeneration-overlay-large {
+  border-radius: inherit;
+}
+
+.qa-regeneration-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 39px;
+  height: 39px;
+  margin-bottom: 2px;
+  border-radius: 50%;
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.12
+    );
+  font-size: 19px;
+}
+
+.qa-regeneration-spinner svg {
+  animation:
+    qa-portraits-spin
+    0.9s linear
+    infinite;
+}
+
+.qa-regeneration-overlay strong {
+  font-size: 12px;
+}
+
+.qa-regeneration-overlay > span {
+  color: #fff;
+  font-size: 23px;
+  font-weight: 800;
+}
+
+.qa-regeneration-overlay small {
+  color:
+    rgba(
+      255,
+      255,
+      255,
+      0.66
+    );
+  font-size: 9px;
+}
+
+.qa-regeneration-progress-track {
+  width: min(230px, 82%);
+  height: 6px;
+  overflow: hidden;
+  margin: 2px 0;
+  border-radius: 999px;
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.17
+    );
+}
+
+.qa-regeneration-progress-value {
+  height: 100%;
+  border-radius: inherit;
+  background: #fff;
+  transition:
+    width 0.6s ease;
+}
+
+/* =========================================================
+   NEW PORTRAIT BADGE
+========================================================= */
+
+.qa-regenerated-badge {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 27px;
+  padding: 0 9px;
+  border-radius: 999px;
+  background: #267344;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 800;
+  box-shadow:
+    0 5px 14px
+    rgba(38, 115, 68, 0.18);
+}
+
+/* =========================================================
+   PORTRAIT STATUS
+========================================================= */
+
+.qa-portrait-state {
+  position: absolute;
+  right: 9px;
+  top: 9px;
+  display: flex;
+  width: 28px;
+  height: 28px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.qa-portrait-state.approved {
+  background: #edf7f0;
+  color: #267344;
+}
+
+.qa-portrait-state.rejected {
+  background: #fceeee;
+  color: #a64242;
+}
+
+.qa-portrait-state.retouch {
+  background: #fff5df;
+  color: #936413;
+}
+
+/* =========================================================
+   PORTRAIT FOOTER
+========================================================= */
+
+.qa-portrait-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 11px 12px;
+}
+
+.qa-portrait-footer strong {
+  font-size: 11px;
+}
+
+.qa-portrait-footer span {
+  color: #8e8592;
+  font-size: 9px;
+}
+
+/* =========================================================
+   REVIEW PANEL
+========================================================= */
+
+.qa-portrait-review-panel {
+  position: sticky;
+  top: 24px;
+  padding: 19px;
+  scroll-margin-top: 20px;
+}
+
+.qa-portrait-review-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.qa-portrait-review-header > div > span {
+  color: #7657b7;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+}
+
+.qa-portrait-review-header h2 {
+  margin: 4px 0 0;
+  font-size: 15px;
+}
+
+.qa-portrait-review-status {
+  height: fit-content;
+  padding: 6px 9px;
+  border-radius: 999px;
+  background: #f1eef3;
+  color: #685f6c;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.qa-portrait-review-status.status-generated,
+.qa-portrait-review-status.status-qa_pending {
+  background: #eaf3ff;
+  color: #2d69a5;
+}
+
+.qa-portrait-review-status.status-qa_approved {
+  background: #edf7f0;
+  color: #267344;
+}
+
+.qa-portrait-review-status.status-qa_rejected {
+  background: #fceeee;
+  color: #a64242;
+}
+
+.qa-portrait-review-status.status-retouch_required {
+  background: #fff5df;
+  color: #936413;
+}
+
+/* =========================================================
+   REVIEW IMAGE
+========================================================= */
+
+.qa-portrait-review-image {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 1 / 1;
+  border-radius: 15px;
+  background: #f4f1f6;
+}
+
+.qa-portrait-review-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.qa-portrait-review-no-image {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  color: #8d8491;
+}
+
+/* =========================================================
+   CHECKLIST
+========================================================= */
+
+.qa-portrait-checklist {
+  margin-top: 16px;
+  padding: 14px;
+  border-radius: 12px;
+  background: #faf9fb;
+}
+
+.qa-portrait-checklist h3 {
+  margin: 0 0 10px;
+  font-size: 12px;
+}
+
+.qa-portrait-checklist div {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 7px 0;
+  color: #665c6c;
+  font-size: 10px;
+}
+
+.qa-portrait-checklist svg {
+  color: #7657b7;
+}
+
+/* =========================================================
+   NOTES
+========================================================= */
+
+.qa-portrait-notes {
+  margin-top: 15px;
+}
+
+.qa-portrait-notes label {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 10px;
+  font-weight: 750;
+}
+
+.qa-portrait-notes textarea {
+  width: 100%;
+  box-sizing: border-box;
+  resize: vertical;
+  padding: 11px;
+  border: 1px solid #ddd6e2;
+  outline: none;
+  border-radius: 11px;
+  color: #302636;
+  font: inherit;
+  font-size: 10px;
+}
+
+.qa-portrait-notes textarea:focus {
+  border-color: #8b70c1;
+  box-shadow:
+    0 0 0 3px
+    rgba(86, 50, 168, 0.07);
+}
+
+.qa-portrait-notes textarea:disabled {
+  background: #f5f2f7;
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.qa-portrait-actions {
+  display: grid;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.qa-portrait-actions button {
+  display: flex;
+  min-height: 42px;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 0;
+  border-radius: 10px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.qa-portrait-actions button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.qa-portrait-reject {
+  background: #fceeee;
+  color: #a64242;
+}
+
+.qa-portrait-regenerate {
+  background: #fff5df;
+  color: #936413;
+}
+
+.qa-portrait-approve {
+  grid-column: 1 / -1;
+  background: #5632a8;
+  color: #fff;
+}
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+.qa-portrait-empty-review {
+  display: flex;
+  min-height: 400px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 9px;
+  color: #857a8b;
+  text-align: center;
+}
+
+.qa-portrait-empty-review svg {
+  font-size: 30px;
+}
+
+.qa-portrait-empty-review strong {
+  color: #403546;
+  font-size: 12px;
+}
+
+.qa-portrait-empty-review span {
+  max-width: 220px;
+  color: #9b929f;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.qa-portraits-empty {
+  display: flex;
+  min-height: 300px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  color: #958b99;
+}
+
+/* =========================================================
+   FINAL
+========================================================= */
+
+.qa-portraits-final {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 22px;
+  margin-top: 20px;
+  padding: 20px 22px;
+  border-radius: 17px;
+  background: #370f56;
+  color: #fff;
+}
+
+.qa-portraits-final > div > span {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  opacity: 0.72;
+}
+
+.qa-portraits-final h2 {
+  margin: 5px 0;
+  font-size: 18px;
+}
+
+.qa-portraits-final p {
+  margin: 0;
+  color:
+    rgba(
+      255,
+      255,
+      255,
+      0.72
+    );
+  font-size: 11px;
+}
+
+.qa-portraits-complete-button {
+  display: inline-flex;
+  min-height: 45px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  flex-shrink: 0;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 10px;
+  background: #fff;
+  color: #370f56;
+  cursor: pointer;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.qa-portraits-complete-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1050px) {
+  .qa-portraits-workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .qa-portrait-review-panel {
+    position: static;
+  }
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 760px) {
+  .qa-portraits-page {
+    padding: 20px 15px;
+  }
+
+  .qa-portraits-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .qa-portraits-header h1 {
+    font-size: 28px;
+  }
+
+  .qa-portraits-participant {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .qa-portraits-stats {
+    grid-template-columns:
+      repeat(2, 1fr);
+  }
+
+  .qa-portraits-list {
+    padding: 15px;
+  }
+
+  .qa-portraits-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+    gap: 9px;
+  }
+
+  .qa-portraits-final {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .qa-portraits-complete-button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 650px) {
+  .qa-portraits-bulk {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .qa-portraits-approve-all {
+    width: 100%;
+  }
+
+  .qa-regeneration-overlay {
+    padding: 14px;
+  }
+
+  .qa-regeneration-overlay strong {
+    font-size: 10px;
+  }
+
+  .qa-regeneration-overlay > span {
+    font-size: 19px;
+  }
+}
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+  .qa-portraits-page {
+    padding: 15px 11px;
+  }
+
+  .qa-portraits-stats {
+    gap: 8px;
+  }
+
+  .qa-portraits-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .qa-portrait-review-panel {
+    padding: 14px;
+  }
+
+  .qa-portrait-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .qa-portrait-approve {
+    grid-column: auto;
+  }
+
+  .qa-portraits-section-head {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .qa-portraits-section-head > strong {
+    align-self: flex-start;
+  }
+}

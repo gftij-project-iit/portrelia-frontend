@@ -1,6 +1,7 @@
 import {
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 
@@ -23,8 +24,7 @@ import {
 import api from "../../../services/api";
 import "./AdminQaParticipantPage.css";
 
-const MIN_ACCEPTED =
-  6;
+const MIN_ACCEPTED = 6;
 
 function AdminQaParticipantPage() {
   const {
@@ -33,6 +33,9 @@ function AdminQaParticipantPage() {
 
   const navigate =
     useNavigate();
+
+  const reviewPanelRef =
+    useRef(null);
 
   const [
     participant,
@@ -65,6 +68,11 @@ function AdminQaParticipantPage() {
   ] = useState(null);
 
   const [
+    bulkProcessing,
+    setBulkProcessing,
+  ] = useState(false);
+
+  const [
     completing,
     setCompleting,
   ] = useState(false);
@@ -83,7 +91,7 @@ function AdminQaParticipantPage() {
 
   /*
    * =========================================================
-   * COUNTS
+   * STATS
    * =========================================================
    */
   const stats =
@@ -112,12 +120,21 @@ function AdminQaParticipantPage() {
       return {
         total:
           photos.length,
+
         accepted,
+
         rejected,
+
         pending,
       };
     }, [photos]);
 
+  /*
+   * QA terminé seulement si :
+   *
+   * - minimum 6 photos acceptées
+   * - aucune photo encore UPLOADED
+   */
   const canComplete =
     stats.accepted >=
       MIN_ACCEPTED &&
@@ -125,7 +142,7 @@ function AdminQaParticipantPage() {
 
   /*
    * =========================================================
-   * LOAD
+   * LOAD PARTICIPANT
    * =========================================================
    */
   const loadParticipant =
@@ -170,24 +187,24 @@ function AdminQaParticipantPage() {
           new Set()
         );
 
+        /*
+         * Garde la photo sélectionnée
+         * après acceptation / rejet.
+         */
         setSelectedPhoto(
           (current) => {
             if (
-              current
+              !current
             ) {
-              return (
-                loadedPhotos.find(
-                  (photo) =>
-                    photo.id ===
-                    current.id
-                ) ||
-                loadedPhotos[0] ||
-                null
-              );
+              return null;
             }
 
             return (
-              loadedPhotos[0] ||
+              loadedPhotos.find(
+                (photo) =>
+                  photo.id ===
+                  current.id
+              ) ||
               null
             );
           }
@@ -211,6 +228,11 @@ function AdminQaParticipantPage() {
       }
     };
 
+  /*
+   * =========================================================
+   * INITIAL LOAD
+   * =========================================================
+   */
   useEffect(() => {
     let active =
       true;
@@ -259,9 +281,16 @@ function AdminQaParticipantPage() {
             loadedPhotos
           );
 
+          /*
+           * Au départ :
+           * aucune photo sélectionnée.
+           */
           setSelectedPhoto(
-            loadedPhotos[0] ||
-              null
+            null
+          );
+
+          setBrokenPhotos(
+            new Set()
           );
 
           setError("");
@@ -271,6 +300,11 @@ function AdminQaParticipantPage() {
           if (!active) {
             return;
           }
+
+          console.error(
+            "QA INITIAL LOAD ERROR :",
+            requestError
+          );
 
           setError(
             requestError
@@ -321,7 +355,58 @@ function AdminQaParticipantPage() {
 
   /*
    * =========================================================
-   * ACCEPT
+   * SELECT PHOTO
+   * =========================================================
+   *
+   * Sur mobile/tablette :
+   *
+   * clic photo
+   * ↓
+   * scroll automatique
+   * ↓
+   * panneau validation
+   */
+  const handleSelectPhoto =
+    (photo) => {
+      setSelectedPhoto(
+        photo
+      );
+
+      setRejectionReason(
+        photo.rejectionReason ||
+          ""
+      );
+
+      const shouldScroll =
+        window.matchMedia(
+          "(max-width: 1050px)"
+        ).matches;
+
+      if (shouldScroll) {
+        window.requestAnimationFrame(
+          () => {
+            setTimeout(
+              () => {
+                reviewPanelRef
+                  .current
+                  ?.scrollIntoView({
+                    behavior:
+                      "smooth",
+
+                    block:
+                      "start",
+                  });
+              },
+              50
+            );
+          }
+        );
+      }
+    };
+
+  /*
+   * =========================================================
+   * ACCEPT PHOTO
    * =========================================================
    */
   const acceptPhoto =
@@ -344,8 +429,11 @@ function AdminQaParticipantPage() {
           }
         );
 
-        await loadParticipant();
+        setRejectionReason(
+          ""
+        );
 
+        await loadParticipant();
       } catch (
         requestError
       ) {
@@ -370,7 +458,7 @@ function AdminQaParticipantPage() {
 
   /*
    * =========================================================
-   * REJECT
+   * REJECT PHOTO
    * =========================================================
    */
   const rejectPhoto =
@@ -410,7 +498,6 @@ function AdminQaParticipantPage() {
         );
 
         await loadParticipant();
-
       } catch (
         requestError
       ) {
@@ -429,6 +516,93 @@ function AdminQaParticipantPage() {
       } finally {
         setProcessingPhotoId(
           null
+        );
+      }
+    };
+
+  /*
+   * =========================================================
+   * ACCEPT ALL PHOTOS
+   * =========================================================
+   *
+   * Accepte toutes les photos
+   * encore en statut UPLOADED.
+   */
+  const acceptAllPendingPhotos =
+    async () => {
+      const pendingPhotos =
+        photos.filter(
+          (photo) =>
+            photo.status ===
+            "UPLOADED"
+        );
+
+      if (
+        pendingPhotos.length ===
+        0
+      ) {
+        return;
+      }
+
+      const confirmed =
+        window.confirm(
+          `Confirmer l'acceptation des ${pendingPhotos.length} photo(s) encore à contrôler ?`
+        );
+
+      if (!confirmed) {
+        return;
+      }
+
+      try {
+        setBulkProcessing(
+          true
+        );
+
+        setError("");
+
+        await Promise.all(
+          pendingPhotos.map(
+            (photo) =>
+              api.patch(
+                `/admin/photos/${photo.id}/review`,
+                {
+                  status:
+                    "ACCEPTED",
+
+                  rejectionReason:
+                    null,
+                }
+              )
+          )
+        );
+
+        setSelectedPhoto(
+          null
+        );
+
+        setRejectionReason(
+          ""
+        );
+
+        await loadParticipant();
+      } catch (
+        requestError
+      ) {
+        console.error(
+          "QA ACCEPT ALL ERROR :",
+          requestError
+        );
+
+        setError(
+          requestError
+            .response
+            ?.data
+            ?.message ||
+            "Impossible d'accepter toutes les photos."
+        );
+      } finally {
+        setBulkProcessing(
+          false
         );
       }
     };
@@ -482,25 +656,38 @@ function AdminQaParticipantPage() {
       }
     };
 
+  /*
+   * =========================================================
+   * LOADING
+   * =========================================================
+   */
   if (loading) {
     return (
       <div className="qa-page qa-centered">
+
         <FiRefreshCw className="qa-spinner" />
 
         <strong>
           Chargement du contrôle
           qualité...
         </strong>
+
       </div>
     );
   }
 
+  /*
+   * =========================================================
+   * ERROR
+   * =========================================================
+   */
   if (
     error &&
     !participant
   ) {
     return (
       <div className="qa-page qa-centered">
+
         <FiXCircle />
 
         <strong>
@@ -510,6 +697,7 @@ function AdminQaParticipantPage() {
         <p>
           {error}
         </p>
+
       </div>
     );
   }
@@ -517,11 +705,14 @@ function AdminQaParticipantPage() {
   return (
     <div className="qa-page">
 
-      {/* HEADER */}
+      {/* =====================================================
+          HEADER
+      ====================================================== */}
 
       <header className="qa-header">
 
         <div>
+
           <button
             type="button"
             className="qa-back"
@@ -533,8 +724,7 @@ function AdminQaParticipantPage() {
           >
             <FiArrowLeft />
 
-            Retour au
-            participant
+            Retour au participant
           </button>
 
           <span className="qa-eyebrow">
@@ -550,9 +740,11 @@ function AdminQaParticipantPage() {
             avant de lancer la
             génération.
           </p>
+
         </div>
 
         <div className="qa-participant">
+
           <div className="qa-avatar">
             {participant
               ?.firstName
@@ -566,6 +758,7 @@ function AdminQaParticipantPage() {
           </div>
 
           <div>
+
             <strong>
               {
                 participant
@@ -583,16 +776,21 @@ function AdminQaParticipantPage() {
                   ?.email
               }
             </span>
+
           </div>
+
         </div>
 
       </header>
 
-      {/* STATS */}
+      {/* =====================================================
+          STATS
+      ====================================================== */}
 
       <section className="qa-stats">
 
         <article>
+
           <span>
             Photos
           </span>
@@ -600,9 +798,11 @@ function AdminQaParticipantPage() {
           <strong>
             {stats.total}
           </strong>
+
         </article>
 
         <article>
+
           <span>
             À contrôler
           </span>
@@ -610,9 +810,11 @@ function AdminQaParticipantPage() {
           <strong>
             {stats.pending}
           </strong>
+
         </article>
 
         <article className="qa-stat-success">
+
           <span>
             Acceptées
           </span>
@@ -620,9 +822,11 @@ function AdminQaParticipantPage() {
           <strong>
             {stats.accepted}
           </strong>
+
         </article>
 
         <article className="qa-stat-danger">
+
           <span>
             Rejetées
           </span>
@@ -630,9 +834,14 @@ function AdminQaParticipantPage() {
           <strong>
             {stats.rejected}
           </strong>
+
         </article>
 
       </section>
+
+      {/* =====================================================
+          ERROR
+      ====================================================== */}
 
       {error && (
         <div className="qa-error">
@@ -640,14 +849,22 @@ function AdminQaParticipantPage() {
         </div>
       )}
 
+      {/* =====================================================
+          WORKSPACE
+      ====================================================== */}
+
       <main className="qa-workspace">
 
-        {/* GRID */}
+        {/* =================================================
+            PHOTO LIST
+        ================================================== */}
 
         <section className="qa-photo-list">
 
           <div className="qa-section-head">
+
             <div>
+
               <span>
                 FILE DE CONTRÔLE
               </span>
@@ -655,9 +872,10 @@ function AdminQaParticipantPage() {
               <h2>
                 Photos reçues
               </h2>
+
             </div>
 
-            <strong>
+            <strong className="qa-minimum-badge">
               {
                 stats.accepted
               }
@@ -667,7 +885,65 @@ function AdminQaParticipantPage() {
               }{" "}
               minimum
             </strong>
+
           </div>
+
+          {/* =================================================
+              ACCEPT ALL
+          ================================================== */}
+
+          <div className="qa-bulk-actions">
+
+            <div>
+
+              <strong>
+                Validation rapide
+              </strong>
+
+              <span>
+                {stats.pending >
+                0
+                  ? `${stats.pending} photo(s) restent à contrôler`
+                  : "Toutes les photos ont été contrôlées"}
+              </span>
+
+            </div>
+
+            <button
+              type="button"
+              className="qa-accept-all-button"
+              disabled={
+                stats.pending ===
+                  0 ||
+                bulkProcessing ||
+                processingPhotoId !==
+                  null
+              }
+              onClick={
+                acceptAllPendingPhotos
+              }
+            >
+              {bulkProcessing ? (
+                <>
+                  <FiRefreshCw className="qa-button-spinner" />
+
+                  Validation en cours...
+                </>
+              ) : (
+                <>
+                  <FiCheck />
+
+                  Accepter toutes
+                  les photos
+                </>
+              )}
+            </button>
+
+          </div>
+
+          {/* =================================================
+              GRID
+          ================================================== */}
 
           <div className="qa-grid">
 
@@ -704,7 +980,7 @@ function AdminQaParticipantPage() {
                         : ""
                     } status-${photo.status?.toLowerCase()}`}
                     onClick={() =>
-                      setSelectedPhoto(
+                      handleSelectPhoto(
                         photo
                       )
                     }
@@ -750,6 +1026,7 @@ function AdminQaParticipantPage() {
                     </div>
 
                     <div className="qa-photo-footer">
+
                       <strong>
                         Photo{" "}
                         {
@@ -767,6 +1044,7 @@ function AdminQaParticipantPage() {
                           ? "Rejetée"
                           : "À contrôler"}
                       </span>
+
                     </div>
 
                   </button>
@@ -778,16 +1056,28 @@ function AdminQaParticipantPage() {
 
         </section>
 
-        {/* REVIEW */}
+        {/* =================================================
+            REVIEW PANEL
+        ================================================== */}
 
-        <aside className="qa-review-panel">
+        <aside
+          ref={
+            reviewPanelRef
+          }
+          className="qa-review-panel"
+        >
 
           {selectedPhoto ? (
             <>
 
+              <div className="qa-mobile-review-marker">
+                Contrôle de la photo
+              </div>
+
               <div className="qa-review-header">
 
                 <div>
+
                   <span>
                     PHOTO
                     SÉLECTIONNÉE
@@ -800,6 +1090,7 @@ function AdminQaParticipantPage() {
                       "Photo source"
                     }
                   </h2>
+
                 </div>
 
                 <span
@@ -815,6 +1106,8 @@ function AdminQaParticipantPage() {
                 </span>
 
               </div>
+
+              {/* IMAGE */}
 
               <div className="qa-review-image">
 
@@ -836,14 +1129,18 @@ function AdminQaParticipantPage() {
                   />
                 ) : (
                   <div className="qa-review-no-image">
+
                     <FiImage />
 
                     Image
                     indisponible
+
                   </div>
                 )}
 
               </div>
+
+              {/* CHECKLIST */}
 
               <div className="qa-checklist">
 
@@ -853,33 +1150,40 @@ function AdminQaParticipantPage() {
 
                 <div>
                   <FiCheckCircle />
+
                   Visage net et
                   visible
                 </div>
 
                 <div>
                   <FiCheckCircle />
+
                   Éclairage
                   exploitable
                 </div>
 
                 <div>
                   <FiCheckCircle />
+
                   Cadrage correct
                 </div>
 
                 <div>
                   <FiCheckCircle />
+
                   Pas de filtre ou
                   artefact gênant
                 </div>
 
                 <div>
                   <FiCheckCircle />
+
                   Apparence récente
                 </div>
 
               </div>
+
+              {/* REJECTION REASON */}
 
               <div className="qa-rejection">
 
@@ -903,6 +1207,8 @@ function AdminQaParticipantPage() {
 
               </div>
 
+              {/* ACTIONS */}
+
               <div className="qa-review-actions">
 
                 <button
@@ -910,7 +1216,8 @@ function AdminQaParticipantPage() {
                   className="qa-reject-button"
                   disabled={
                     processingPhotoId ===
-                    selectedPhoto.id
+                      selectedPhoto.id ||
+                    bulkProcessing
                   }
                   onClick={() =>
                     rejectPhoto(
@@ -918,7 +1225,12 @@ function AdminQaParticipantPage() {
                     )
                   }
                 >
-                  <FiX />
+                  {processingPhotoId ===
+                  selectedPhoto.id ? (
+                    <FiRefreshCw className="qa-button-spinner" />
+                  ) : (
+                    <FiX />
+                  )}
 
                   Rejeter
                 </button>
@@ -928,7 +1240,8 @@ function AdminQaParticipantPage() {
                   className="qa-accept-button"
                   disabled={
                     processingPhotoId ===
-                    selectedPhoto.id
+                      selectedPhoto.id ||
+                    bulkProcessing
                   }
                   onClick={() =>
                     acceptPhoto(
@@ -936,7 +1249,12 @@ function AdminQaParticipantPage() {
                     )
                   }
                 >
-                  <FiCheck />
+                  {processingPhotoId ===
+                  selectedPhoto.id ? (
+                    <FiRefreshCw className="qa-button-spinner" />
+                  ) : (
+                    <FiCheck />
+                  )}
 
                   Accepter
                 </button>
@@ -946,12 +1264,20 @@ function AdminQaParticipantPage() {
             </>
           ) : (
             <div className="qa-empty-review">
+
               <FiShield />
 
               <strong>
                 Sélectionnez une
                 photo
               </strong>
+
+              <span>
+                Cliquez sur une
+                photo pour afficher
+                la zone de contrôle.
+              </span>
+
             </div>
           )}
 
@@ -959,7 +1285,9 @@ function AdminQaParticipantPage() {
 
       </main>
 
-      {/* FINAL */}
+      {/* =====================================================
+          FINAL VALIDATION
+      ====================================================== */}
 
       <section className="qa-final-card">
 
@@ -999,7 +1327,11 @@ function AdminQaParticipantPage() {
             completeQa
           }
         >
-          <FiShield />
+          {completing ? (
+            <FiRefreshCw className="qa-button-spinner" />
+          ) : (
+            <FiShield />
+          )}
 
           {completing
             ? "Validation..."

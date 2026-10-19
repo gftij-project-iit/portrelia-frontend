@@ -638,10 +638,28 @@ function AdminParticipantDetailsPage() {
             </h2>
 
             <p>
-              Ces photos seront
-              contrôlées par
-              l'équipe QA avant
-              toute génération.
+              {participant.status ===
+              "PHOTOS_RECEIVED"
+                ? "Les photos ont été reçues et doivent maintenant être contrôlées par l'équipe QA."
+                : participant.status ===
+                  "GENERATION_PENDING"
+                ? `Le contrôle qualité est terminé. ${photoStats.accepted} photo${photoStats.accepted > 1 ? "s" : ""} acceptée${photoStats.accepted > 1 ? "s" : ""} sont prêtes pour la génération.`
+                : participant.status ===
+                  "GENERATION_IN_PROGRESS"
+                ? "Les photos validées sont actuellement utilisées pour générer les portraits."
+                : participant.status ===
+                  "QA_PENDING"
+                ? "La génération est terminée. Les portraits générés doivent maintenant être contrôlés par l'équipe QA."
+                : participant.status ===
+                  "GALLERY_READY"
+                ? "Les portraits validés sont prêts à être présentés au participant."
+                : participant.status ===
+                  "VALIDATED"
+                ? "Le participant a validé son portrait final."
+                : participant.status ===
+                  "DELIVERED"
+                ? "Le portrait final a été livré."
+                : "Photos source envoyées par le participant."}
             </p>
 
           </div>
@@ -729,7 +747,7 @@ function AdminParticipantDetailsPage() {
 
             <p>
               Le participant
-              n'a pas encore
+              n&apos;a pas encore
               envoyé ses photos.
             </p>
 
@@ -938,17 +956,18 @@ function AdminParticipantDetailsPage() {
                 </h3>
 
                 <p>
-                  Les photos ont
-                  été reçues.
-                  Elles doivent
-                  maintenant être
-                  contrôlées avant
-                  la génération.
+                  Les photos sont
+                  prêtes pour le
+                  contrôle qualité.
+                  Vérifiez chaque
+                  photo avant
+                  d&apos;autoriser la
+                  génération.
                 </p>
               </>
             )}
 
-            {/* QA TERMINÉ */}
+            {/* GÉNÉRATION À LANCER */}
 
             {participant.status ===
               "GENERATION_PENDING" && (
@@ -960,9 +979,132 @@ function AdminParticipantDetailsPage() {
 
                 <p>
                   Le contrôle
-                  qualité des
-                  photos source
-                  est terminé.
+                  qualité est
+                  terminé.{" "}
+                  {
+                    photoStats.accepted
+                  }{" "}
+                  photo
+                  {
+                    photoStats.accepted >
+                    1
+                      ? "s"
+                      : ""
+                  }{" "}
+                  acceptée
+                  {
+                    photoStats.accepted >
+                    1
+                      ? "s"
+                      : ""
+                  }{" "}
+                  seront utilisées
+                  pour générer les
+                  portraits.
+                </p>
+              </>
+            )}
+
+            {/* GÉNÉRATION EN COURS */}
+
+            {participant.status ===
+              "GENERATION_IN_PROGRESS" && (
+              <>
+                <h3>
+                  Génération en
+                  cours
+                </h3>
+
+                <p>
+                  Les portraits
+                  professionnels de
+                  ce participant
+                  sont actuellement
+                  en cours de
+                  génération.
+                </p>
+              </>
+            )}
+
+            {/* QA PORTRAITS */}
+
+            {participant.status ===
+              "QA_PENDING" && (
+              <>
+                <h3>
+                  Portraits à
+                  contrôler
+                </h3>
+
+                <p>
+                  La génération est
+                  terminée. Les
+                  portraits doivent
+                  maintenant passer
+                  le contrôle
+                  qualité avant
+                  d&apos;être présentés
+                  au participant.
+                </p>
+              </>
+            )}
+
+            {/* GALERIE PRÊTE */}
+
+            {participant.status ===
+              "GALLERY_READY" && (
+              <>
+                <h3>
+                  Galerie prête
+                </h3>
+
+                <p>
+                  Les portraits
+                  validés sont
+                  disponibles pour
+                  la sélection
+                  finale du
+                  participant.
+                </p>
+              </>
+            )}
+
+            {/* VALIDÉ */}
+
+            {participant.status ===
+              "VALIDATED" && (
+              <>
+                <h3>
+                  Portrait validé
+                </h3>
+
+                <p>
+                  Le participant a
+                  sélectionné son
+                  portrait final.
+                  Le dossier peut
+                  maintenant être
+                  préparé pour la
+                  livraison.
+                </p>
+              </>
+            )}
+
+            {/* LIVRÉ */}
+
+            {participant.status ===
+              "DELIVERED" && (
+              <>
+                <h3>
+                  Portrait livré
+                </h3>
+
+                <p>
+                  Le portrait final
+                  a été livré. Le
+                  parcours de ce
+                  participant est
+                  terminé.
                 </p>
               </>
             )}
@@ -972,6 +1114,11 @@ function AdminParticipantDetailsPage() {
             {![
               "PHOTOS_RECEIVED",
               "GENERATION_PENDING",
+              "GENERATION_IN_PROGRESS",
+              "QA_PENDING",
+              "GALLERY_READY",
+              "VALIDATED",
+              "DELIVERED",
             ].includes(
               participant.status
             ) && (

@@ -15,9 +15,13 @@
   text-align: center;
 }
 
+.qa-spinner,
+.qa-button-spinner {
+  animation: qa-spin 0.9s linear infinite;
+}
+
 .qa-spinner {
   font-size: 30px;
-  animation: qa-spin 0.9s linear infinite;
 }
 
 @keyframes qa-spin {
@@ -26,7 +30,9 @@
   }
 }
 
-/* HEADER */
+/* =========================================================
+   HEADER
+========================================================= */
 
 .qa-header {
   display: flex;
@@ -88,6 +94,7 @@
 .qa-avatar {
   width: 44px;
   height: 44px;
+  flex: 0 0 44px;
   border-radius: 50%;
   background: #370f56;
   color: white;
@@ -101,6 +108,7 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
+  min-width: 0;
 }
 
 .qa-participant strong {
@@ -110,9 +118,12 @@
 .qa-participant span {
   font-size: 12px;
   color: #806d85;
+  overflow-wrap: anywhere;
 }
 
-/* STATS */
+/* =========================================================
+   STATS
+========================================================= */
 
 .qa-stats {
   display: grid;
@@ -149,7 +160,9 @@
   color: #b13d58;
 }
 
-/* ERROR */
+/* =========================================================
+   ERROR
+========================================================= */
 
 .qa-error {
   margin-bottom: 20px;
@@ -160,7 +173,9 @@
   padding: 14px 16px;
 }
 
-/* WORKSPACE */
+/* =========================================================
+   WORKSPACE
+========================================================= */
 
 .qa-workspace {
   display: grid;
@@ -185,15 +200,19 @@
   padding: 22px;
 }
 
+/* =========================================================
+   SECTION HEADER
+========================================================= */
+
 .qa-section-head {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 18px;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
-.qa-section-head span {
+.qa-section-head > div:first-child > span {
   display: block;
   font-size: 11px;
   font-weight: 800;
@@ -206,15 +225,96 @@
   font-size: 22px;
 }
 
-.qa-section-head > strong {
+.qa-minimum-badge {
   background: #f6eff7;
   color: #370f56;
   border-radius: 999px;
-  padding: 8px 12px;
+  padding: 9px 12px;
   font-size: 12px;
+  white-space: nowrap;
 }
 
-/* GRID */
+/* =========================================================
+   BULK ACCEPT
+========================================================= */
+
+.qa-bulk-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+
+  margin-bottom: 20px;
+
+  padding: 14px 16px;
+
+  background: #f4faf6;
+
+  border:
+    1px solid
+    #d7eadd;
+
+  border-radius: 14px;
+}
+
+.qa-bulk-actions > div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.qa-bulk-actions > div > strong {
+  color: #245d40;
+  font-size: 13px;
+}
+
+.qa-bulk-actions > div > span {
+  color: #708076;
+  font-size: 11px;
+}
+
+.qa-accept-all-button {
+  min-height: 44px;
+  padding: 0 18px;
+
+  border: 0;
+
+  border-radius: 12px;
+
+  background: #26734d;
+
+  color: #fff;
+
+  font-size: 13px;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  white-space: nowrap;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.qa-accept-all-button:hover:not(:disabled) {
+  background: #1f6241;
+  transform: translateY(-1px);
+}
+
+.qa-accept-all-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   GRID
+========================================================= */
 
 .qa-grid {
   display: grid;
@@ -231,6 +331,7 @@
   padding: 0;
   text-align: left;
   cursor: pointer;
+
   transition:
     transform 0.2s ease,
     border-color 0.2s ease,
@@ -244,9 +345,18 @@
 
 .qa-photo-card.selected {
   border-color: #370f56;
+
   box-shadow:
     0 0 0 2px
     rgba(55, 15, 86, 0.08);
+}
+
+.qa-photo-card.status-accepted {
+  border-color: #b9ddc9;
+}
+
+.qa-photo-card.status-rejected {
+  border-color: #edbbc7;
 }
 
 .qa-photo-image {
@@ -266,10 +376,13 @@
 .qa-photo-empty {
   width: 100%;
   height: 100%;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   font-size: 28px;
+
   color: #a998ad;
 }
 
@@ -277,12 +390,19 @@
   position: absolute;
   right: 10px;
   top: 10px;
+
   width: 28px;
   height: 28px;
+
   border-radius: 50%;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
+  box-shadow:
+    0 3px 12px
+    rgba(20, 10, 25, 0.14);
 }
 
 .qa-photo-state.accepted {
@@ -297,8 +417,10 @@
 
 .qa-photo-footer {
   padding: 11px 12px;
+
   display: flex;
   flex-direction: column;
+
   gap: 3px;
 }
 
@@ -311,43 +433,74 @@
   color: #806d85;
 }
 
-/* REVIEW PANEL */
+/* =========================================================
+   REVIEW PANEL
+========================================================= */
 
 .qa-review-panel {
   padding: 20px;
+
   position: sticky;
   top: 24px;
+
+  scroll-margin-top: 24px;
+}
+
+.qa-mobile-review-marker {
+  display: none;
 }
 
 .qa-review-header {
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
+
   gap: 12px;
+
   margin-bottom: 16px;
+}
+
+.qa-review-header > div {
+  min-width: 0;
 }
 
 .qa-review-header > div > span {
   font-size: 10px;
+
   letter-spacing: 0.1em;
+
   font-weight: 800;
+
   color: #a64d6e;
 }
 
 .qa-review-header h2 {
   margin: 5px 0 0;
+
   font-size: 16px;
+
   max-width: 220px;
+
   overflow: hidden;
+
   text-overflow: ellipsis;
+
   white-space: nowrap;
 }
 
 .qa-review-status {
+  flex: 0 0 auto;
+
   height: fit-content;
+
   padding: 6px 9px;
+
   border-radius: 999px;
+
   background: #f3eef4;
+
   font-size: 11px;
+
   font-weight: 700;
 }
 
@@ -363,52 +516,80 @@
 
 .qa-review-image {
   overflow: hidden;
+
   border-radius: 16px;
+
   background: #f2edf3;
+
   aspect-ratio: 1 / 1;
 }
 
 .qa-review-image img {
   width: 100%;
   height: 100%;
+
   object-fit: cover;
+
   display: block;
 }
 
 .qa-review-no-image {
   height: 100%;
+
   display: flex;
   flex-direction: column;
+
   gap: 8px;
+
   align-items: center;
   justify-content: center;
+
   color: #8e7d92;
 }
 
+/* =========================================================
+   CHECKLIST
+========================================================= */
+
 .qa-checklist {
   margin-top: 18px;
+
   padding: 16px;
+
   background: #fbf8fb;
+
   border-radius: 14px;
 }
 
 .qa-checklist h3 {
   margin: 0 0 12px;
+
   font-size: 14px;
 }
 
 .qa-checklist div {
   display: flex;
+
   align-items: center;
+
   gap: 8px;
+
   color: #645469;
+
   font-size: 12px;
+
   margin: 8px 0;
 }
 
 .qa-checklist svg {
+  flex: 0 0 auto;
+
   color: #786084;
 }
+
+/* =========================================================
+   REJECTION
+========================================================= */
 
 .qa-rejection {
   margin-top: 16px;
@@ -416,127 +597,230 @@
 
 .qa-rejection label {
   display: block;
+
   font-size: 12px;
+
   font-weight: 700;
+
   margin-bottom: 7px;
 }
 
 .qa-rejection textarea {
   width: 100%;
+
   resize: vertical;
+
   box-sizing: border-box;
-  border: 1px solid #ddcedf;
+
+  border:
+    1px solid
+    #ddcedf;
+
   border-radius: 12px;
+
   padding: 11px 12px;
+
   font: inherit;
+
   color: #24102e;
+
   outline: none;
+
+  background: #fff;
 }
 
 .qa-rejection textarea:focus {
   border-color: #7a4a91;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(122, 74, 145, 0.08);
 }
+
+/* =========================================================
+   REVIEW ACTIONS
+========================================================= */
 
 .qa-review-actions {
   display: grid;
+
   grid-template-columns:
     1fr 1fr;
+
   gap: 10px;
+
   margin-top: 15px;
 }
 
 .qa-reject-button,
 .qa-accept-button {
-  height: 44px;
+  min-height: 44px;
+
   border-radius: 12px;
+
   border: 0;
+
   font-weight: 700;
+
   cursor: pointer;
+
   display: flex;
+
   justify-content: center;
+
   align-items: center;
+
   gap: 7px;
 }
 
 .qa-reject-button {
   background: #fdecef;
+
   color: #ab314d;
+}
+
+.qa-reject-button:hover:not(:disabled) {
+  background: #f9dde3;
 }
 
 .qa-accept-button {
   background: #370f56;
+
   color: #fff;
+}
+
+.qa-accept-button:hover:not(:disabled) {
+  background: #48166c;
 }
 
 .qa-reject-button:disabled,
 .qa-accept-button:disabled {
   opacity: 0.5;
+
   cursor: not-allowed;
 }
 
 .qa-empty-review {
   min-height: 350px;
+
   display: flex;
+
   align-items: center;
+
   justify-content: center;
+
   flex-direction: column;
+
   gap: 10px;
+
   color: #7e6b83;
+
+  text-align: center;
 }
 
-/* FINAL */
+.qa-empty-review svg {
+  font-size: 30px;
+}
+
+.qa-empty-review span {
+  max-width: 230px;
+
+  font-size: 12px;
+
+  color: #97869b;
+}
+
+/* =========================================================
+   FINAL
+========================================================= */
 
 .qa-final-card {
   margin-top: 22px;
+
   background: #370f56;
-  color: white;
+
+  color: #fff;
+
   border-radius: 20px;
+
   padding: 22px 24px;
+
   display: flex;
+
   justify-content: space-between;
+
   align-items: center;
+
   gap: 24px;
 }
 
 .qa-final-card span {
   font-size: 10px;
+
   letter-spacing: 0.12em;
+
   font-weight: 800;
+
   opacity: 0.7;
 }
 
 .qa-final-card h2 {
   margin: 6px 0;
+
   font-size: 20px;
 }
 
 .qa-final-card p {
   margin: 0;
-  color: rgba(255, 255, 255, 0.72);
+
+  color:
+    rgba(
+      255,
+      255,
+      255,
+      0.72
+    );
+
   font-size: 13px;
 }
 
 .qa-complete-button {
   border: 0;
+
   min-height: 46px;
+
   border-radius: 12px;
+
   padding: 0 18px;
+
   background: #fff;
+
   color: #370f56;
+
   font-weight: 800;
+
   cursor: pointer;
+
   display: inline-flex;
+
   align-items: center;
+
+  justify-content: center;
+
   gap: 8px;
+
   white-space: nowrap;
 }
 
 .qa-complete-button:disabled {
   opacity: 0.45;
+
   cursor: not-allowed;
 }
 
-/* RESPONSIVE */
+/* =========================================================
+   TABLET
+========================================================= */
 
 @media (
   max-width: 1050px
@@ -546,48 +830,353 @@
       1fr;
   }
 
+  /*
+   * Important :
+   * le panneau passe sous
+   * les photos.
+   *
+   * Quand une photo est
+   * sélectionnée, le JS
+   * scroll ici automatiquement.
+   */
   .qa-review-panel {
     position: static;
+
+    scroll-margin-top:
+      18px;
+  }
+
+  .qa-mobile-review-marker {
+    display: inline-flex;
+
+    align-items: center;
+
+    margin-bottom: 12px;
+
+    padding: 6px 10px;
+
+    border-radius: 999px;
+
+    background: #f4edf6;
+
+    color: #370f56;
+
+    font-size: 11px;
+
+    font-weight: 800;
   }
 }
+
+/* =========================================================
+   MOBILE
+========================================================= */
 
 @media (
   max-width: 760px
 ) {
   .qa-page {
-    padding: 18px;
+    padding: 16px;
   }
+
+  /* HEADER */
 
   .qa-header {
     flex-direction: column;
+
     align-items: stretch;
+
+    gap: 18px;
+
+    margin-bottom: 20px;
   }
+
+  .qa-back {
+    margin-bottom: 16px;
+  }
+
+  .qa-header h1 {
+    font-size: 28px;
+  }
+
+  .qa-header p {
+    font-size: 14px;
+
+    line-height: 1.5;
+  }
+
+  .qa-participant {
+    width: 100%;
+
+    box-sizing: border-box;
+  }
+
+  /* STATS */
 
   .qa-stats {
     grid-template-columns:
-      repeat(2, 1fr);
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+
+    gap: 10px;
+
+    margin-bottom: 18px;
+  }
+
+  .qa-stats article {
+    padding: 14px;
+  }
+
+  .qa-stats strong {
+    font-size: 24px;
+  }
+
+  /* PHOTOS */
+
+  .qa-photo-list {
+    padding: 15px;
+
+    border-radius: 16px;
+  }
+
+  .qa-section-head {
+    align-items: flex-start;
+
+    gap: 12px;
+  }
+
+  .qa-section-head h2 {
+    font-size: 20px;
+  }
+
+  /*
+   * Bouton toutes les photos
+   * très visible sur mobile.
+   */
+  .qa-bulk-actions {
+    flex-direction: column;
+
+    align-items: stretch;
+
+    gap: 12px;
+
+    padding: 14px;
+
+    margin-bottom: 16px;
+  }
+
+  .qa-bulk-actions > div {
+    text-align: center;
+  }
+
+  .qa-accept-all-button {
+    width: 100%;
+
+    min-height: 50px;
+
+    white-space: normal;
   }
 
   .qa-grid {
     grid-template-columns:
-      repeat(2, 1fr);
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+
+    gap: 10px;
   }
+
+  .qa-photo-card {
+    border-radius: 13px;
+  }
+
+  .qa-photo-footer {
+    padding: 9px 10px;
+  }
+
+  /* REVIEW */
+
+  .qa-review-panel {
+    padding: 16px;
+
+    border-radius: 16px;
+
+    scroll-margin-top:
+      12px;
+  }
+
+  .qa-review-header {
+    margin-bottom: 12px;
+  }
+
+  .qa-review-header h2 {
+    max-width: 190px;
+
+    font-size: 14px;
+  }
+
+  .qa-review-image {
+    aspect-ratio: 1 / 1;
+  }
+
+  .qa-checklist {
+    margin-top: 14px;
+
+    padding: 14px;
+  }
+
+  .qa-rejection {
+    margin-top: 14px;
+  }
+
+  /*
+   * Sur mobile :
+   * les boutons restent
+   * visibles en bas.
+   */
+  .qa-review-actions {
+    position: sticky;
+
+    bottom: 8px;
+
+    z-index: 20;
+
+    margin:
+      16px -8px -8px;
+
+    padding:
+      10px 8px 8px;
+
+    background:
+      rgba(
+        255,
+        255,
+        255,
+        0.97
+      );
+
+    backdrop-filter:
+      blur(10px);
+
+    border-top:
+      1px solid
+      #eee4ed;
+
+    border-radius:
+      0 0 14px 14px;
+
+    box-shadow:
+      0 -8px 20px
+      rgba(
+        55,
+        15,
+        86,
+        0.06
+      );
+  }
+
+  .qa-reject-button,
+  .qa-accept-button {
+    min-height: 50px;
+
+    font-size: 14px;
+  }
+
+  /* FINAL */
 
   .qa-final-card {
     flex-direction: column;
+
     align-items: stretch;
+
+    border-radius: 16px;
+
+    padding: 19px;
   }
 
   .qa-complete-button {
-    justify-content: center;
+    width: 100%;
+
+    min-height: 50px;
   }
 }
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
 
 @media (
   max-width: 480px
 ) {
+  .qa-page {
+    padding: 12px;
+  }
+
+  .qa-header h1 {
+    font-size: 25px;
+  }
+
+  .qa-stats {
+    gap: 8px;
+  }
+
+  /*
+   * Deux photos par ligne
+   * même sur petit mobile.
+   */
   .qa-grid {
     grid-template-columns:
-      1fr;
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+
+    gap: 8px;
+  }
+
+  .qa-photo-footer strong {
+    font-size: 12px;
+  }
+
+  .qa-photo-footer span {
+    font-size: 10px;
+  }
+
+  .qa-photo-state {
+    width: 25px;
+
+    height: 25px;
+
+    top: 7px;
+
+    right: 7px;
+  }
+
+  .qa-section-head {
+    flex-direction: column;
+
+    align-items: stretch;
+  }
+
+  .qa-minimum-badge {
+    width: fit-content;
+  }
+
+  .qa-review-panel {
+    padding: 13px;
+  }
+
+  .qa-review-header {
+    gap: 8px;
+  }
+
+  .qa-review-header h2 {
+    max-width: 155px;
+  }
+
+  .qa-review-actions {
+    gap: 8px;
   }
 }
