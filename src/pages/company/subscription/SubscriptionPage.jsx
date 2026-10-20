@@ -1,10 +1,6 @@
 
-import { useEffect, useState, useRef } from "react";
-import {
-  useNavigate,
-  useSearchParams,
-} from "react-router-dom";
-
+import { useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   FiArrowRight,
   FiCheck,
@@ -21,8 +17,9 @@ import {
   FiAlertCircle,
   FiCreditCard,
   FiStar,
+  FiSettings,
+  FiExternalLink,
 } from "react-icons/fi";
-
 import { ClipLoader } from "react-spinners";
 
 import { useAuth } from "../../../context/AuthContext";
@@ -46,39 +43,34 @@ const normalizePlans = (response) => {
     ...plan,
     code: String(plan.code || "").toUpperCase(),
     price: Number(
-      plan.priceMonthly ?? plan.price_monthly ?? 0
+      plan.priceMonthly ??
+      plan.price_monthly ??
+      0
     ),
     currency: plan.currency || "EUR",
-
     maxActiveCampaigns:
       plan.maxActiveCampaigns ??
       plan.max_active_campaigns ??
       null,
-
     maxParticipantsPerCampaign:
       plan.maxParticipantsPerCampaign ??
       plan.max_participants_per_campaign ??
       null,
-
     maxPortraitsPerMonth:
       plan.maxPortraitsPerMonth ??
       plan.max_portraits_per_month ??
       null,
-
-    allStyles:
-      plan.allStyles ?? plan.all_styles ?? false,
-
-    hdDownload:
-      plan.hdDownload ?? plan.hd_download ?? false,
-
-    zipExport:
-      plan.zipExport ?? plan.zip_export ?? false,
-
+    allStyles: plan.allStyles ?? plan.all_styles ?? false,
+    hdDownload: plan.hdDownload ?? plan.hd_download ?? false,
+    zipExport: plan.zipExport ?? plan.zip_export ?? false,
     customBranding:
-      plan.customBranding ?? plan.custom_branding ?? false,
-
+      plan.customBranding ??
+      plan.custom_branding ??
+      false,
     prioritySupport:
-      plan.prioritySupport ?? plan.priority_support ?? false,
+      plan.prioritySupport ??
+      plan.priority_support ??
+      false,
   }));
 };
 
@@ -87,31 +79,39 @@ const formatLimit = (value) => {
     return "Illimité";
   }
 
-  return new Intl.NumberFormat("fr-FR").format(
-    Number(value)
-  );
+  return new Intl.NumberFormat("fr-FR").format(Number(value));
 };
 
-const formatPrice = (price, currency = "EUR") =>
-  new Intl.NumberFormat("fr-FR", {
+const formatPrice = (price, currency = "EUR") => {
+  return new Intl.NumberFormat("fr-FR", {
     style: "currency",
     currency,
     minimumFractionDigits: 0,
     maximumFractionDigits: 2,
   }).format(Number(price));
+};
 
 const formatDate = (date) => {
   if (!date) return null;
 
   const parsed = new Date(date);
 
-  if (Number.isNaN(parsed.getTime())) return null;
+  if (Number.isNaN(parsed.getTime())) {
+    return null;
+  }
 
   return new Intl.DateTimeFormat("fr-FR", {
     day: "2-digit",
     month: "long",
     year: "numeric",
   }).format(parsed);
+};
+
+const isPremiumActive = (user) => {
+  return (
+    user?.subscription?.status === "ACTIVE" &&
+    user?.subscription?.plan?.code === "PREMIUM"
+  );
 };
 
 const features = [
@@ -144,30 +144,24 @@ const features = [
 
 function SubscriptionPage() {
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] =
-    useSearchParams();
-
-  const { user, refreshUser } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { user, setUser } = useAuth();
 
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState("");
   const [reloadKey, setReloadKey] = useState(0);
+  const [paymentStatus, setPaymentStatus] = useState("idle");
 
-  const [paymentStatus, setPaymentStatus] =
-    useState("idle");
+  const [portalLoading, setPortalLoading] = useState(false);
+  const [portalError, setPortalError] = useState("");
 
   const payment = searchParams.get("payment");
-  const paymentSessionId =
-    searchParams.get("session_id");
-
-  const paymentCheckStarted = useRef(false);
+  const sessionId = searchParams.get("session_id");
 
   const subscription = user?.subscription;
-
-  const isActive =
-    subscription?.status === "ACTIVE";
+  const isActive = subscription?.status === "ACTIVE";
 
   const planCode = isActive
     ? subscription?.plan?.code
@@ -176,7 +170,6 @@ function SubscriptionPage() {
   const isPremium = planCode === "PREMIUM";
   const isFree = planCode === "FREE";
 
-  // Charger les offres
   useEffect(() => {
     const controller = new AbortController();
 
@@ -187,21 +180,21 @@ function SubscriptionPage() {
         if (controller.signal.aborted) return;
 
         setPlans(normalizePlans(response));
+        setError("");
       })
       .catch((err) => {
         if (
-          err.code === "ERR_CANCELED" ||
-          err.name === "CanceledError"
-        ) return;
+          controller.signal.aborted ||
+          err.code === "ERR_CANCELED"
+        ) {
+          return;
+        }
 
-        console.error(
-          "Erreur chargement abonnement :",
-          err
-        );
+        console.error("Erreur chargement plans :", err);
 
         setError(
           err.response?.data?.message ||
-          "Impossible de récupérer les offres."
+          "Impossible de charger les offres."
         );
       })
       .finally(() => {
@@ -213,97 +206,123 @@ function SubscriptionPage() {
     return () => controller.abort();
   }, [reloadKey]);
 
-  // Vérifier le paiement après retour de Stripe
   useEffect(() => {
-    if (
-      payment !== "success" ||
-      paymentCheckStarted.current
-    ) {
-      return;
-    }
+    if (payment !== "success") return;
 
-    paymentCheckStarted.current = true;
+    const controller = new AbortController();
+    let timer = null;
+    let attempts = 0;
 
-    let cancelled = false;
-    let timeoutId = null;
+    const maxAttempts = 10;
+    const interval = 2000;
 
-    const verifyPayment = async () => {
-      setPaymentStatus("checking");
+    const checkSubscription = async () => {
+      if (controller.signal.aborted) return;
 
-      // Le webhook peut être reçu après
-      // la redirection de Stripe.
-      for (let attempt = 0; attempt < 10; attempt++) {
-        if (cancelled) return;
+      attempts += 1;
 
-        try {
-          const updatedUser = await refreshUser();
+      try {
+        const response = await api.get("/me", {
+          signal: controller.signal,
+          timeout: 10000,
+          headers: {
+            "Cache-Control": "no-cache",
+          },
+          params: {
+            _t: Date.now(),
+          },
+        });
 
-          if (cancelled) return;
+        if (controller.signal.aborted) return;
 
-          if (
-            updatedUser?.subscription?.status === "ACTIVE" &&
-            updatedUser?.subscription?.plan?.code === "PREMIUM"
-          ) {
+        const updatedUser = response.data?.user;
+
+        if (
+          response.data?.success === true &&
+          updatedUser
+        ) {
+          setUser(updatedUser);
+
+          if (isPremiumActive(updatedUser)) {
             setPaymentStatus("success");
-
-            console.log(
-              "✅ PREMIUM confirmé dans PostgreSQL"
-            );
-
+            console.log("✅ Abonnement PREMIUM confirmé");
             return;
           }
-        } catch (err) {
-          console.error(
-            "Vérification abonnement :",
-            err
-          );
         }
+      } catch (err) {
+        if (controller.signal.aborted) return;
 
-        if (attempt < 9) {
-          await new Promise((resolve) => {
-            timeoutId = setTimeout(resolve, 2000);
-          });
-        }
+        console.error(
+          "Vérification paiement Stripe :",
+          err.message
+        );
       }
 
-      if (!cancelled) {
+      if (controller.signal.aborted) return;
+
+      if (attempts >= maxAttempts) {
         setPaymentStatus("pending");
+        return;
       }
+
+      timer = setTimeout(checkSubscription, interval);
     };
 
-    verifyPayment();
+    if (!sessionId) {
+      console.warn(
+        "Retour Stripe sans identifiant de session"
+      );
+    }
+
+    checkSubscription();
 
     return () => {
-      cancelled = true;
+      controller.abort();
 
-      if (timeoutId) {
-        clearTimeout(timeoutId);
+      if (timer !== null) {
+        clearTimeout(timer);
       }
     };
-
-    // Uniquement au retour de Stripe.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [payment]);
+  }, [payment, sessionId, setUser]);
 
   const handleRefresh = async () => {
+    if (refreshing) return;
+
     try {
       setRefreshing(true);
       setError("");
+      setPortalError("");
 
-      const updatedUser = await refreshUser();
+      const response = await api.get("/me", {
+        timeout: 10000,
+        params: {
+          _t: Date.now(),
+        },
+      });
 
       if (
-        payment === "success" &&
-        updatedUser?.subscription?.status === "ACTIVE" &&
-        updatedUser?.subscription?.plan?.code === "PREMIUM"
+        response.data?.success !== true ||
+        !response.data?.user
       ) {
-        setPaymentStatus("success");
+        throw new Error("Réponse utilisateur invalide");
+      }
+
+      const updatedUser = response.data.user;
+
+      setUser(updatedUser);
+
+      if (payment === "success") {
+        setPaymentStatus(
+          isPremiumActive(updatedUser)
+            ? "success"
+            : "pending"
+        );
       }
 
       setLoading(true);
       setReloadKey((previous) => previous + 1);
     } catch (err) {
-      console.error(err);
+      console.error("Actualisation abonnement :", err);
 
       setError(
         "Impossible d'actualiser votre abonnement."
@@ -314,13 +333,71 @@ function SubscriptionPage() {
   };
 
   const closePaymentMessage = () => {
-    setPaymentStatus("idle");
-
     const params = new URLSearchParams(searchParams);
+
     params.delete("payment");
     params.delete("session_id");
 
+    setPaymentStatus("idle");
     setSearchParams(params, { replace: true });
+  };
+
+  const goToPremium = () => {
+    navigate("/dashboard/abonnement/choisir", {
+      state: {
+        preferredPlan: "PREMIUM",
+      },
+    });
+  };
+
+  const handleOpenBillingPortal = async () => {
+    if (portalLoading || !isPremium) return;
+
+    try {
+      setPortalLoading(true);
+      setPortalError("");
+
+      const response = await api.post(
+        "/company/subscription/portal",
+        {},
+        { timeout: 15000 }
+      );
+
+      const portalUrl = response.data?.portalUrl;
+
+      if (
+        response.data?.success !== true ||
+        typeof portalUrl !== "string"
+      ) {
+        throw new Error(
+          "Le lien de gestion de l'abonnement est indisponible."
+        );
+      }
+
+      const url = new URL(portalUrl);
+
+      if (
+        url.protocol !== "https:" ||
+        (
+          url.hostname !== "billing.stripe.com" &&
+          !url.hostname.endsWith(".billing.stripe.com")
+        )
+      ) {
+        throw new Error("Adresse de redirection Stripe invalide.");
+      }
+
+      window.location.assign(url.href);
+    } catch (err) {
+      console.error("Erreur portail Stripe :", err);
+
+      setPortalError(
+        err.response?.data?.message ||
+        err.message ||
+        "Impossible d'ouvrir la gestion de votre abonnement."
+      );
+
+      setPortalLoading(false);
+    }
   };
 
   const currentPlan = plans.find(
@@ -331,17 +408,17 @@ function SubscriptionPage() {
     subscription?.currentPeriodEnd
   );
 
-  const goToPremium = () => {
-    navigate("/dashboard/abonnement/choisir", {
-      state: {
-        preferredPlan: "PREMIUM",
-      },
-    });
-  };
+  const effectivePaymentStatus =
+    payment !== "success"
+      ? "idle"
+      : isPremiumActive(user)
+        ? "success"
+        : paymentStatus === "idle"
+          ? "checking"
+          : paymentStatus;
 
   return (
     <div className="company-subscription-page">
-
       <div className="company-subscription-header">
         <div>
           <span className="company-subscription-kicker">
@@ -369,35 +446,29 @@ function SubscriptionPage() {
                 : ""
             }
           />
-
           <span>Actualiser</span>
         </button>
       </div>
 
-      {/* Statut après retour Stripe */}
-
       {payment === "success" &&
-        paymentStatus === "checking" && (
+        effectivePaymentStatus === "checking" && (
           <div
             className="company-subscription-loading"
             role="status"
           >
-            <ClipLoader
-              size={25}
-              color="#4f2e94"
-            />
-
-            <strong>Vérification de votre paiement</strong>
-
+            <ClipLoader size={25} color="#4f2e94" />
+            <strong>
+              Vérification de votre abonnement
+            </strong>
             <span>
-              Nous vérifions l'activation
-              de votre abonnement Premium.
+              Nous vérifions l'activation de Premium.
+              Cela peut prendre quelques instants.
             </span>
           </div>
         )}
 
       {payment === "success" &&
-        paymentStatus === "success" && (
+        effectivePaymentStatus === "success" && (
           <div
             className="company-subscription-feature"
             role="status"
@@ -414,6 +485,7 @@ function SubscriptionPage() {
               type="button"
               className="company-subscription-refresh"
               onClick={closePaymentMessage}
+              aria-label="Fermer le message"
             >
               <FiX />
             </button>
@@ -421,7 +493,7 @@ function SubscriptionPage() {
         )}
 
       {payment === "success" &&
-        paymentStatus === "pending" && (
+        effectivePaymentStatus === "pending" && (
           <div
             className="company-subscription-error"
             role="status"
@@ -429,10 +501,9 @@ function SubscriptionPage() {
             <FiAlertCircle />
 
             <span>
-              Le retour Stripe a été reçu, mais
-              l'activation Premium n'est pas encore
-              confirmée. Vérifiez le paiement
-              dans Stripe, puis actualisez la page.
+              Votre abonnement Premium n'est pas encore
+              confirmé. Vérifiez le statut du paiement
+              puis actualisez votre abonnement.
             </span>
 
             <button
@@ -447,18 +518,28 @@ function SubscriptionPage() {
           </div>
         )}
 
-      {payment === "success" &&
-        !paymentSessionId &&
-        paymentStatus === "idle" && (
-          <div className="company-subscription-error">
-            <FiAlertCircle />
+      {payment === "cancel" && (
+        <div
+          className="company-subscription-error"
+          role="status"
+        >
+          <FiAlertCircle />
 
-            <span>
-              Référence de paiement absente.
-              Vérifiez votre abonnement.
-            </span>
-          </div>
-        )}
+          <span>
+            Vous avez quitté le paiement.
+            Votre abonnement actuel reste inchangé.
+          </span>
+
+          <button
+            type="button"
+            className="company-subscription-refresh"
+            onClick={closePaymentMessage}
+            aria-label="Fermer"
+          >
+            <FiX />
+          </button>
+        </div>
+      )}
 
       {error && (
         <div
@@ -470,33 +551,40 @@ function SubscriptionPage() {
         </div>
       )}
 
+      {portalError && (
+        <div
+          className="company-subscription-error"
+          role="alert"
+        >
+          <FiAlertCircle />
+          <span>{portalError}</span>
+          <button
+            type="button"
+            className="company-subscription-refresh"
+            onClick={() => setPortalError("")}
+            aria-label="Fermer l'erreur"
+          >
+            <FiX />
+          </button>
+        </div>
+      )}
+
       {loading ? (
         <div className="company-subscription-loading">
-          <ClipLoader
-            size={30}
-            color="#4f2e94"
-          />
-
+          <ClipLoader size={30} color="#4f2e94" />
           <span>
             Chargement de votre abonnement...
           </span>
         </div>
       ) : (
         <>
-          {/* Offre actuelle */}
-
           <section className="company-subscription-overview">
-
             <div className="company-subscription-overview-main">
-
               <div className="company-subscription-plan-icon">
-                {isPremium
-                  ? <FiZap />
-                  : <FiCreditCard />}
+                {isPremium ? <FiZap /> : <FiCreditCard />}
               </div>
 
               <div className="company-subscription-plan-info">
-
                 <span className="company-subscription-overview-label">
                   VOTRE OFFRE ACTUELLE
                 </span>
@@ -528,7 +616,6 @@ function SubscriptionPage() {
             </div>
 
             <div className="company-subscription-overview-side">
-
               <div className="company-subscription-price">
                 <strong>
                   {formatPrice(
@@ -540,7 +627,6 @@ function SubscriptionPage() {
                       "EUR"
                   )}
                 </strong>
-
                 <span>/ mois</span>
               </div>
 
@@ -563,20 +649,40 @@ function SubscriptionPage() {
               )}
 
               {isPremium && (
-                <span className="company-subscription-premium-label">
-                  <FiCheckCircle />
-                  Offre Premium activée
-                </span>
+                <>
+                  <span className="company-subscription-premium-label">
+                    <FiCheckCircle />
+                    Offre Premium activée
+                  </span>
+
+                  <button
+                    type="button"
+                    className="company-subscription-upgrade-btn"
+                    onClick={handleOpenBillingPortal}
+                    disabled={portalLoading}
+                    aria-busy={portalLoading}
+                  >
+                    {portalLoading ? (
+                      <>
+                        <FiRefreshCw className="company-subscription-spin" />
+                        Ouverture...
+                      </>
+                    ) : (
+                      <>
+                        <FiSettings />
+                        Gérer mon abonnement
+                        <FiExternalLink />
+                      </>
+                    )}
+                  </button>
+                </>
               )}
             </div>
           </section>
 
-          {/* Limites */}
-
           <div className="company-subscription-section-heading">
             <div>
               <h2>Limites de votre offre</h2>
-
               <p>
                 Les capacités incluses dans votre abonnement.
               </p>
@@ -633,12 +739,9 @@ function SubscriptionPage() {
             </div>
           </div>
 
-          {/* Fonctionnalités */}
-
           <div className="company-subscription-section-heading">
             <div>
               <h2>Fonctionnalités incluses</h2>
-
               <p>
                 Retrouvez les avantages disponibles
                 avec votre formule.
@@ -691,11 +794,8 @@ function SubscriptionPage() {
             })}
           </section>
 
-          {/* Upgrade */}
-
           {isFree && (
             <section className="company-subscription-upgrade">
-
               <div className="company-subscription-upgrade-symbol">
                 <FiZap />
               </div>
