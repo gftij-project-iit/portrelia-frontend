@@ -1,145 +1,298 @@
+import { useState } from "react";
+
 import {
   FiGrid,
   FiBriefcase,
   FiUsers,
   FiImage,
-  FiEdit3,
+  FiLayers,
   FiCreditCard,
   FiSettings,
   FiMoreHorizontal,
+  FiChevronsLeft,
+  FiChevronsRight,
 } from "react-icons/fi";
 
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 
 import logo from "../../assets/logo.png";
+
 import "./AdminSidebar.css";
 
-function AdminSidebar() {
+function AdminSidebar({
+  collapsed,
+  onToggle,
+}) {
   const { user } = useAuth();
 
-  const initial =
-    user?.firstName?.charAt(0)?.toUpperCase() || "A";
+  const [previewOpen, setPreviewOpen] =
+    useState(false);
 
-  const fullName = user?.firstName
-    ? `${user.firstName} ${user.lastName || ""}`
-    : "Portrélia";
+  const initial =
+    user?.firstName
+      ?.charAt(0)
+      ?.toUpperCase() || "A";
+
+  const fullName =
+    user?.firstName
+      ? `${user.firstName} ${user.lastName || ""}`
+      : "Portrélia";
+
+  const getLinkClass = ({
+    isActive,
+  }) =>
+    `admin-sidebar-link ${
+      isActive
+        ? "admin-sidebar-link-active"
+        : ""
+    }`;
+
+  /*
+   * Clic poignée :
+   *
+   * on ferme d'abord toute prévisualisation,
+   * puis on change réellement l'état du menu.
+   */
+  const handleToggle = () => {
+    setPreviewOpen(false);
+    onToggle();
+  };
+
+  /*
+   * Ouverture temporaire uniquement
+   * quand on survole logo / icônes.
+   */
+  const handlePreviewOpen = () => {
+    if (collapsed) {
+      setPreviewOpen(true);
+    }
+  };
+
+  /*
+   * Quand la souris quitte complètement
+   * la sidebar :
+   *
+   * si elle était seulement ouverte en preview,
+   * elle se referme.
+   */
+  const handleMouseLeave = () => {
+    setPreviewOpen(false);
+  };
+
+  const previewActive =
+    collapsed && previewOpen;
 
   return (
-    <aside className="admin-sidebar">
+    <aside
+      className={`admin-sidebar ${
+        collapsed
+          ? "admin-sidebar-collapsed"
+          : ""
+      } ${
+        previewActive
+          ? "admin-sidebar-preview-open"
+          : ""
+      }`}
+      onMouseLeave={handleMouseLeave}
+    >
+      {/* HANDLE */}
+
+      <button
+        type="button"
+        className="admin-sidebar-handle"
+        onClick={handleToggle}
+        aria-label={
+          collapsed
+            ? "Ouvrir le menu"
+            : "Réduire le menu"
+        }
+      >
+        <span className="admin-sidebar-handle-line" />
+
+        <span className="admin-sidebar-handle-icon">
+          {collapsed ? (
+            <FiChevronsRight />
+          ) : (
+            <FiChevronsLeft />
+          )}
+        </span>
+
+        <span className="admin-sidebar-handle-line" />
+      </button>
 
       {/* BRAND */}
-      <div className="admin-sidebar-brand">
-        <img
-          src={logo}
-          alt="Portrélia"
-          className="admin-sidebar-logo"
-        />
 
-        <span className="admin-sidebar-brand-name">
-          Portrélia
-        </span>
+      <div
+        className="admin-sidebar-brand"
+        onMouseEnter={handlePreviewOpen}
+      >
+        <div className="admin-sidebar-logo-container">
+          <div className="admin-sidebar-logo-glow" />
+
+          <img
+            src={logo}
+            alt="Portrélia"
+            className="admin-sidebar-logo"
+          />
+        </div>
+
+        <div className="admin-sidebar-brand-copy">
+          <span className="admin-sidebar-brand-name">
+            Portrélia
+          </span>
+
+          <span className="admin-sidebar-brand-subtitle">
+            Administration
+          </span>
+        </div>
       </div>
 
       {/* NAV */}
-      <nav className="admin-sidebar-nav">
 
+      <nav className="admin-sidebar-nav">
         <NavLink
           to="/admin"
           end
-          className={({ isActive }) =>
-            `admin-sidebar-link ${
-              isActive ? "admin-sidebar-link-active" : ""
-            }`
-          }
+          title="Tableau de bord"
+          className={getLinkClass}
+          onMouseEnter={handlePreviewOpen}
         >
-          <FiGrid />
-          <span>Tableau de bord</span>
+          <span className="admin-sidebar-link-icon">
+            <FiGrid />
+          </span>
+
+          <span className="admin-sidebar-link-text">
+            Tableau de bord
+          </span>
+
+          <span className="admin-sidebar-active-indicator" />
         </NavLink>
 
         <NavLink
           to="/admin/entreprises"
-          className={({ isActive }) =>
-            `admin-sidebar-link ${
-              isActive ? "admin-sidebar-link-active" : ""
-            }`
-          }
+          title="Entreprises"
+          className={getLinkClass}
+          onMouseEnter={handlePreviewOpen}
         >
-          <FiBriefcase />
-          <span>Entreprises</span>
+          <span className="admin-sidebar-link-icon">
+            <FiBriefcase />
+          </span>
+
+          <span className="admin-sidebar-link-text">
+            Entreprises
+          </span>
+
+          <span className="admin-sidebar-active-indicator" />
         </NavLink>
 
         <NavLink
           to="/admin/demandes-demo"
-          className={({ isActive }) =>
-            `admin-sidebar-link ${
-              isActive ? "admin-sidebar-link-active" : ""
-            }`
-          }
+          title="Demandes de démo"
+          className={getLinkClass}
+          onMouseEnter={handlePreviewOpen}
         >
-          <FiUsers />
-          <span>Demandes de démo</span>
+          <span className="admin-sidebar-link-icon">
+            <FiUsers />
+          </span>
+
+          <span className="admin-sidebar-link-text">
+            Demandes de démo
+          </span>
+
+          <span className="admin-sidebar-active-indicator" />
         </NavLink>
+
+        <div className="admin-sidebar-section-label">
+          <span>Production</span>
+        </div>
 
         <NavLink
           to="/admin/campagnes"
-          className={({ isActive }) =>
-            `admin-sidebar-link ${
-              isActive ? "admin-sidebar-link-active" : ""
-            }`
-          }
+          title="Campagnes & QA"
+          className={getLinkClass}
+          onMouseEnter={handlePreviewOpen}
         >
-          <FiImage />
-          <span>Campagnes & QA</span>
+          <span className="admin-sidebar-link-icon">
+            <FiImage />
+          </span>
+
+          <span className="admin-sidebar-link-text">
+            Campagnes & QA
+          </span>
+
+          <span className="admin-sidebar-active-indicator" />
         </NavLink>
 
-      
-
         <NavLink
-          to="/admin/retouches"
-          className={({ isActive }) =>
-            `admin-sidebar-link ${
-              isActive ? "admin-sidebar-link-active" : ""
-            }`
-          }
+          to="/admin/galeries"
+          title="Galeries"
+          className={getLinkClass}
+          onMouseEnter={handlePreviewOpen}
         >
-          <FiEdit3 />
-          <span>Retouches</span>
+          <span className="admin-sidebar-link-icon">
+            <FiLayers />
+          </span>
+
+          <span className="admin-sidebar-link-text">
+            Galeries
+          </span>
+
+          <span className="admin-sidebar-active-indicator" />
         </NavLink>
 
         <NavLink
           to="/admin/livraisons"
-          className={({ isActive }) =>
-            `admin-sidebar-link ${
-              isActive ? "admin-sidebar-link-active" : ""
-            }`
-          }
+          title="Livraisons"
+          className={getLinkClass}
+          onMouseEnter={handlePreviewOpen}
         >
-          <FiCreditCard />
-          <span>Livraisons</span>
+          <span className="admin-sidebar-link-icon">
+            <FiCreditCard />
+          </span>
+
+          <span className="admin-sidebar-link-text">
+            Livraisons
+          </span>
+
+          <span className="admin-sidebar-active-indicator" />
         </NavLink>
+
+        <div className="admin-sidebar-section-label">
+          <span>Système</span>
+        </div>
 
         <NavLink
           to="/admin/parametres"
-          className={({ isActive }) =>
-            `admin-sidebar-link ${
-              isActive ? "admin-sidebar-link-active" : ""
-            }`
-          }
+          title="Paramètres"
+          className={getLinkClass}
+          onMouseEnter={handlePreviewOpen}
         >
-          <FiSettings />
-          <span>Paramètres</span>
-        </NavLink>
+          <span className="admin-sidebar-link-icon">
+            <FiSettings />
+          </span>
 
+          <span className="admin-sidebar-link-text">
+            Paramètres
+          </span>
+
+          <span className="admin-sidebar-active-indicator" />
+        </NavLink>
       </nav>
 
-      {/* FOOTER USER */}
-      <div className="admin-sidebar-footer">
+      {/* FOOTER */}
 
+      <div
+        className="admin-sidebar-footer"
+        onMouseEnter={handlePreviewOpen}
+      >
         <div className="admin-sidebar-user">
+          <div className="admin-sidebar-avatar-wrap">
+            <div className="admin-sidebar-avatar">
+              {initial}
+            </div>
 
-          <div className="admin-sidebar-avatar">
-            {initial}
+            <span className="admin-sidebar-online-dot" />
           </div>
 
           <div className="admin-sidebar-user-info">
@@ -159,11 +312,8 @@ function AdminSidebar() {
           >
             <FiMoreHorizontal />
           </button>
-
         </div>
-
       </div>
-
     </aside>
   );
 }

@@ -21,7 +21,7 @@ const ParticipantRoutes = (
      {/* Étape 3 - Validation avant envoi */}
     <Route path="/invitation/validation" element={<PublicRoute><PhotoValidationPage /></PublicRoute>} />
     <Route path="/invitation/envoi-termine" element={<PublicRoute><SubmissionCompletePage /></PublicRoute>} />
-    <Route path="/gallery/:token" element={ <PublicRoute> <ParticipantGalleryPage /> </PublicRoute>} />
+    <Route path="/gallery/:token" element={  <ParticipantGalleryPage /> } />
   </>
 );
 

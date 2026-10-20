@@ -16,7 +16,18 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Login
+  const refreshUser = async () => {
+    const response = await api.get("/me");
+
+    if (response.data.success) {
+      setUser(response.data.user);
+      return response.data.user;
+    }
+
+    setUser(null);
+    return null;
+  };
+
   const login = async (email, password) => {
     const response = await api.post("/login", {
       email,
@@ -30,7 +41,6 @@ export function AuthProvider({ children }) {
     return response.data;
   };
 
-  // Logout
   const logout = async () => {
     try {
       await api.post("/logout");
@@ -41,25 +51,34 @@ export function AuthProvider({ children }) {
     }
   };
 
-  // Check session
   useEffect(() => {
-    const checkSession = async () => {
-      try {
-        const response = await api.get("/me");
-        console.log("Réponse de l'API /me :", response.data);
+    let active = true;
+
+    api
+      .get("/me")
+      .then((response) => {
+        if (!active) return;
+
         if (response.data.success) {
           setUser(response.data.user);
         } else {
           setUser(null);
         }
-      } catch {
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
-    };
+      })
+      .catch(() => {
+        if (active) {
+          setUser(null);
+        }
+      })
+      .finally(() => {
+        if (active) {
+          setLoading(false);
+        }
+      });
 
-    checkSession();
+    return () => {
+      active = false;
+    };
   }, []);
 
   if (loading) {
@@ -73,10 +92,7 @@ export function AuthProvider({ children }) {
           background: "#fff",
         }}
       >
-        <ClipLoader
-          size={42}
-          color="#111827"
-        />
+        <ClipLoader size={42} color="#111827" />
       </div>
     );
   }
@@ -88,6 +104,7 @@ export function AuthProvider({ children }) {
         loading,
         login,
         logout,
+        refreshUser,
         setUser,
       }}
     >

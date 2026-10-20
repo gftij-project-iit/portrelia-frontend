@@ -1,3 +1,4 @@
+
 import {
   NavLink,
 } from "react-router-dom";
@@ -10,6 +11,7 @@ import {
   FiPackage,
   FiCreditCard,
   FiSettings,
+  FiZap,
 } from "react-icons/fi";
 
 import {
@@ -57,6 +59,11 @@ function CompanySidebar() {
       icon: <FiPackage />,
     },
     {
+      label: "Abonnement",
+      path: "/dashboard/abonnement",
+      icon: <FiZap />,
+    },
+    {
       label: "Facturation",
       path: "/dashboard/facturation",
       icon: <FiCreditCard />,
@@ -88,6 +95,7 @@ function CompanySidebar() {
             key={item.path}
             to={item.path}
             end={item.path === "/dashboard"}
+            title={item.label}
             className={({ isActive }) =>
               `company-sidebar-link ${
                 isActive

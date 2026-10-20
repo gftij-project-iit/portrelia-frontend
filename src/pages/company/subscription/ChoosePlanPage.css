@@ -1,0 +1,686 @@
+
+/* =========================================
+   PAGE
+========================================= */
+
+.company-plans-page {
+  --purple: #4f2e94;
+  --purple-light: #f3effb;
+  --text: #111827;
+  --muted: #667085;
+  --border: #e5e7eb;
+
+  min-height: 100vh;
+  background: #f7f7fb;
+  color: var(--text);
+
+  display: flex;
+  flex-direction: column;
+  font-family: inherit;
+}
+
+.company-plans-page * {
+  box-sizing: border-box;
+}
+
+/* =========================================
+   HEADER
+========================================= */
+
+.company-plans-nav {
+  height: 68px;
+  padding: 0 5%;
+
+  background: #fff;
+  border-bottom: 1px solid #eaecf0;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.company-plans-brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+.company-plans-brand-icon {
+  width: 35px;
+  height: 35px;
+  border-radius: 10px;
+
+  display: grid;
+  place-items: center;
+
+  background: var(--purple);
+  color: #fff;
+}
+
+.company-plans-brand-dot {
+  color: #7956d1;
+}
+
+.company-plans-logout {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 9px 12px;
+
+  border: 1px solid var(--border);
+  background: #fff;
+  border-radius: 8px;
+
+  color: #475467;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* =========================================
+   CONTENT
+========================================= */
+
+.company-plans-container {
+  width: 100%;
+  max-width: 920px;
+
+  margin: 0 auto;
+  padding: 45px 24px 55px;
+  flex: 1;
+}
+
+.company-plans-intro {
+  text-align: center;
+  margin-bottom: 29px;
+}
+
+.company-plans-kicker {
+  display: inline-block;
+
+  color: var(--purple);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.company-plans-intro h1 {
+  margin: 10px 0 9px;
+
+  font-size: 31px;
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.2;
+}
+
+.company-plans-intro p {
+  margin: 0 auto;
+  max-width: 540px;
+
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* =========================================
+   CURRENT / ERROR
+========================================= */
+
+.company-plans-current,
+.company-plans-error {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+
+  padding: 12px 15px;
+  margin-bottom: 18px;
+
+  border-radius: 9px;
+  font-size: 12px;
+}
+
+.company-plans-current {
+  color: #027a48;
+  background: #ecfdf3;
+  border: 1px solid #abefc6;
+}
+
+.company-plans-error {
+  color: #b42318;
+  background: #fef3f2;
+  border: 1px solid #fecdca;
+}
+
+.company-plans-error span {
+  flex: 1;
+}
+
+.company-plans-error button {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* =========================================
+   PLAN GRID
+========================================= */
+
+.company-plans-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  align-items: stretch;
+}
+
+/* =========================================
+   CARD
+========================================= */
+
+.company-plan-card {
+  min-width: 0;
+  padding: 19px;
+
+  background: #fff;
+  border: 2px solid #e5e7eb;
+  border-radius: 14px;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.company-plan-card:hover {
+  border-color: #c8b7e7;
+}
+
+.company-plan-card-selected {
+  border-color: #4f2e94;
+  box-shadow:
+    0 0 0 3px rgba(79, 46, 148, 0.07);
+}
+
+/* =========================================
+   SELECT PLAN
+========================================= */
+
+.company-plan-select {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+
+  padding: 0;
+  border: none;
+  background: transparent;
+
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.company-plan-radio {
+  width: 20px;
+  height: 20px;
+
+  flex-shrink: 0;
+
+  display: grid;
+  place-items: center;
+
+  border: 1.5px solid #d0d5dd;
+  border-radius: 50%;
+
+  color: #fff;
+  margin-top: 2px;
+}
+
+.company-plan-card-selected .company-plan-radio {
+  border-color: #4f2e94;
+  background: #4f2e94;
+}
+
+.company-plan-radio svg {
+  width: 12px;
+  height: 12px;
+}
+
+.company-plan-heading {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.company-plan-name-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.company-plan-name-row strong {
+  font-size: 17px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.company-plan-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+
+  padding: 4px 7px;
+  background: #eee8fa;
+  color: #4f2e94;
+
+  border-radius: 6px;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.company-plan-subtitle {
+  color: #98a2b3;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.company-plan-price {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+
+  flex-shrink: 0;
+  gap: 3px;
+}
+
+.company-plan-price strong {
+  font-size: 19px;
+  font-weight: 800;
+  white-space: nowrap;
+  letter-spacing: -0.035em;
+}
+
+.company-plan-price small {
+  color: #98a2b3;
+  font-size: 11px;
+}
+
+.company-plan-divider {
+  height: 1px;
+  background: #f0f1f3;
+  margin: 18px 0;
+}
+
+/* =========================================
+   FEATURES
+========================================= */
+
+.company-plan-features {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.company-plan-feature {
+  display: grid;
+  grid-template-columns: 17px 1fr auto;
+  align-items: center;
+  gap: 9px;
+
+  color: #667085;
+  font-size: 12px;
+}
+
+.company-plan-feature > svg {
+  width: 16px;
+  height: 16px;
+  color: #7658af;
+}
+
+.company-plan-feature strong {
+  color: #111827;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.company-plan-extras {
+  margin-top: 18px;
+  padding-top: 17px;
+
+  border-top: 1px solid #f0f1f3;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 9px;
+}
+
+.company-plan-extra {
+  min-width: 0;
+
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  color: #475467;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.company-plan-extra svg {
+  flex-shrink: 0;
+  color: #4f2e94;
+}
+
+.company-plan-extra-disabled {
+  color: #b4b9c2;
+}
+
+.company-plan-extra-disabled svg {
+  color: #d0d5dd;
+}
+
+/* =========================================
+   ACTION
+========================================= */
+
+.company-plans-action {
+  max-width: 440px;
+
+  margin: 25px auto 0;
+
+  display: flex;
+  align-items: stretch;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.company-plans-selection {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+
+  font-size: 12px;
+}
+
+.company-plans-selection span {
+  color: #98a2b3;
+}
+
+.company-plans-selection strong {
+  color: #344054;
+  font-weight: 750;
+}
+
+.company-plans-continue {
+  min-height: 45px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+
+  padding: 11px 18px;
+
+  background: #4f2e94;
+  color: #fff;
+
+  border: none;
+  border-radius: 9px;
+
+  font-size: 13px;
+  font-weight: 750;
+  font-family: inherit;
+
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.company-plans-continue:hover:not(:disabled) {
+  background: #42247f;
+  transform: translateY(-1px);
+}
+
+.company-plans-continue:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.company-plans-action-note {
+  color: #98a2b3;
+  font-size: 11px;
+  text-align: center;
+}
+
+/* =========================================
+   LOADING
+========================================= */
+
+.company-plans-loading {
+  min-height: 240px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 13px;
+
+  color: #667085;
+  font-size: 13px;
+}
+
+.company-plans-loading button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 9px 13px;
+
+  border: 0;
+  border-radius: 8px;
+
+  background: #4f2e94;
+  color: #fff;
+
+  cursor: pointer;
+}
+
+/* =========================================
+   ASSURANCE
+========================================= */
+
+.company-plans-assurance {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+
+  margin-top: 29px;
+
+  color: #98a2b3;
+  font-size: 11px;
+}
+
+.company-plans-assurance svg {
+  color: #7658af;
+  font-size: 15px;
+}
+
+/* =========================================
+   FOOTER
+========================================= */
+
+.company-plans-footer {
+  padding: 17px;
+  text-align: center;
+
+  color: #98a2b3;
+  font-size: 11px;
+
+  background: #fff;
+  border-top: 1px solid #eaecf0;
+}
+
+/* =========================================
+   TABLETTE
+========================================= */
+
+@media (max-width: 900px) {
+  .company-plans-container {
+    padding: 36px 22px 48px;
+  }
+
+  .company-plan-card {
+    padding: 15px;
+  }
+
+  .company-plan-name-row strong {
+    font-size: 16px;
+  }
+
+  .company-plan-price strong {
+    font-size: 17px;
+  }
+
+  .company-plan-extras {
+    grid-template-columns: 1fr;
+    gap: 9px;
+  }
+}
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 700px) {
+  .company-plans-nav {
+    height: 60px;
+    padding: 0 16px;
+  }
+
+  .company-plans-brand {
+    font-size: 18px;
+  }
+
+  .company-plans-brand-icon {
+    width: 31px;
+    height: 31px;
+  }
+
+  .company-plans-logout {
+    padding: 8px;
+  }
+
+  .company-plans-logout span {
+    display: none;
+  }
+
+  .company-plans-container {
+    padding: 29px 14px 36px;
+  }
+
+  .company-plans-intro {
+    margin-bottom: 23px;
+  }
+
+  .company-plans-intro h1 {
+    font-size: 25px;
+  }
+
+  .company-plans-intro p {
+    font-size: 12px;
+  }
+
+  .company-plans-grid {
+    grid-template-columns: 1fr;
+    gap: 13px;
+  }
+
+  .company-plan-card {
+    padding: 15px;
+    border-radius: 12px;
+  }
+
+  .company-plan-divider {
+    margin: 13px 0;
+  }
+
+  .company-plan-features {
+    gap: 10px;
+  }
+
+  .company-plan-extras {
+    grid-template-columns: 1fr 1fr;
+    margin-top: 13px;
+    padding-top: 12px;
+    gap: 9px;
+  }
+
+  .company-plans-action {
+    margin-top: 21px;
+  }
+
+  .company-plans-assurance {
+    margin-top: 23px;
+  }
+}
+
+/* =========================================
+   PETIT MOBILE
+========================================= */
+
+@media (max-width: 430px) {
+  .company-plans-container {
+    padding: 24px 11px 35px;
+  }
+
+  .company-plans-intro h1 {
+    font-size: 23px;
+  }
+
+  .company-plan-card {
+    padding: 13px;
+  }
+
+  .company-plan-name-row strong {
+    font-size: 15px;
+  }
+
+  .company-plan-price strong {
+    font-size: 16px;
+  }
+
+  .company-plan-subtitle {
+    font-size: 10px;
+  }
+
+  .company-plan-extra {
+    font-size: 10px;
+  }
+
+  .company-plans-selection {
+    font-size: 11px;
+  }
+}
+
+.company-plans-page button:focus-visible {
+  outline: 3px solid rgba(79, 46, 148, 0.3);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .company-plans-page *,
+  .company-plans-page *::before,
+  .company-plans-page *::after {
+    transition: none !important;
+  }
+}

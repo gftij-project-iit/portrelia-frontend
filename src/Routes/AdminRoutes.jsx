@@ -22,6 +22,7 @@ import AdminParticipantDetailsPage from "../pages/Admin/compagnes/AdminParticipa
 import AdminQaParticipantPage from "../pages/Admin/adminQA/AdminQaParticipantPage";
 import AdminGenerationParticipantPage from "../pages/Admin/adminQA/AdminGenerationParticipantPage";
 import AdminQaPortraitsPage from "../pages/Admin/adminQA/AdminQaPortraitsPage";
+import AdminGalleriesPage from "../pages/Admin/adminGalleries/AdminGalleriesPage";
 
 
 const AdminRoutes = (
@@ -139,12 +140,15 @@ const AdminRoutes = (
         }
       />
       <Route
-      path="qa-portraits/participants/:participantId"
-       element={
-    <AdminQaPortraitsPage />
-  }
+        path="qa-portraits/participants/:participantId"
+        element={
+        <AdminQaPortraitsPage />
+       }
       />
-      
+       <Route
+          path="galeries"
+          element={<AdminGalleriesPage />}
+        />
 
     </Route>
   </>
