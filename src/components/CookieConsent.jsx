@@ -6,11 +6,19 @@ import { FiShield, FiSettings } from "react-icons/fi";
 import "./CookieConsent.css";
 
 const STORAGE_KEY = "portrelia-analytics-consent";
+
 const GA_ID = import.meta.env.VITE_GA_MEASUREMENT_ID;
+const GOOGLE_TAG_ID = import.meta.env.VITE_GOOGLE_TAG_ID;
+
+const VALID_GA_ID = /^G-[A-Z0-9]+$/i.test(GA_ID || "");
+const VALID_TAG_ID = /^(GT|G)-[A-Z0-9]+$/i.test(
+  GOOGLE_TAG_ID || ""
+);
 
 function getSavedConsent() {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
+
     return saved === "accepted" || saved === "rejected"
       ? saved
       : null;
@@ -49,7 +57,10 @@ function removeAnalyticsCookies() {
 }
 
 function enableAnalytics() {
-  if (!/^G-[A-Z0-9]+$/i.test(GA_ID || "")) {
+  if (!VALID_GA_ID || !VALID_TAG_ID) {
+    console.warn(
+      "[Portrélia] Configuration Google Analytics manquante."
+    );
     return;
   }
 
@@ -63,29 +74,67 @@ function enableAnalytics() {
       window.dataLayer.push(arguments);
     };
 
-  if (!document.getElementById("portrelia-ga-script")) {
-    window.gtag("js", new Date());
-
-    window.gtag("config", GA_ID, {
-      send_page_view: false,
-    });
-
-    const script = document.createElement("script");
-    script.id = "portrelia-ga-script";
-    script.async = true;
-    script.src =
-      `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(GA_ID)}`;
-
-    document.head.appendChild(script);
+  if (document.getElementById("portrelia-ga-script")) {
+    return;
   }
+
+  window.gtag("js", new Date());
+
+  // Les pages vues sont envoyées manuellement par React Router.
+  window.gtag("config", GA_ID, {
+    send_page_view: false,
+  });
+
+  const script = document.createElement("script");
+
+  script.id = "portrelia-ga-script";
+  script.async = true;
+
+  // Charge la nouvelle balise Google dédiée à Portrélia.
+  script.src =
+    `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(
+      GOOGLE_TAG_ID
+    )}`;
+
+  script.onerror = () => {
+    console.error(
+      "[Portrélia] Échec du chargement de Google Analytics.",
+      script.src
+    );
+  };
+
+  document.head.appendChild(script);
 }
 
 function disableAnalytics() {
-  if (GA_ID) {
+  if (VALID_GA_ID) {
     window[`ga-disable-${GA_ID}`] = true;
   }
 
   removeAnalyticsCookies();
+}
+
+function getSafePagePath(pathname) {
+  // Exclure les pages contenant des tokens sensibles.
+  const sensitivePaths = [
+    /galerie-partagee/i,
+    /reset.password/i,
+    /reinitialis/i,
+    /activation.compte/i,
+    /invitation/i,
+  ];
+
+  if (sensitivePaths.some((pattern) => pattern.test(pathname))) {
+    return null;
+  }
+
+  // Remplacer les segments d'URL dynamiques sensibles.
+  return pathname
+    .replace(
+      /\/[0-9a-f]{8}-[0-9a-f-]{27,}/gi,
+      "/:id"
+    )
+    .replace(/\/\d+(?=\/|$)/g, "/:id");
 }
 
 export default function CookieConsent() {
@@ -107,23 +156,27 @@ export default function CookieConsent() {
   useEffect(() => {
     if (
       consent !== "accepted" ||
-      !/^G-[A-Z0-9]+$/i.test(GA_ID || "")
+      !VALID_GA_ID ||
+      !VALID_TAG_ID
     ) {
+      return;
+    }
+
+    const pagePath = getSafePagePath(location.pathname);
+
+    if (!pagePath) {
       return;
     }
 
     enableAnalytics();
 
-    const pagePath =
-      location.pathname + location.search;
-
     window.gtag?.("event", "page_view", {
-      page_title: document.title,
-      page_location: window.location.href,
+      page_title: "Portrélia",
+      page_location: window.location.origin + pagePath,
       page_path: pagePath,
       send_to: GA_ID,
     });
-  }, [consent, location.pathname, location.search]);
+  }, [consent, location.pathname]);
 
   const saveConsent = (choice) => {
     try {
