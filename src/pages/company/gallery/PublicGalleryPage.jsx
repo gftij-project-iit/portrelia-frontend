@@ -20,8 +20,9 @@ import {
 } from "react-icons/fi";
 import { ClipLoader } from "react-spinners";
 
-import api from "../../services/api";
+
 import "./PublicGalleryPage.css";
+import api from "../../../services/api";
 
 /*
  * =========================================================
