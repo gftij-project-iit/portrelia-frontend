@@ -9,6 +9,7 @@ import AccountActivationPage from "../pages/Admin/AccountActivationPage";
 import CompanyRoutes from "./companyRoutes";
 
 import ParticipantRoutes from "./ParticipantRoutes";
+import PublicGalleryPage from "../pages/company/gallery/PublicGalleryPage";
 
 function AppRoutes() {
   return (
@@ -19,7 +20,7 @@ function AppRoutes() {
         <Route path="/connexion" element={<PublicRoute><LoginPage /></PublicRoute>} />
         <Route path="/demande-demo" element={<PublicRoute><DemoRequestPage /></PublicRoute>} />
         <Route path="/activation-compte" element={<PublicRoute><AccountActivationPage /></PublicRoute>} />
-
+        <Route path="/galerie-partagee/:token" element={<PublicGalleryPage />} />
         {/* ADMIN */}
         {AdminRoutes}
         {/* ENTREPRISE */}
