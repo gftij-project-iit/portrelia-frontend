@@ -1,3 +1,8 @@
+
+/* ==================================================
+   PORTRÉLIA — DEMANDE DE DÉMONSTRATION
+   ================================================== */
+
 .demo-page {
   width: 100%;
   min-height: 100vh;
@@ -6,12 +11,17 @@
   justify-content: center;
   padding: 50px 20px;
   box-sizing: border-box;
-  background:
-    linear-gradient(
-      180deg,
-      #f9fafb 0%,
-      #f3f4f6 100%
-    );
+  background: linear-gradient(
+    180deg,
+    #f9fafb 0%,
+    #f3f4f6 100%
+  );
+}
+
+.demo-page *,
+.demo-page *::before,
+.demo-page *::after {
+  box-sizing: border-box;
 }
 
 /* CARD */
@@ -20,13 +30,10 @@
   width: 100%;
   max-width: 760px;
   padding: 34px 42px 28px;
-  box-sizing: border-box;
   background: #ffffff;
   border: 1px solid #e4e7ec;
   border-radius: 10px;
-  box-shadow:
-    0 16px 45px
-    rgba(17, 24, 39, 0.08);
+  box-shadow: 0 16px 45px rgba(17, 24, 39, 0.08);
 }
 
 /* BRAND */
@@ -37,7 +44,9 @@
   align-items: center;
   justify-content: center;
   gap: 5px;
-  margin-bottom: 18px;
+  width: fit-content;
+  margin: 0 auto 18px;
+  text-decoration: none;
 }
 
 .demo-logo {
@@ -58,7 +67,7 @@
 
 .demo-header {
   max-width: 600px;
-  margin: 0 auto 30px;
+  margin: 0 auto 24px;
   text-align: center;
 }
 
@@ -88,7 +97,43 @@
   line-height: 1.6;
 }
 
-/* ERROR */
+/* DEMO STEPS */
+
+.demo-process-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 28px;
+  padding: 12px 14px;
+  border: 1px solid #ece6f4;
+  border-radius: 8px;
+  background: #faf8fd;
+  color: #5c5370;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.demo-process-number {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #4b2e83;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.demo-process-separator {
+  margin: 0 6px;
+  color: #9b8bb5;
+}
+
+/* ERRORS */
 
 .demo-form-error {
   width: 100%;
@@ -97,7 +142,6 @@
   gap: 5px;
   margin-bottom: 22px;
   padding: 14px 16px;
-  box-sizing: border-box;
   background: #fff7ed;
   border: 1px solid #fed7aa;
   border-radius: 8px;
@@ -137,12 +181,12 @@
 
 .demo-grid {
   display: grid;
-  grid-template-columns:
-    repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
 }
 
 .demo-field {
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 7px;
@@ -166,11 +210,11 @@
 .demo-field select,
 .demo-field textarea {
   width: 100%;
-  box-sizing: border-box;
   border: 1px solid #d0d5dd;
   border-radius: 6px;
   background: #ffffff;
   color: #111827;
+  font-family: inherit;
   font-size: 13px;
   outline: none;
   transition:
@@ -202,9 +246,7 @@
 .demo-field select:focus,
 .demo-field textarea:focus {
   border-color: #4b2e83;
-  box-shadow:
-    0 0 0 3px
-    rgba(75, 46, 131, 0.08);
+  box-shadow: 0 0 0 3px rgba(75, 46, 131, 0.08);
 }
 
 .demo-field input:disabled,
@@ -228,30 +270,107 @@
   line-height: 1.4;
 }
 
-/* CONSENT */
+/* ==================================================
+   LEGAL SECTION
+   ================================================== */
+
+.demo-legal-panel {
+  margin: 5px 0 21px;
+  padding: 20px;
+  border: 1px solid #e7e0f0;
+  border-radius: 10px;
+  background: #faf9fc;
+}
+
+.demo-legal-heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  margin-bottom: 18px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #e9e5ee;
+}
+
+.demo-legal-symbol {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  border-radius: 9px;
+  background: #eee8f8;
+  color: #4b2e83;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.demo-legal-heading h2 {
+  margin: 0 0 5px;
+  color: #302047;
+  font-size: 14px;
+  font-weight: 750;
+}
+
+.demo-legal-heading p {
+  margin: 0;
+  color: #777085;
+  font-size: 11px;
+  line-height: 1.6;
+}
 
 .demo-consent {
   display: flex;
   align-items: flex-start;
-  gap: 9px;
-  margin: 2px 0 20px;
-  color: #667085;
-  font-size: 11px;
-  line-height: 1.45;
+  gap: 10px;
+  margin: 0 0 15px;
+  color: #555d6d;
+  font-size: 12px;
+  line-height: 1.65;
   cursor: pointer;
 }
 
 .demo-consent input {
-  width: 15px;
-  height: 15px;
-  flex-shrink: 0;
-  margin-top: 1px;
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+  margin: 2px 0 0;
   accent-color: #4b2e83;
   cursor: pointer;
 }
 
 .demo-consent input:disabled {
   cursor: not-allowed;
+}
+
+.demo-consent span {
+  min-width: 0;
+}
+
+.demo-consent strong {
+  color: #4b2e83;
+  font-weight: 800;
+}
+
+.demo-consent a,
+.demo-privacy-notice a {
+  color: #4b2e83;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.demo-consent a:hover,
+.demo-privacy-notice a:hover {
+  color: #30155f;
+}
+
+.demo-privacy-notice {
+  margin: 16px 0 0;
+  padding-top: 14px;
+  border-top: 1px solid #e9e5ee;
+  color: #777085;
+  font-size: 11px;
+  line-height: 1.7;
 }
 
 /* SUBMIT */
@@ -265,19 +384,17 @@
   gap: 9px;
   border: none;
   border-radius: 6px;
-  background:
-    linear-gradient(
-      90deg,
-      #4b2e83 0%,
-      #3d206f 100%
-    );
+  background: linear-gradient(
+    90deg,
+    #4b2e83 0%,
+    #3d206f 100%
+  );
   color: #ffffff;
+  font-family: inherit;
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
-  box-shadow:
-    0 4px 12px
-    rgba(75, 46, 131, 0.14);
+  box-shadow: 0 4px 12px rgba(75, 46, 131, 0.14);
   transition:
     transform 0.16s ease,
     box-shadow 0.16s ease,
@@ -288,9 +405,7 @@
 .demo-submit:hover:not(:disabled) {
   background: #3e246f;
   transform: translateY(-1px);
-  box-shadow:
-    0 6px 16px
-    rgba(75, 46, 131, 0.2);
+  box-shadow: 0 6px 16px rgba(75, 46, 131, 0.2);
 }
 
 .demo-submit:active:not(:disabled) {
@@ -303,12 +418,11 @@
   transform: none;
 }
 
-/* REQUIRED */
-
 .demo-required {
-  margin: 10px 0 0;
+  margin: 12px 0 0;
   color: #98a2b3;
   font-size: 10px;
+  line-height: 1.5;
   text-align: center;
 }
 
@@ -334,19 +448,43 @@
   text-decoration: underline;
 }
 
-/* SUCCESS */
+/* LEGAL FOOTER */
+
+.demo-legal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px 17px;
+  margin-top: 21px;
+  padding-top: 18px;
+  border-top: 1px solid #edf0f3;
+}
+
+.demo-legal-footer a {
+  color: #858899;
+  font-size: 10px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.demo-legal-footer a:hover {
+  color: #4b2e83;
+  text-decoration: underline;
+}
+
+/* ==================================================
+   SUCCESS
+   ================================================== */
 
 .demo-success-card {
   width: 100%;
   max-width: 500px;
   padding: 38px 38px 34px;
-  box-sizing: border-box;
   background: #ffffff;
   border: 1px solid #e4e7ec;
   border-radius: 10px;
-  box-shadow:
-    0 16px 45px
-    rgba(17, 24, 39, 0.08);
+  box-shadow: 0 16px 45px rgba(17, 24, 39, 0.08);
   text-align: center;
 }
 
@@ -372,10 +510,16 @@
 
 .demo-success-card > p {
   max-width: 410px;
-  margin: 0 auto;
+  margin: 0 auto 12px;
   color: #667085;
   font-size: 13px;
   line-height: 1.6;
+}
+
+.demo-success-card > .demo-success-info {
+  margin-top: 16px;
+  color: #73738a;
+  font-size: 12px;
 }
 
 .demo-back-button {
@@ -402,7 +546,20 @@
   transform: translateY(-1px);
 }
 
-/* RESPONSIVE */
+/* ACCESSIBILITY */
+
+.demo-page a:focus-visible,
+.demo-page button:focus-visible,
+.demo-page input:focus-visible,
+.demo-page select:focus-visible,
+.demo-page textarea:focus-visible {
+  outline: 3px solid rgba(75, 46, 131, 0.25);
+  outline-offset: 2px;
+}
+
+/* ==================================================
+   TABLET
+   ================================================== */
 
 @media (max-width: 767.98px) {
   .demo-page {
@@ -424,6 +581,10 @@
   }
 }
 
+/* ==================================================
+   MOBILE
+   ================================================== */
+
 @media (max-width: 575.98px) {
   .demo-page {
     padding: 16px 10px;
@@ -440,7 +601,7 @@
   }
 
   .demo-header {
-    margin-bottom: 24px;
+    margin-bottom: 21px;
   }
 
   .demo-header h1 {
@@ -451,11 +612,49 @@
     font-size: 13px;
   }
 
+  .demo-process-note {
+    gap: 6px;
+    padding: 11px 9px;
+    font-size: 10px;
+  }
+
+  .demo-process-separator {
+    margin: 0 2px;
+  }
+
   .demo-form-error {
     padding: 13px 14px;
   }
 
+  .demo-legal-panel {
+    padding: 16px 14px;
+  }
+
+  .demo-legal-heading {
+    gap: 9px;
+  }
+
+  .demo-consent {
+    font-size: 11px;
+  }
+
+  .demo-privacy-notice {
+    font-size: 10px;
+  }
+
   .demo-success-card {
     padding: 30px 22px;
+  }
+
+  .demo-success-card h1 {
+    font-size: 25px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .demo-page *,
+  .demo-page *::before,
+  .demo-page *::after {
+    transition: none !important;
   }
 }

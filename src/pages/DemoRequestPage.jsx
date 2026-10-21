@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
@@ -7,48 +8,31 @@ import api from "../services/api";
 
 import "./DemoRequestPage.css";
 
+const initialForm = {
+  companyName: "",
+  firstName: "",
+  lastName: "",
+  email: "",
+  phone: "",
+  teamSize: "",
+  message: "",
+  consent: false,
+};
+
 function DemoRequestPage() {
-  const [form, setForm] = useState({
-    companyName: "",
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    teamSize: "",
-    message: "",
-    consent: false,
-  });
-
-  const [submitted, setSubmitted] =
-    useState(false);
-
-  const [submitting, setSubmitting] =
-    useState(false);
-
-  const [
-    errorMessage,
-    setErrorMessage,
-  ] = useState("");
-
-  const [
-    errorCode,
-    setErrorCode,
-  ] = useState("");
+  const [form, setForm] = useState(initialForm);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [errorCode, setErrorCode] = useState("");
 
   const handleChange = (event) => {
-    const {
-      name,
-      value,
-      type,
-      checked,
-    } = event.target;
+    const { name, value, type, checked } = event.target;
 
     setForm((previous) => ({
       ...previous,
-      [name]:
-        type === "checkbox"
-          ? checked
-          : value,
+      [name]: type === "checkbox" ? checked : value,
     }));
 
     if (errorMessage) {
@@ -60,7 +44,19 @@ function DemoRequestPage() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (submitting) {
+    if (submitting) return;
+
+    if (!acceptedTerms) {
+      setErrorMessage(
+        "Veuillez accepter les conditions générales d'utilisation."
+      );
+      return;
+    }
+
+    if (!form.consent) {
+      setErrorMessage(
+        "Veuillez confirmer que notre équipe peut vous recontacter au sujet de votre demande."
+      );
       return;
     }
 
@@ -69,16 +65,25 @@ function DemoRequestPage() {
       setErrorMessage("");
       setErrorCode("");
 
-      const response = await api.post(
-        "/demo-requests",
-        form
-      );
+      // On conserve le payload attendu par le backend existant.
+      // acceptedTerms reste une vérification frontend.
+      const response = await api.post("/demo-requests", {
+        companyName: form.companyName.trim(),
+        firstName: form.firstName.trim(),
+        lastName: form.lastName.trim(),
+        email: form.email.trim(),
+        phone: form.phone.trim(),
+        teamSize: form.teamSize,
+        message: form.message.trim(),
+        consent: form.consent,
+      });
 
-      if (
-        response.status === 200 ||
-        response.status === 201
-      ) {
+      if (response.status === 200 || response.status === 201) {
         setSubmitted(true);
+      } else {
+        setErrorMessage(
+          "La demande n'a pas pu être confirmée. Merci de réessayer."
+        );
       }
     } catch (error) {
       console.error(
@@ -86,16 +91,10 @@ function DemoRequestPage() {
         error
       );
 
-      const apiMessage =
-        error.response?.data?.message;
+      const apiMessage = error.response?.data?.message;
+      const apiCode = error.response?.data?.code;
 
-      const apiCode =
-        error.response?.data?.code;
-
-      setErrorCode(
-        apiCode || "DEMO_REQUEST_ERROR"
-      );
-
+      setErrorCode(apiCode || "DEMO_REQUEST_ERROR");
       setErrorMessage(
         apiMessage ||
           "Une erreur est survenue lors de l'envoi de votre demande. Merci de réessayer."
@@ -107,28 +106,22 @@ function DemoRequestPage() {
 
   if (submitted) {
     return (
-      <section className="demo-page">
-        <div className="demo-success-card">
-
+      <main className="demo-page">
+        <section className="demo-success-card">
           <div className="demo-brand">
             <img
               src={logo}
               alt="Logo Portrélia"
               className="demo-logo"
             />
-
-            <span className="demo-brand-name">
-              Portrélia
-            </span>
+            <span className="demo-brand-name">Portrélia</span>
           </div>
 
-          <div className="demo-success-icon">
+          <div className="demo-success-icon" aria-hidden="true">
             ✓
           </div>
 
-          <h1>
-            Demande envoyée
-          </h1>
+          <h1>Demande envoyée</h1>
 
           <p>
             Merci pour votre intérêt pour Portrélia.
@@ -136,101 +129,84 @@ function DemoRequestPage() {
             vous recontactera prochainement.
           </p>
 
-          <Link
-            to="/"
-            className="demo-back-button"
-          >
+          <p className="demo-success-info">
+            L'envoi de cette demande ne crée pas
+            automatiquement un compte entreprise.
+            L'ouverture d'un accès est soumise
+            à validation.
+          </p>
+
+          <Link to="/" className="demo-back-button">
             Retour à l'accueil
           </Link>
-
-        </div>
-      </section>
+        </section>
+      </main>
     );
   }
 
   return (
-    <section className="demo-page">
-
-      <div className="demo-card">
-
-        {/* BRAND */}
-        <div className="demo-brand">
+    <main className="demo-page">
+      <section className="demo-card">
+        <Link to="/" className="demo-brand">
           <img
             src={logo}
             alt="Logo Portrélia"
             className="demo-logo"
           />
+          <span className="demo-brand-name">Portrélia</span>
+        </Link>
 
-          <span className="demo-brand-name">
-            Portrélia
-          </span>
-        </div>
-
-        {/* HEADER */}
         <div className="demo-header">
-
           <span className="demo-kicker">
             PORTRÉLIA POUR LES ENTREPRISES
           </span>
 
-          <h1>
-            Demander une démo
-          </h1>
+          <h1>Demander une démo</h1>
 
           <p>
             Parlez-nous de votre équipe et de votre besoin.
             Nous vous recontacterons pour vous présenter
             Portrélia et préparer votre premier pilote.
           </p>
-
         </div>
 
-        {/* ERROR */}
+        <div className="demo-process-note">
+          <span className="demo-process-number">1</span>
+          <span>Envoyez votre demande</span>
+          <span className="demo-process-separator">→</span>
+          <span className="demo-process-number">2</span>
+          <span>Notre équipe vous contacte</span>
+        </div>
+
         {errorMessage && (
           <div
             className={`demo-form-error ${
-              errorCode ===
-              "DEMO_REQUEST_REJECTED"
+              errorCode === "DEMO_REQUEST_REJECTED"
                 ? "demo-form-error-important"
                 : ""
             }`}
             role="alert"
           >
             <strong>
-              {errorCode ===
-              "DEMO_REQUEST_REJECTED"
+              {errorCode === "DEMO_REQUEST_REJECTED"
                 ? "Demande non disponible"
                 : "Impossible d'envoyer la demande"}
             </strong>
 
-            <span>
-              {errorMessage}
-            </span>
+            <span>{errorMessage}</span>
 
-            {errorCode ===
-              "DEMO_REQUEST_ACCEPTED" && (
-              <Link
-                to="/connexion"
-                className="demo-error-link"
-              >
+            {errorCode === "DEMO_REQUEST_ACCEPTED" && (
+              <Link to="/connexion" className="demo-error-link">
                 Se connecter
               </Link>
             )}
           </div>
         )}
 
-        {/* FORM */}
-        <form
-          className="demo-form"
-          onSubmit={handleSubmit}
-        >
-
-          {/* ENTREPRISE */}
+        <form className="demo-form" onSubmit={handleSubmit}>
           <div className="demo-field">
-
             <label htmlFor="companyName">
-              Nom de l'entreprise
-              <span>*</span>
+              Nom de l'entreprise <span>*</span>
             </label>
 
             <input
@@ -238,27 +214,19 @@ function DemoRequestPage() {
               name="companyName"
               type="text"
               placeholder="Ex. ACME"
-              value={
-                form.companyName
-              }
-              onChange={
-                handleChange
-              }
+              value={form.companyName}
+              onChange={handleChange}
               autoComplete="organization"
+              maxLength={150}
               disabled={submitting}
               required
             />
-
           </div>
 
-          {/* PRÉNOM + NOM */}
           <div className="demo-grid">
-
             <div className="demo-field">
-
               <label htmlFor="firstName">
-                Prénom
-                <span>*</span>
+                Prénom <span>*</span>
               </label>
 
               <input
@@ -266,24 +234,18 @@ function DemoRequestPage() {
                 name="firstName"
                 type="text"
                 placeholder="Claire"
-                value={
-                  form.firstName
-                }
-                onChange={
-                  handleChange
-                }
+                value={form.firstName}
+                onChange={handleChange}
                 autoComplete="given-name"
+                maxLength={100}
                 disabled={submitting}
                 required
               />
-
             </div>
 
             <div className="demo-field">
-
               <label htmlFor="lastName">
-                Nom
-                <span>*</span>
+                Nom <span>*</span>
               </label>
 
               <input
@@ -291,29 +253,20 @@ function DemoRequestPage() {
                 name="lastName"
                 type="text"
                 placeholder="Martin"
-                value={
-                  form.lastName
-                }
-                onChange={
-                  handleChange
-                }
+                value={form.lastName}
+                onChange={handleChange}
                 autoComplete="family-name"
+                maxLength={100}
                 disabled={submitting}
                 required
               />
-
             </div>
-
           </div>
 
-          {/* EMAIL + PHONE */}
           <div className="demo-grid">
-
             <div className="demo-field">
-
               <label htmlFor="email">
-                Email professionnel
-                <span>*</span>
+                Email professionnel <span>*</span>
               </label>
 
               <input
@@ -321,102 +274,73 @@ function DemoRequestPage() {
                 name="email"
                 type="email"
                 placeholder="claire@entreprise.com"
-                value={
-                  form.email
-                }
-                onChange={
-                  handleChange
-                }
+                value={form.email}
+                onChange={handleChange}
                 autoComplete="email"
+                maxLength={254}
                 disabled={submitting}
                 required
               />
-
             </div>
 
             <div className="demo-field">
-
-              <label htmlFor="phone">
-                Téléphone
-              </label>
+              <label htmlFor="phone">Téléphone</label>
 
               <input
                 id="phone"
                 name="phone"
                 type="tel"
                 placeholder="+33 6 00 00 00 00"
-                value={
-                  form.phone
-                }
-                onChange={
-                  handleChange
-                }
+                value={form.phone}
+                onChange={handleChange}
                 autoComplete="tel"
+                maxLength={30}
                 disabled={submitting}
               />
-
             </div>
-
           </div>
 
-          {/* TEAM SIZE */}
           <div className="demo-field">
-
             <label htmlFor="teamSize">
-              Nombre de collaborateurs concernés
-              <span>*</span>
+              Nombre de collaborateurs concernés <span>*</span>
             </label>
 
             <select
               id="teamSize"
               name="teamSize"
-              value={
-                form.teamSize
-              }
-              onChange={
-                handleChange
-              }
+              value={form.teamSize}
+              onChange={handleChange}
               disabled={submitting}
               required
             >
               <option value="">
                 Sélectionnez une taille d'équipe
               </option>
-
               <option value="1-10">
                 1 à 10 collaborateurs
               </option>
-
               <option value="11-25">
                 11 à 25 collaborateurs
               </option>
-
               <option value="26-50">
                 26 à 50 collaborateurs
               </option>
-
               <option value="51-100">
                 51 à 100 collaborateurs
               </option>
-
               <option value="101-250">
                 101 à 250 collaborateurs
               </option>
-
               <option value="251-500">
                 251 à 500 collaborateurs
               </option>
-
               <option value="500+">
                 Plus de 500 collaborateurs
               </option>
             </select>
-
           </div>
 
-          {/* MESSAGE */}
           <div className="demo-field">
-
             <label htmlFor="message">
               Parlez-nous de votre besoin
             </label>
@@ -424,14 +348,11 @@ function DemoRequestPage() {
             <textarea
               id="message"
               name="message"
-              rows="5"
+              rows={5}
               placeholder="Ex. Nous souhaitons harmoniser les portraits de notre équipe commerciale répartie sur plusieurs sites..."
-              value={
-                form.message
-              }
-              onChange={
-                handleChange
-              }
+              value={form.message}
+              onChange={handleChange}
+              maxLength={3000}
               disabled={submitting}
             />
 
@@ -439,44 +360,87 @@ function DemoRequestPage() {
               Vous pouvez préciser votre contexte,
               votre nombre de sites ou votre délai.
             </span>
-
           </div>
 
-          {/* CONSENT */}
-          <label className="demo-consent">
+          <div className="demo-legal-panel">
+            <div className="demo-legal-heading">
+              <span className="demo-legal-symbol" aria-hidden="true">
+                ✓
+              </span>
 
-            <input
-              type="checkbox"
-              name="consent"
-              checked={
-                form.consent
-              }
-              onChange={
-                handleChange
-              }
-              disabled={submitting}
-              required
-            />
+              <div>
+                <h2>Confidentialité et conditions</h2>
+                <p>
+                  Vos informations sont utilisées pour traiter
+                  votre demande et vous recontacter à son sujet.
+                </p>
+              </div>
+            </div>
 
-            <span>
-              J'accepte d'être recontacté(e) par
-              Portrélia au sujet de cette demande.
-            </span>
+            <label className="demo-consent">
+              <input
+                type="checkbox"
+                checked={acceptedTerms}
+                onChange={(event) =>
+                  setAcceptedTerms(event.target.checked)
+                }
+                disabled={submitting}
+                required
+              />
 
-          </label>
+              <span>
+                J'ai lu et j'accepte les{" "}
+                <Link to="/cgu" target="_blank" rel="noopener noreferrer">
+                  conditions générales d'utilisation
+                </Link>
+                . <strong>*</strong>
+              </span>
+            </label>
 
-          {/* SUBMIT */}
+            <label className="demo-consent">
+              <input
+                type="checkbox"
+                name="consent"
+                checked={form.consent}
+                onChange={handleChange}
+                disabled={submitting}
+                required
+              />
+
+              <span>
+                J'accepte d'être recontacté(e) par
+                l'équipe Portrélia uniquement au sujet
+                de cette demande de démonstration.{" "}
+                <strong>*</strong>
+              </span>
+            </label>
+
+            <p className="demo-privacy-notice">
+              Pour connaître l'utilisation de vos données
+              personnelles et vos droits, consultez notre{" "}
+              <Link
+                to="/politique-confidentialite"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                politique de confidentialité
+              </Link>
+              .
+            </p>
+          </div>
+
           <button
             type="submit"
             className="demo-submit"
-            disabled={submitting}
+            disabled={
+              submitting ||
+              !acceptedTerms ||
+              !form.consent
+            }
           >
             {submitting ? (
               <>
-                <ClipLoader
-                  size={16}
-                  color="#ffffff"
-                />
+                <ClipLoader size={16} color="#ffffff" />
                 Envoi en cours...
               </>
             ) : (
@@ -485,27 +449,27 @@ function DemoRequestPage() {
           </button>
 
           <p className="demo-required">
-            * Champs obligatoires
+            * Champs obligatoires. Aucun paiement
+            ni mot de passe n'est demandé à cette étape.
           </p>
-
         </form>
 
-        {/* FOOTER */}
         <div className="demo-card-footer">
-
-          <span>
-            Vous avez déjà un accès ?
-          </span>
-
-          <Link to="/connexion">
-            Se connecter
-          </Link>
-
+          <span>Vous avez déjà un accès ?</span>
+          <Link to="/connexion">Se connecter</Link>
         </div>
 
-      </div>
-
-    </section>
+        <nav className="demo-legal-footer" aria-label="Informations légales">
+          <Link to="/mentions-legales">Mentions légales</Link>
+          <Link to="/politique-confidentialite">
+            Confidentialité
+          </Link>
+          <Link to="/cgu">CGU</Link>
+          <Link to="/cgv">CGV</Link>
+          <Link to="/politique-cookies">Cookies</Link>
+        </nav>
+      </section>
+    </main>
   );
 }
 

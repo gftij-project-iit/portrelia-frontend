@@ -13,6 +13,7 @@ import PublicGalleryPage from "../pages/company/gallery/PublicGalleryPage";
 import ForgotPasswordPage from "../pages/ForgotPasswordPage";
 import ResetPasswordPage from "../pages/ResetPasswordPage";
 import CookieConsent from "../components/CookieConsent";
+import LegalPage from "../pages/legal/LegalPage";
 
 function AppRoutes() {
   return (
@@ -33,6 +34,32 @@ function AppRoutes() {
       <Route
         path="/reinitialiser-mot-de-passe"
         element={<ResetPasswordPage />}
+      />
+
+      {/* PAGES LÉGALES PUBLIQUES */}
+      <Route
+        path="/politique-confidentialite"
+        element={<LegalPage />}
+      />
+
+      <Route
+        path="/mentions-legales"
+        element={<LegalPage />}
+      />
+
+      <Route
+        path="/cgu"
+        element={<LegalPage />}
+      />
+
+      <Route
+        path="/cgv"
+        element={<LegalPage />}
+      />
+
+      <Route
+        path="/politique-cookies"
+        element={<LegalPage />}
       />
         {/* ADMIN */}
         {AdminRoutes}
