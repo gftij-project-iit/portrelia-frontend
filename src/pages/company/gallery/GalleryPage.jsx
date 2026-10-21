@@ -73,7 +73,6 @@ const formatDate = (value) => {
   if (!value) return "—";
 
   const date = new Date(value);
-
   if (Number.isNaN(date.getTime())) return "—";
 
   return new Intl.DateTimeFormat("fr-FR", {
@@ -99,6 +98,45 @@ const openDownload = (value) => {
 
   window.open(value, "_blank", "noopener,noreferrer");
 };
+
+/*
+ * Validation des URL de partage.
+ *
+ * Les URL proviennent du backend.
+ * On ne conserve jamais le token dans localStorage.
+ *
+ * Le domaine doit correspondre au frontend configuré
+ * ou au site actuellement utilisé.
+ */
+
+const normalizeShareUrl = (value) => {
+  if (!value || typeof value !== "string") return "";
+
+  try {
+    const url = new URL(value);
+
+    const localDevelopment =
+      url.protocol === "http:" &&
+      ["localhost", "127.0.0.1"].includes(url.hostname);
+
+    const secure = url.protocol === "https:";
+
+    const validPath =
+      /^\/galerie-partagee\/[a-f0-9]{64}\/?$/.test(url.pathname);
+
+    if ((!secure && !localDevelopment) || !validPath) {
+      return "";
+    }
+
+    return url.href;
+  } catch {
+    return "";
+  }
+};
+
+/* =========================================================
+   COMPOSANT
+========================================================= */
 
 function GalleryPage() {
   const navigate = useNavigate();
@@ -133,6 +171,14 @@ function GalleryPage() {
 
   const [shareActive, setShareActive] = useState(false);
   const [shareInfo, setShareInfo] = useState(null);
+
+  /*
+   * Ce lien est récupéré depuis PostgreSQL
+   * via le backend.
+   *
+   * Aucun stockage navigateur.
+   */
+
   const [shareUrl, setShareUrl] = useState("");
 
   const [shareError, setShareError] = useState("");
@@ -145,49 +191,49 @@ function GalleryPage() {
      CHARGEMENT DES PORTRAITS
   ========================================================= */
 
-  const loadPortraits = useCallback(async ({
-    cursor = null,
-    append = false,
-    signal,
-  } = {}) => {
-    const response = await api.get(
-      "/company/gallery/portraits",
-      {
-        signal,
-        timeout: 60000,
-        params: cursor ? { cursor } : {},
-      }
-    );
-
-    if (signal?.aborted) return;
-
-    const result = normalizeResponse(response);
-    const received = result.portraits.map(normalizePortrait);
-
-    setPortraits((previous) => {
-      if (!append) return received;
-
-      const ids = new Set(
-        previous.map((portrait) => String(portrait.id))
+  const loadPortraits = useCallback(
+    async ({ cursor = null, append = false, signal } = {}) => {
+      const response = await api.get(
+        "/company/gallery/portraits",
+        {
+          signal,
+          timeout: 60000,
+          params: cursor ? { cursor } : {},
+        }
       );
 
-      return [
-        ...previous,
-        ...received.filter(
-          (portrait) => !ids.has(String(portrait.id))
-        ),
-      ];
-    });
+      if (signal?.aborted) return;
 
-    setHasMore(result.hasMore);
-    setNextCursor(result.nextCursor);
-  }, []);
+      const result = normalizeResponse(response);
+      const received = result.portraits.map(normalizePortrait);
+
+      setPortraits((previous) => {
+        if (!append) return received;
+
+        const ids = new Set(
+          previous.map((portrait) => String(portrait.id))
+        );
+
+        return [
+          ...previous,
+          ...received.filter(
+            (portrait) => !ids.has(String(portrait.id))
+          ),
+        ];
+      });
+
+      setHasMore(result.hasMore);
+      setNextCursor(result.nextCursor);
+    },
+    []
+  );
 
   useEffect(() => {
     const controller = new AbortController();
 
     const initialize = async () => {
       try {
+        setLoading(true);
         setError("");
 
         await loadPortraits({
@@ -242,12 +288,7 @@ function GalleryPage() {
   };
 
   const handleLoadMore = async () => {
-    if (
-      !hasMore ||
-      !nextCursor ||
-      loadingMore ||
-      refreshing
-    ) {
+    if (!hasMore || !nextCursor || loadingMore || refreshing) {
       return;
     }
 
@@ -305,8 +346,7 @@ function GalleryPage() {
         .join(" ")
         .toLowerCase();
 
-      const matchesSearch =
-        !query || content.includes(query);
+      const matchesSearch = !query || content.includes(query);
 
       const matchesCampaign =
         campaignFilter === "ALL" ||
@@ -417,17 +457,32 @@ function GalleryPage() {
   };
 
   /* =========================================================
-     CHARGEMENT DU PARTAGE EXISTANT
-
-     Le backend conserve le hash du token.
-     Il peut confirmer qu'un lien existe, mais ne peut pas
-     récupérer son URL après fermeture de la page.
-  ========================================================= */
+     RÉCUPÉRATION DU LIEN EXISTANT — CORRECTION
+  =========================================================
+   *
+   * Le backend doit retourner :
+   *
+   * {
+   *   success: true,
+   *   active: true,
+   *   share: {
+   *     id: ...,
+   *     expiresAt: ...
+   *   },
+   *   shareUrl: "https://.../galerie-partagee/TOKEN"
+   * }
+   *
+   * Le lien est disponible même après déconnexion,
+   * actualisation ou changement d'appareil.
+   */
 
   const loadShareStatus = useCallback(async () => {
     const response = await api.get(
       "/company/gallery/share",
-      { timeout: 60000 }
+      {
+        timeout: 60000,
+        params: { _: Date.now() },
+      }
     );
 
     if (response.data?.success !== true) {
@@ -438,13 +493,39 @@ function GalleryPage() {
 
     const active = response.data.active === true;
 
-    setShareActive(active);
-    setShareInfo(response.data.share || null);
+    const receivedUrl = normalizeShareUrl(
+      response.data.shareUrl ||
+      response.data.share?.shareUrl ||
+      ""
+    );
 
-    if (!active) {
-      setShareUrl("");
-    }
+    setShareActive(active);
+    setShareInfo(
+      active ? response.data.share || null : null
+    );
+
+    /*
+     * CORRECTION PRINCIPALE :
+     *
+     * Au lieu de conserver l'URL uniquement
+     * après un POST, on récupère celle du GET.
+     *
+     * Si le partage a été révoqué ou expiré,
+     * on efface immédiatement le lien.
+     */
+
+    setShareUrl(active ? receivedUrl : "");
+    setCopied(false);
+
+    return {
+      active,
+      shareUrl: active ? receivedUrl : "",
+    };
   }, []);
+
+  /* =========================================================
+     OUVERTURE DE LA MODALE DE PARTAGE
+  ========================================================= */
 
   const handleOpenShare = async () => {
     setShareOpen(true);
@@ -481,13 +562,7 @@ function GalleryPage() {
   };
 
   /* =========================================================
-     CRÉATION D'UN LIEN PUBLIC
-
-     Le serveur génère le token.
-     Le frontend ne fabrique jamais le lien lui-même.
-
-     La confirmation n'est pas une preuve de consentement.
-     Le backend devra vérifier les autorisations de partage.
+     CRÉATION / REMPLACEMENT DU LIEN
   ========================================================= */
 
   const handleCreateShare = async () => {
@@ -518,25 +593,32 @@ function GalleryPage() {
         throw new Error("Lien de partage invalide.");
       }
 
-      const url = new URL(response.data.shareUrl);
+      const newUrl = normalizeShareUrl(
+        response.data.shareUrl
+      );
 
-      if (
-        url.protocol !== "https:" ||
-        url.origin !== window.location.origin
-      ) {
+      if (!newUrl) {
         throw new Error(
-          "Le lien retourné ne correspond pas au site Portrélia."
+          "Le backend a retourné une URL de partage invalide."
         );
       }
 
-      setShareUrl(url.href);
+      /*
+       * Le nouveau lien remplace l'ancien.
+       *
+       * Le backend stocke sa version chiffrée
+       * et révoque l'ancien lien.
+       */
+
+      setShareUrl(newUrl);
       setShareActive(true);
+
       setShareInfo({
         expiresAt: response.data.expiresAt,
       });
 
       setShareSuccess(
-        "Lien créé. Copiez-le maintenant pour le partager."
+        "Lien créé avec succès. Il restera disponible tant qu'il sera actif."
       );
 
       setShareConfirmed(false);
@@ -553,6 +635,10 @@ function GalleryPage() {
       setShareSaving(false);
     }
   };
+
+  /* =========================================================
+     COPIE DU LIEN
+  ========================================================= */
 
   const handleCopyShare = async () => {
     if (!shareUrl) return;
@@ -572,11 +658,7 @@ function GalleryPage() {
   };
 
   /* =========================================================
-     RÉVOCATION DU LIEN
-
-     Le token cesse d'être accepté par l'API publique.
-     Les URL Supabase déjà émises restent cependant valables
-     jusqu'à leur expiration.
+     RÉVOCATION
   ========================================================= */
 
   const handleRevokeShare = async () => {
@@ -602,6 +684,11 @@ function GalleryPage() {
         throw new Error("Révocation non confirmée.");
       }
 
+      /*
+       * Lien désactivé :
+       * on le supprime immédiatement de l'interface.
+       */
+
       setShareActive(false);
       setShareInfo(null);
       setShareUrl("");
@@ -622,6 +709,10 @@ function GalleryPage() {
       setShareRevoking(false);
     }
   };
+
+  /* =========================================================
+     AFFICHAGE
+  ========================================================= */
 
   return (
     <div className="company-gallery-page">
@@ -651,6 +742,7 @@ function GalleryPage() {
               refreshing ? "company-gallery-spin" : ""
             }
           />
+
           {refreshing ? "Actualisation..." : "Actualiser"}
         </button>
       </header>
@@ -659,6 +751,7 @@ function GalleryPage() {
       {error && (
         <div className="company-gallery-alert" role="alert">
           <FiAlertCircle />
+
           <span>{error}</span>
 
           <button
@@ -731,6 +824,7 @@ function GalleryPage() {
 
           <span className="company-gallery-quick-text">
             <strong>Voir tous les portraits</strong>
+
             <small>
               Afficher les portraits finaux de toutes les campagnes
             </small>
@@ -750,6 +844,7 @@ function GalleryPage() {
 
           <span className="company-gallery-quick-text">
             <strong>Partager la galerie</strong>
+
             <small>
               Créer ou gérer un lien public temporaire
             </small>
@@ -855,7 +950,6 @@ function GalleryPage() {
             <p>Chargement des portraits...</p>
           </div>
         ) : filteredPortraits.length === 0 ? (
-          /* ÉTAT VIDE */
           <div className="company-gallery-empty">
             {hasFilters ? (
               <FiSearch size={38} />
@@ -1048,6 +1142,7 @@ function GalleryPage() {
 
                 <div>
                   <h2>Partager la galerie</h2>
+
                   <p>
                     Créez un lien de consultation temporaire.
                   </p>
@@ -1079,6 +1174,7 @@ function GalleryPage() {
                 </div>
               ) : (
                 <>
+                  {/* ERREURS */}
                   {shareError && (
                     <div
                       className="company-gallery-share-alert"
@@ -1089,6 +1185,7 @@ function GalleryPage() {
                     </div>
                   )}
 
+                  {/* SUCCÈS */}
                   {shareSuccess && (
                     <div
                       className="company-gallery-share-success"
@@ -1099,7 +1196,7 @@ function GalleryPage() {
                     </div>
                   )}
 
-                  {/* STATUT DU LIEN */}
+                  {/* STATUT DU PARTAGE */}
                   <div className="company-gallery-share-status">
                     <div>
                       <span
@@ -1124,9 +1221,11 @@ function GalleryPage() {
                     </span>
                   </div>
 
+                  {/* EXPIRATION */}
                   {shareActive && shareInfo?.expiresAt && (
                     <div className="company-gallery-share-expiration">
                       <FiClock />
+
                       <span>
                         Expiration :{" "}
                         <strong>
@@ -1136,11 +1235,22 @@ function GalleryPage() {
                     </div>
                   )}
 
-                  {/* URL DISPONIBLE APRÈS CRÉATION */}
-                  {shareUrl && (
+                  {/* =================================================
+                      LIEN PERSISTANT — NOUVEAU COMPORTEMENT
+
+                      Il apparaît :
+                      - juste après sa création ;
+                      - après fermeture de la modale ;
+                      - après actualisation ;
+                      - après reconnexion ;
+                      - depuis un autre appareil.
+
+                      À condition que le backend retourne shareUrl.
+                  ================================================= */}
+                  {shareActive && shareUrl && (
                     <div className="company-gallery-share-link-block">
                       <label htmlFor="galleryShareUrl">
-                        Lien public
+                        Lien public actif
                       </label>
 
                       <div className="company-gallery-share-link-input">
@@ -1187,22 +1297,23 @@ function GalleryPage() {
                     </div>
                   )}
 
-                  {/* LIEN ACTIF MAIS TOKEN INDISPONIBLE */}
+                  {/* ANCIEN PARTAGE SANS TOKEN CHIFFRÉ */}
                   {shareActive && !shareUrl && (
                     <div className="company-gallery-share-notice">
                       <FiInfo />
 
                       <p>
-                        Un lien existe déjà. Pour des raisons de
-                        sécurité, son adresse ne peut pas être
-                        récupérée après sa création. Vous pouvez
-                        en générer un nouveau, ce qui désactivera
-                        l'ancien.
+                        Un partage est actif, mais son lien
+                        n'est pas récupérable. Il a peut-être
+                        été créé avant l'enregistrement chiffré
+                        des liens. Générez un nouveau lien une
+                        seule fois pour pouvoir ensuite le
+                        retrouver à chaque visite.
                       </p>
                     </div>
                   )}
 
-                  {/* CONFIRMATION */}
+                  {/* CONFIRMATION AVANT CRÉATION */}
                   <label className="company-gallery-share-consent">
                     <input
                       type="checkbox"
@@ -1219,7 +1330,7 @@ function GalleryPage() {
                     </span>
                   </label>
 
-                  {/* CRÉATION */}
+                  {/* CRÉATION / NOUVEAU LIEN */}
                   <div className="company-gallery-share-create">
                     <div>
                       <strong>
@@ -1255,6 +1366,7 @@ function GalleryPage() {
                       ) : (
                         <>
                           <FiLink />
+
                           {shareActive
                             ? "Nouveau lien"
                             : "Créer le lien"}
@@ -1268,6 +1380,7 @@ function GalleryPage() {
                     <div className="company-gallery-share-danger">
                       <div>
                         <strong>Désactiver le partage</strong>
+
                         <span>
                           Empêche les nouveaux accès via ce lien.
                         </span>
@@ -1378,18 +1491,14 @@ function GalleryPage() {
                 <button
                   type="button"
                   className="company-gallery-modal-arrow"
-                  onClick={() =>
-                    changeSelection(-1)
-                  }
+                  onClick={() => changeSelection(-1)}
                   aria-label="Portrait précédent"
                 >
                   <FiChevronLeft />
                 </button>
               )}
 
-              {isTrustedImageUrl(
-                selectedPortrait.imageUrl
-              ) ? (
+              {isTrustedImageUrl(selectedPortrait.imageUrl) ? (
                 <img
                   src={selectedPortrait.imageUrl}
                   alt={`Portrait final de ${getFullName(
@@ -1408,9 +1517,7 @@ function GalleryPage() {
                 <button
                   type="button"
                   className="company-gallery-modal-arrow"
-                  onClick={() =>
-                    changeSelection(1)
-                  }
+                  onClick={() => changeSelection(1)}
                   aria-label="Portrait suivant"
                 >
                   <FiChevronRight />
@@ -1425,9 +1532,7 @@ function GalleryPage() {
                 </strong>
 
                 <span>
-                  {formatDate(
-                    selectedPortrait.createdAt
-                  )}
+                  {formatDate(selectedPortrait.createdAt)}
                 </span>
               </div>
 
@@ -1438,9 +1543,7 @@ function GalleryPage() {
                   <button
                     type="button"
                     onClick={() =>
-                      openDownload(
-                        selectedPortrait.downloadUrl
-                      )
+                      openDownload(selectedPortrait.downloadUrl)
                     }
                   >
                     <FiDownload />
