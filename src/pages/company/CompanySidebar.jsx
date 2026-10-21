@@ -8,7 +8,6 @@ import {
   FiImage,
   FiUsers,
   FiCamera,
-  FiPackage,
   FiCreditCard,
   FiSettings,
   FiZap,
@@ -53,11 +52,7 @@ function CompanySidebar() {
       path: "/dashboard/galerie",
       icon: <FiCamera />,
     },
-    {
-      label: "Livraisons",
-      path: "/dashboard/livraisons",
-      icon: <FiPackage />,
-    },
+    
     {
       label: "Abonnement",
       path: "/dashboard/abonnement",

@@ -18,6 +18,9 @@ import RequiredActionPage from "../pages/RequiredActionPage";
 import SubscriptionGuard from "../context/SubscriptionGuard";
 import ChoosePlanPage from "../pages/company/subscription/ChoosePlanPage";
 import SubscriptionPage from "../pages/company/subscription/SubscriptionPage";
+import BillingPage from "../pages/company/billing/BillingPage";
+import CollaboratorsPage from "../pages/company/collaborators/CollaboratorsPage";
+import GalleryPage from "../pages/company/gallery/GalleryPage";
 
 const CompanyRoutes = (
   <>
@@ -98,8 +101,21 @@ const CompanyRoutes = (
       />
 
       <Route
+        path="collaborateurs"
+        element={<CollaboratorsPage />}
+      />
+      <Route
+        path="galerie"
+        element={<GalleryPage />}
+      />
+
+      <Route
         path="abonnement"
         element={<SubscriptionPage />}
+      />
+      <Route
+        path="facturation"
+        element={<BillingPage />}
       />
     </Route>
   </>
