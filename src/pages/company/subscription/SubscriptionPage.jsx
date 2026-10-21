@@ -19,12 +19,14 @@ import {
   FiStar,
   FiSettings,
   FiExternalLink,
+  FiCalendar,
+  FiClock,
+  FiInfo,
 } from "react-icons/fi";
 import { ClipLoader } from "react-spinners";
 
 import { useAuth } from "../../../context/AuthContext";
 import api from "../../../services/api";
-
 import "./SubscriptionPage.css";
 
 const normalizePlans = (response) => {
@@ -60,9 +62,18 @@ const normalizePlans = (response) => {
       plan.maxPortraitsPerMonth ??
       plan.max_portraits_per_month ??
       null,
-    allStyles: plan.allStyles ?? plan.all_styles ?? false,
-    hdDownload: plan.hdDownload ?? plan.hd_download ?? false,
-    zipExport: plan.zipExport ?? plan.zip_export ?? false,
+    allStyles:
+      plan.allStyles ??
+      plan.all_styles ??
+      false,
+    hdDownload:
+      plan.hdDownload ??
+      plan.hd_download ??
+      false,
+    zipExport:
+      plan.zipExport ??
+      plan.zip_export ??
+      false,
     customBranding:
       plan.customBranding ??
       plan.custom_branding ??
@@ -88,31 +99,27 @@ const formatPrice = (price, currency = "EUR") => {
     currency,
     minimumFractionDigits: 0,
     maximumFractionDigits: 2,
-  }).format(Number(price));
+  }).format(Number(price ?? 0));
 };
 
-const formatDate = (date) => {
-  if (!date) return null;
+const formatDate = (value) => {
+  if (!value) return null;
 
-  const parsed = new Date(date);
-
-  if (Number.isNaN(parsed.getTime())) {
-    return null;
-  }
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return null;
 
   return new Intl.DateTimeFormat("fr-FR", {
     day: "2-digit",
     month: "long",
     year: "numeric",
-  }).format(parsed);
+    timeZone: "Europe/Paris",
+  }).format(date);
 };
 
-const isPremiumActive = (user) => {
-  return (
-    user?.subscription?.status === "ACTIVE" &&
-    user?.subscription?.plan?.code === "PREMIUM"
-  );
-};
+const isPremiumActive = (user) => (
+  user?.subscription?.status === "ACTIVE" &&
+  user?.subscription?.plan?.code === "PREMIUM"
+);
 
 const features = [
   {
@@ -153,7 +160,6 @@ function SubscriptionPage() {
   const [error, setError] = useState("");
   const [reloadKey, setReloadKey] = useState(0);
   const [paymentStatus, setPaymentStatus] = useState("idle");
-
   const [portalLoading, setPortalLoading] = useState(false);
   const [portalError, setPortalError] = useState("");
 
@@ -162,13 +168,53 @@ function SubscriptionPage() {
 
   const subscription = user?.subscription;
   const isActive = subscription?.status === "ACTIVE";
-
   const planCode = isActive
-    ? subscription?.plan?.code
+    ? String(subscription?.plan?.code || "").toUpperCase()
     : null;
 
   const isPremium = planCode === "PREMIUM";
   const isFree = planCode === "FREE";
+
+  const cancellationValue =
+    subscription?.cancelAtPeriodEnd ??
+    subscription?.cancel_at_period_end;
+
+  const cancellationKnown = typeof cancellationValue === "boolean";
+
+  const cancellationScheduled =
+    isPremium &&
+    isActive &&
+    cancellationValue === true;
+
+  const currentPlan = plans.find(
+    (plan) => plan.code === planCode
+  );
+
+  const periodEnd = formatDate(subscription?.currentPeriodEnd);
+
+  const periodStart = formatDate(
+    subscription?.currentPeriodStart
+  );
+
+  const displayName =
+    currentPlan?.name ||
+    subscription?.plan?.name ||
+    "Aucun abonnement";
+
+  const displayDescription =
+    currentPlan?.description ||
+    subscription?.plan?.description ||
+    "Aucune offre active pour le moment.";
+
+  const planPrice =
+    currentPlan?.price ??
+    subscription?.plan?.priceMonthly ??
+    0;
+
+  const planCurrency =
+    currentPlan?.currency ??
+    subscription?.plan?.currency ??
+    "EUR";
 
   useEffect(() => {
     const controller = new AbortController();
@@ -178,7 +224,6 @@ function SubscriptionPage() {
     })
       .then((response) => {
         if (controller.signal.aborted) return;
-
         setPlans(normalizePlans(response));
         setError("");
       })
@@ -245,7 +290,6 @@ function SubscriptionPage() {
 
           if (isPremiumActive(updatedUser)) {
             setPaymentStatus("success");
-            console.log("✅ Abonnement PREMIUM confirmé");
             return;
           }
         }
@@ -304,7 +348,7 @@ function SubscriptionPage() {
         response.data?.success !== true ||
         !response.data?.user
       ) {
-        throw new Error("Réponse utilisateur invalide");
+        throw new Error("Réponse utilisateur invalide.");
       }
 
       const updatedUser = response.data.user;
@@ -325,6 +369,7 @@ function SubscriptionPage() {
       console.error("Actualisation abonnement :", err);
 
       setError(
+        err.response?.data?.message ||
         "Impossible d'actualiser votre abonnement."
       );
     } finally {
@@ -383,7 +428,9 @@ function SubscriptionPage() {
           !url.hostname.endsWith(".billing.stripe.com")
         )
       ) {
-        throw new Error("Adresse de redirection Stripe invalide.");
+        throw new Error(
+          "Adresse de redirection Stripe invalide."
+        );
       }
 
       window.location.assign(url.href);
@@ -399,14 +446,6 @@ function SubscriptionPage() {
       setPortalLoading(false);
     }
   };
-
-  const currentPlan = plans.find(
-    (plan) => plan.code === planCode
-  );
-
-  const nextBillingDate = formatDate(
-    subscription?.currentPeriodEnd
-  );
 
   const effectivePaymentStatus =
     payment !== "success"
@@ -457,9 +496,11 @@ function SubscriptionPage() {
             role="status"
           >
             <ClipLoader size={25} color="#4f2e94" />
+
             <strong>
               Vérification de votre abonnement
             </strong>
+
             <span>
               Nous vérifions l'activation de Premium.
               Cela peut prendre quelques instants.
@@ -558,6 +599,7 @@ function SubscriptionPage() {
         >
           <FiAlertCircle />
           <span>{portalError}</span>
+
           <button
             type="button"
             className="company-subscription-refresh"
@@ -572,6 +614,7 @@ function SubscriptionPage() {
       {loading ? (
         <div className="company-subscription-loading">
           <ClipLoader size={30} color="#4f2e94" />
+
           <span>
             Chargement de votre abonnement...
           </span>
@@ -590,49 +633,97 @@ function SubscriptionPage() {
                 </span>
 
                 <div className="company-subscription-plan-title">
-                  <h2>
-                    {currentPlan?.name ||
-                      subscription?.plan?.name ||
-                      "Aucun abonnement"}
-                  </h2>
+                  <h2>{displayName}</h2>
 
                   <span
                     className={`company-subscription-status ${
                       isActive
-                        ? "company-subscription-status-active"
+                        ? cancellationScheduled
+                          ? "company-subscription-status-inactive"
+                          : "company-subscription-status-active"
                         : "company-subscription-status-inactive"
                     }`}
                   >
-                    {isActive ? "Actif" : "Inactif"}
+                    {cancellationScheduled
+                      ? "Résiliation programmée"
+                      : isActive
+                        ? "Actif"
+                        : "Inactif"}
                   </span>
                 </div>
 
-                <p>
-                  {currentPlan?.description ||
-                    subscription?.plan?.description ||
-                    "Aucune offre active pour le moment."}
-                </p>
+                <p>{displayDescription}</p>
+
+                {isPremium &&
+                  isActive &&
+                  cancellationScheduled && (
+                    <p
+                      style={{
+                        display: "flex",
+                        alignItems: "flex-start",
+                        gap: 9,
+                        marginTop: 14,
+                        color: "#92400e",
+                        lineHeight: 1.6,
+                      }}
+                    >
+                      <FiClock
+                        style={{
+                          flexShrink: 0,
+                          marginTop: 4,
+                        }}
+                      />
+
+                      <span>
+                        Votre abonnement prendra fin
+                        {periodEnd
+                          ? ` le ${periodEnd}`
+                          : " à la fin de votre période payée"}
+                        . Vous conservez vos avantages
+                        Premium jusqu'à cette date.
+                      </span>
+                    </p>
+                  )}
+
+                {isPremium &&
+                  isActive &&
+                  !cancellationScheduled &&
+                  periodEnd && (
+                    <p
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 9,
+                        marginTop: 14,
+                        lineHeight: 1.6,
+                      }}
+                    >
+                      <FiCalendar style={{ flexShrink: 0 }} />
+
+                      <span>
+                        {cancellationKnown
+                          ? `Prochain renouvellement : ${periodEnd}`
+                          : `Période en cours jusqu'au ${periodEnd}`}
+                      </span>
+                    </p>
+                  )}
               </div>
             </div>
 
             <div className="company-subscription-overview-side">
               <div className="company-subscription-price">
                 <strong>
-                  {formatPrice(
-                    currentPlan?.price ??
-                      subscription?.plan?.priceMonthly ??
-                      0,
-                    currentPlan?.currency ??
-                      subscription?.plan?.currency ??
-                      "EUR"
-                  )}
+                  {formatPrice(planPrice, planCurrency)}
                 </strong>
                 <span>/ mois</span>
               </div>
 
-              {nextBillingDate && (
+              {periodEnd && isPremium && (
                 <span className="company-subscription-period">
-                  Fin de période : {nextBillingDate}
+                  {cancellationScheduled
+                    ? "Fin d'accès"
+                    : "Fin de période"}{" "}
+                  : {periodEnd}
                 </span>
               )}
 
@@ -652,7 +743,9 @@ function SubscriptionPage() {
                 <>
                   <span className="company-subscription-premium-label">
                     <FiCheckCircle />
-                    Offre Premium activée
+                    {cancellationScheduled
+                      ? "Accès Premium conservé"
+                      : "Offre Premium activée"}
                   </span>
 
                   <button
@@ -664,7 +757,9 @@ function SubscriptionPage() {
                   >
                     {portalLoading ? (
                       <>
-                        <FiRefreshCw className="company-subscription-spin" />
+                        <FiRefreshCw
+                          className="company-subscription-spin"
+                        />
                         Ouverture...
                       </>
                     ) : (
@@ -679,6 +774,95 @@ function SubscriptionPage() {
               )}
             </div>
           </section>
+
+          {isPremium && cancellationScheduled && (
+            <div
+              role="status"
+              style={{
+                display: "flex",
+                alignItems: "flex-start",
+                gap: 14,
+                padding: "18px 20px",
+                marginTop: 18,
+                border: "1px solid #f5d7a4",
+                borderRadius: 14,
+                background: "#fffaf0",
+                color: "#855a18",
+              }}
+            >
+              <FiInfo
+                size={20}
+                style={{ flexShrink: 0, marginTop: 2 }}
+              />
+
+              <div style={{ lineHeight: 1.6 }}>
+                <strong style={{ display: "block" }}>
+                  Votre résiliation est programmée
+                </strong>
+
+                <span>
+                  Votre accès Premium reste actif
+                  {periodEnd
+                    ? ` jusqu'au ${periodEnd}`
+                    : " jusqu'à la fin de la période payée"}
+                  . Vous pouvez annuler cette résiliation
+                  depuis le portail Stripe en cliquant sur
+                  « Gérer mon abonnement ».
+                </span>
+              </div>
+            </div>
+          )}
+
+          {isPremium &&
+            isActive &&
+            !cancellationKnown && (
+              <div
+                role="note"
+                style={{
+                  display: "flex",
+                  alignItems: "flex-start",
+                  gap: 10,
+                  marginTop: 16,
+                  fontSize: 13,
+                  lineHeight: 1.6,
+                  color: "#667085",
+                }}
+              >
+                <FiInfo
+                  size={17}
+                  style={{
+                    flexShrink: 0,
+                    marginTop: 2,
+                  }}
+                />
+
+                <span>
+                  Pour consulter le renouvellement ou
+                  une éventuelle résiliation programmée,
+                  ouvrez la gestion de votre abonnement.
+                </span>
+              </div>
+            )}
+
+          {isPremium && periodStart && (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                flexWrap: "wrap",
+                gap: 8,
+                marginTop: 15,
+                fontSize: 13,
+                color: "#667085",
+              }}
+            >
+              <FiCalendar />
+              <span>
+                Période d'abonnement commencée
+                le {periodStart}
+              </span>
+            </div>
+          )}
 
           <div className="company-subscription-section-heading">
             <div>
@@ -697,9 +881,7 @@ function SubscriptionPage() {
 
               <strong>
                 {currentPlan
-                  ? formatLimit(
-                      currentPlan.maxActiveCampaigns
-                    )
+                  ? formatLimit(currentPlan.maxActiveCampaigns)
                   : "—"}
               </strong>
 
@@ -729,9 +911,7 @@ function SubscriptionPage() {
 
               <strong>
                 {currentPlan
-                  ? formatLimit(
-                      currentPlan.maxPortraitsPerMonth
-                    )
+                  ? formatLimit(currentPlan.maxPortraitsPerMonth)
                   : "—"}
               </strong>
 
@@ -752,9 +932,9 @@ function SubscriptionPage() {
           <section className="company-subscription-features">
             {features.map((feature) => {
               const Icon = feature.icon;
-
               const available = Boolean(
-                currentPlan?.[feature.key]
+                currentPlan?.[feature.key] ??
+                subscription?.plan?.[feature.key]
               );
 
               return (
@@ -814,10 +994,7 @@ function SubscriptionPage() {
                 </p>
               </div>
 
-              <button
-                type="button"
-                onClick={goToPremium}
-              >
+              <button type="button" onClick={goToPremium}>
                 Découvrir Premium
                 <FiArrowRight />
               </button>
