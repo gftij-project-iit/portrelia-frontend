@@ -6,8 +6,6 @@ import {
   FiUsers,
   FiImage,
   FiLayers,
-  FiCreditCard,
-  FiSettings,
   FiMoreHorizontal,
   FiChevronsLeft,
   FiChevronsRight,
@@ -241,43 +239,9 @@ function AdminSidebar({
           <span className="admin-sidebar-active-indicator" />
         </NavLink>
 
-        <NavLink
-          to="/admin/livraisons"
-          title="Livraisons"
-          className={getLinkClass}
-          onMouseEnter={handlePreviewOpen}
-        >
-          <span className="admin-sidebar-link-icon">
-            <FiCreditCard />
-          </span>
+       
 
-          <span className="admin-sidebar-link-text">
-            Livraisons
-          </span>
-
-          <span className="admin-sidebar-active-indicator" />
-        </NavLink>
-
-        <div className="admin-sidebar-section-label">
-          <span>Système</span>
-        </div>
-
-        <NavLink
-          to="/admin/parametres"
-          title="Paramètres"
-          className={getLinkClass}
-          onMouseEnter={handlePreviewOpen}
-        >
-          <span className="admin-sidebar-link-icon">
-            <FiSettings />
-          </span>
-
-          <span className="admin-sidebar-link-text">
-            Paramètres
-          </span>
-
-          <span className="admin-sidebar-active-indicator" />
-        </NavLink>
+        
       </nav>
 
       {/* FOOTER */}

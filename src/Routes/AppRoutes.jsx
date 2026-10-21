@@ -10,6 +10,8 @@ import CompanyRoutes from "./companyRoutes";
 
 import ParticipantRoutes from "./ParticipantRoutes";
 import PublicGalleryPage from "../pages/company/gallery/PublicGalleryPage";
+import ForgotPasswordPage from "../pages/ForgotPasswordPage";
+import ResetPasswordPage from "../pages/ResetPasswordPage";
 
 function AppRoutes() {
   return (
@@ -21,6 +23,15 @@ function AppRoutes() {
         <Route path="/demande-demo" element={<PublicRoute><DemoRequestPage /></PublicRoute>} />
         <Route path="/activation-compte" element={<PublicRoute><AccountActivationPage /></PublicRoute>} />
         <Route path="/galerie-partagee/:token" element={<PublicGalleryPage />} />
+        <Route
+          path="/mot-de-passe-oublie"
+          element={<ForgotPasswordPage />}
+        />
+
+      <Route
+        path="/reinitialiser-mot-de-passe"
+        element={<ResetPasswordPage />}
+      />
         {/* ADMIN */}
         {AdminRoutes}
         {/* ENTREPRISE */}

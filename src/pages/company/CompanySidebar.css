@@ -1,281 +1,1073 @@
 
-/* =========================================
-   SIDEBAR
-========================================= */
+/* =========================================================
+   COMPANY SIDEBAR — PORTRÉLIA
+   Desktop : 240px / collapsed : 76px
+   Tablette : 76px / preview : 240px
+   Mobile : navigation inférieure
+========================================================= */
 
 .company-sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+
   width: 240px;
   height: 100vh;
   height: 100dvh;
 
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 500;
-
   display: flex;
   flex-direction: column;
 
-  padding: 20px 14px;
+  padding: 18px 13px 15px;
   box-sizing: border-box;
+
+  background:
+    radial-gradient(
+      circle at 15% 5%,
+      rgba(103, 76, 190, 0.18),
+      transparent 30%
+    ),
+    linear-gradient(
+      180deg,
+      #202938 0%,
+      #171f2e 56%,
+      #141c29 100%
+    );
+
+  border-right: 1px solid
+    rgba(255, 255, 255, 0.055);
+
+  color: #fff;
+  z-index: 1000;
+
+  overflow: visible;
+
+  box-shadow:
+    8px 0 30px rgba(8, 13, 22, 0.08);
+
+  transition:
+    width 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.3s ease;
+}
+
+/* =========================================================
+   COLLAPSED / PREVIEW
+========================================================= */
+
+.company-sidebar-collapsed {
+  width: 76px;
+}
+
+.company-sidebar-preview-open {
+  width: 240px;
+
+  box-shadow:
+    18px 0 44px rgba(8, 13, 22, 0.2);
+}
+
+/* =========================================================
+   HANDLE
+========================================================= */
+
+.company-sidebar-handle {
+  position: absolute;
+
+  top: 50%;
+  right: -17px;
+
+  width: 34px;
+  height: 72px;
+
+  transform: translateY(-50%);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 5px;
+  padding: 0;
+
+  border: 0;
+  background: transparent;
+
+  cursor: pointer;
+  z-index: 50;
+  color: #9fa9ba;
+  outline: none;
+}
+
+.company-sidebar-handle::before {
+  content: "";
+
+  position: absolute;
+  inset: 2px 4px;
 
   background:
     linear-gradient(
       180deg,
-      #172033 0%,
-      #111827 100%
+      rgba(43, 53, 72, 0.98),
+      rgba(28, 37, 53, 0.98)
     );
 
-  color: #ffffff;
-}
+  border: 1px solid
+    rgba(255, 255, 255, 0.08);
 
-/* =========================================
-   LOGO
-========================================= */
+  border-left: 0;
+  border-radius: 0 16px 16px 0;
 
-.company-sidebar-brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-
-  padding: 0 8px;
-  margin-bottom: 28px;
-
-  flex-shrink: 0;
-}
-
-.company-sidebar-brand img {
-  width: 42px;
-  height: 42px;
-  object-fit: contain;
-}
-
-.company-sidebar-brand span {
-  font-size: 19px;
-  font-weight: 600;
-}
-
-/* =========================================
-   NAVIGATION
-========================================= */
-
-.company-sidebar-nav {
-  min-height: 0;
-
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: #374151 transparent;
-}
-
-.company-sidebar-link {
-  min-height: 44px;
-
-  display: flex;
-  align-items: center;
-  gap: 11px;
-
-  padding: 0 12px;
-
-  border-radius: 8px;
-
-  color: #d1d5db;
-
-  font-size: 13px;
-  font-weight: 500;
-  text-decoration: none;
-
-  flex-shrink: 0;
+  box-shadow:
+    6px 3px 20px rgba(6, 11, 20, 0.22);
 
   transition:
+    transform 0.2s ease,
     background 0.2s ease,
-    color 0.2s ease;
+    box-shadow 0.2s ease;
 }
 
-.company-sidebar-link svg {
-  width: 18px;
-  height: 18px;
-  flex-shrink: 0;
+.company-sidebar-handle:hover::before {
+  transform: translateX(3px);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(96, 70, 178, 0.98),
+      rgba(74, 49, 151, 0.98)
+    );
+
+  box-shadow:
+    8px 4px 24px rgba(79, 52, 157, 0.3);
 }
 
-.company-sidebar-link:hover {
-  background: rgba(255, 255, 255, 0.07);
-  color: #ffffff;
+.company-sidebar-handle:focus-visible::before {
+  outline: 2px solid #c4b5fd;
+  outline-offset: 3px;
 }
 
-.company-sidebar-link-active {
-  background: #33206f;
-  color: #ffffff;
+.company-sidebar-handle-line {
+  position: relative;
+
+  width: 3px;
+  height: 7px;
+
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.3);
+  z-index: 2;
 }
 
-.company-sidebar-link-active:hover {
-  background: #402685;
-}
+.company-sidebar-handle-icon {
+  position: relative;
 
-/* =========================================
-   UTILISATEUR
-========================================= */
-
-.company-sidebar-user {
-  margin-top: auto;
-
-  display: flex;
-  align-items: center;
-  gap: 10px;
-
-  padding: 14px 8px 4px;
-
-  flex-shrink: 0;
-}
-
-.company-sidebar-avatar {
-  width: 36px;
-  height: 36px;
-
-  flex-shrink: 0;
+  z-index: 2;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
+  transition:
+    transform 0.2s ease,
+    color 0.2s ease;
+}
+
+.company-sidebar-handle-icon svg {
+  width: 14px;
+  height: 14px;
+  stroke-width: 2.2;
+}
+
+.company-sidebar-handle:hover
+.company-sidebar-handle-icon {
+  color: #fff;
+  transform: scale(1.1);
+}
+
+/* =========================================================
+   BRAND
+========================================================= */
+
+.company-sidebar-brand {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+  min-height: 69px;
+
+  padding: 3px 7px 22px;
+
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.company-sidebar-logo-container {
+  position: relative;
+
+  width: 44px;
+  min-width: 44px;
+  height: 52px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.company-sidebar-logo-glow {
+  position: absolute;
+
+  width: 40px;
+  height: 40px;
+
   border-radius: 50%;
 
-  background: #ffffff;
-  color: #4f2e94;
+  background: rgba(104, 77, 190, 0.16);
+  filter: blur(13px);
+
+  pointer-events: none;
+}
+
+.company-sidebar-logo {
+  position: relative;
+
+  width: 58px;
+  height: 58px;
+
+  object-fit: contain;
+  z-index: 1;
+
+  transition: transform 0.25s ease;
+}
+
+.company-sidebar-brand:hover
+.company-sidebar-logo {
+  transform: scale(1.045);
+}
+
+.company-sidebar-brand-copy {
+  display: flex;
+  flex-direction: column;
+
+  gap: 2px;
+  min-width: 0;
+
+  white-space: nowrap;
+
+  transition:
+    opacity 0.18s ease,
+    transform 0.24s ease;
+}
+
+.company-sidebar-brand-name {
+  color: #fff;
+
+  font-size: 21px;
+  font-weight: 650;
+  letter-spacing: -0.6px;
+}
+
+.company-sidebar-brand-subtitle {
+  color: #778295;
+
+  font-size: 9px;
+  font-weight: 600;
+
+  text-transform: uppercase;
+  letter-spacing: 0.13em;
+}
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+.company-sidebar-nav {
+  display: flex;
+  flex-direction: column;
+
+  gap: 5px;
+  flex: 1;
+  min-height: 0;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  scrollbar-width: none;
+}
+
+.company-sidebar-nav::-webkit-scrollbar {
+  display: none;
+}
+
+/* =========================================================
+   LINKS
+========================================================= */
+
+.company-sidebar-link {
+  position: relative;
+
+  min-height: 44px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 11px;
+  padding: 0 10px;
+
+  box-sizing: border-box;
+  border-radius: 11px;
+
+  color: #b7bfcc;
+  text-decoration: none;
+
+  overflow: hidden;
+  flex-shrink: 0;
+
+  transition:
+    color 0.18s ease,
+    background 0.18s ease,
+    transform 0.18s ease;
+}
+
+.company-sidebar-link:hover {
+  color: #fff;
+
+  background:
+    rgba(255, 255, 255, 0.045);
+}
+
+.company-sidebar-link-icon {
+  width: 28px;
+  min-width: 28px;
+  height: 28px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 8px;
+
+  transition:
+    background 0.18s ease,
+    transform 0.18s ease;
+}
+
+.company-sidebar-link-icon svg {
+  width: 18px;
+  height: 18px;
+
+  stroke-width: 1.8;
+}
+
+.company-sidebar-link:hover
+.company-sidebar-link-icon {
+  transform: scale(1.06);
+}
+
+.company-sidebar-link-text {
+  flex: 1;
 
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 540;
+
+  white-space: nowrap;
+  opacity: 1;
+}
+
+/* =========================================================
+   ACTIVE LINK
+========================================================= */
+
+.company-sidebar-link-active {
+  color: #fff;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(100, 70, 184, 0.92),
+      rgba(77, 52, 153, 0.78)
+    );
+
+  box-shadow:
+    inset 0 0 0 1px
+      rgba(255, 255, 255, 0.055),
+    0 6px 18px
+      rgba(65, 40, 140, 0.17);
+}
+
+.company-sidebar-link-active:hover {
+  color: #fff;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(107, 78, 191, 0.96),
+      rgba(86, 58, 167, 0.84)
+    );
+}
+
+.company-sidebar-link-active
+.company-sidebar-link-icon {
+  background:
+    rgba(255, 255, 255, 0.09);
+}
+
+.company-sidebar-active-indicator {
+  position: absolute;
+
+  left: 0;
+  top: 50%;
+
+  width: 3px;
+  height: 20px;
+
+  border-radius: 0 4px 4px 0;
+  background: #c4b5fd;
+
+  transform:
+    translateY(-50%) scaleY(0);
+
+  opacity: 0;
+}
+
+.company-sidebar-link-active
+.company-sidebar-active-indicator {
+  opacity: 1;
+
+  transform:
+    translateY(-50%) scaleY(1);
+}
+
+/* =========================================================
+   FOOTER USER
+========================================================= */
+
+.company-sidebar-footer {
+  margin-top: auto;
+  padding-top: 13px;
+
+  border-top:
+    1px solid rgba(255, 255, 255, 0.055);
+
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.company-sidebar-user {
+  min-height: 50px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+  padding: 5px;
+
+  border-radius: 12px;
+}
+
+.company-sidebar-user:hover {
+  background:
+    rgba(255, 255, 255, 0.035);
+}
+
+.company-sidebar-avatar-wrap {
+  position: relative;
+
+  width: 37px;
+  min-width: 37px;
+  height: 37px;
+}
+
+.company-sidebar-avatar {
+  width: 37px;
+  height: 37px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 11px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #e5c3a9,
+      #c99879
+    );
+
+  color: #202938;
+
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.company-sidebar-online-dot {
+  position: absolute;
+
+  right: -1px;
+  bottom: -1px;
+
+  width: 9px;
+  height: 9px;
+
+  border: 2px solid #171f2e;
+  border-radius: 50%;
+
+  background: #65d391;
 }
 
 .company-sidebar-user-info {
   min-width: 0;
+  flex: 1;
 
   display: flex;
   flex-direction: column;
+
   gap: 2px;
 }
 
 .company-sidebar-user-info strong {
-  font-size: 12px;
-  color: #ffffff;
+  overflow: hidden;
+
+  color: #f8fafc;
+
+  font-size: 11px;
+  font-weight: 650;
 
   white-space: nowrap;
-  overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .company-sidebar-user-info span {
+  overflow: hidden;
+
+  color: #768195;
   font-size: 10px;
-  color: #9ca3af;
+
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
-/* =========================================
-   TABLETTE
-========================================= */
+/* =========================================================
+   COLLAPSED
+========================================================= */
 
-@media (max-width: 1100px) {
+.company-sidebar-collapsed
+.company-sidebar-brand {
+  justify-content: center;
+
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.company-sidebar-collapsed
+.company-sidebar-brand-copy,
+.company-sidebar-collapsed
+.company-sidebar-link-text,
+.company-sidebar-collapsed
+.company-sidebar-user-info {
+  position: absolute;
+
+  opacity: 0;
+  pointer-events: none;
+}
+
+.company-sidebar-collapsed
+.company-sidebar-link {
+  justify-content: center;
+
+  gap: 0;
+  padding: 0 9px;
+}
+
+.company-sidebar-collapsed
+.company-sidebar-link-icon {
+  width: 38px;
+  min-width: 38px;
+  height: 38px;
+}
+
+.company-sidebar-collapsed
+.company-sidebar-user {
+  justify-content: center;
+
+  gap: 0;
+  padding: 5px 0;
+}
+
+/* =========================================================
+   TEMPORARY PREVIEW
+========================================================= */
+
+.company-sidebar-collapsed.company-sidebar-preview-open
+.company-sidebar-brand {
+  justify-content: flex-start;
+
+  gap: 12px;
+  padding: 3px 7px 22px;
+}
+
+.company-sidebar-collapsed.company-sidebar-preview-open
+.company-sidebar-brand-copy {
+  position: static;
+
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.company-sidebar-collapsed.company-sidebar-preview-open
+.company-sidebar-link {
+  justify-content: flex-start;
+
+  gap: 11px;
+  padding: 0 10px;
+}
+
+.company-sidebar-collapsed.company-sidebar-preview-open
+.company-sidebar-link-icon {
+  width: 28px;
+  min-width: 28px;
+  height: 28px;
+}
+
+.company-sidebar-collapsed.company-sidebar-preview-open
+.company-sidebar-link-text {
+  position: static;
+
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.company-sidebar-collapsed.company-sidebar-preview-open
+.company-sidebar-user {
+  justify-content: flex-start;
+
+  gap: 10px;
+  padding: 5px;
+}
+
+.company-sidebar-collapsed.company-sidebar-preview-open
+.company-sidebar-user-info {
+  position: static;
+
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* =========================================================
+   FOCUS
+========================================================= */
+
+.company-sidebar-link:focus-visible {
+  outline: 2px solid #b6a2ee;
+  outline-offset: -2px;
+}
+
+/* =========================================================
+   TABLET — ALWAYS COMPACT BY DEFAULT
+========================================================= */
+
+@media (max-width: 1100px) and (min-width: 701px) {
   .company-sidebar {
-    width: 86px;
-    align-items: center;
+    width: 76px;
+    padding: 18px 10px 15px;
   }
 
   .company-sidebar-brand {
-    padding: 0;
+    justify-content: center;
+
+    padding-left: 0;
+    padding-right: 0;
   }
 
-  .company-sidebar-brand img {
-    width: 48px;
-    height: 48px;
-  }
-
-  .company-sidebar-brand span,
-  .company-sidebar-link span,
+  .company-sidebar-brand-copy,
+  .company-sidebar-link-text,
   .company-sidebar-user-info {
-    display: none;
-  }
+    position: absolute;
 
-  .company-sidebar-nav {
-    width: 100%;
-    align-items: center;
+    opacity: 0;
+    pointer-events: none;
   }
 
   .company-sidebar-link {
-    width: 54px;
     justify-content: center;
-    padding: 0;
+    gap: 0;
+  }
+
+  .company-sidebar-link-icon {
+    width: 38px;
+    min-width: 38px;
+    height: 38px;
   }
 
   .company-sidebar-user {
-    padding: 0;
+    justify-content: center;
+    gap: 0;
+  }
+
+  .company-sidebar.company-sidebar-preview-open {
+    width: 240px;
+    padding: 18px 13px 15px;
+  }
+
+  .company-sidebar.company-sidebar-preview-open
+  .company-sidebar-brand {
+    justify-content: flex-start;
+    padding: 3px 7px 22px;
+  }
+
+  .company-sidebar.company-sidebar-preview-open
+  .company-sidebar-brand-copy,
+  .company-sidebar.company-sidebar-preview-open
+  .company-sidebar-link-text,
+  .company-sidebar.company-sidebar-preview-open
+  .company-sidebar-user-info {
+    position: static;
+
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .company-sidebar.company-sidebar-preview-open
+  .company-sidebar-link {
+    justify-content: flex-start;
+    gap: 11px;
+
+    padding: 0 10px;
+  }
+
+  .company-sidebar.company-sidebar-preview-open
+  .company-sidebar-link-icon {
+    width: 28px;
+    min-width: 28px;
+    height: 28px;
+  }
+
+  .company-sidebar.company-sidebar-preview-open
+  .company-sidebar-user {
+    justify-content: flex-start;
+    gap: 10px;
   }
 }
 
-/* =========================================
-   MOBILE
-========================================= */
+/* =========================================================
+   MOBILE — FLOATING BOTTOM NAV
+========================================================= */
 
 @media (max-width: 700px) {
-  .company-sidebar {
-    width: 100%;
+  .company-sidebar,
+  .company-sidebar-collapsed,
+  .company-sidebar-preview-open {
+    position: fixed;
+
+    top: auto;
+    right: 10px;
+    bottom: 10px;
+    left: 10px;
+
+    width: auto;
+
     height: calc(
       72px + env(safe-area-inset-bottom)
     );
 
-    top: auto;
-    bottom: 0;
+    padding:
+      7px
+      8px
+      calc(7px + env(safe-area-inset-bottom));
 
+    display: flex;
     flex-direction: row;
     align-items: center;
 
-    padding:
-      8px 10px
-      calc(8px + env(safe-area-inset-bottom));
+    box-sizing: border-box;
 
+    border:
+      1px solid rgba(255, 255, 255, 0.08);
+
+    border-radius: 20px;
+
+    background:
+      rgba(23, 31, 46, 0.96);
+
+    box-shadow:
+      0 16px 42px rgba(8, 13, 22, 0.28);
+
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+
+    z-index: 1200;
     overflow: hidden;
   }
 
+  /* Desktop elements hidden on mobile */
+
+  .company-sidebar-handle,
   .company-sidebar-brand,
-  .company-sidebar-user {
+  .company-sidebar-footer {
     display: none;
   }
+
+  /* Navigation */
 
   .company-sidebar-nav {
     width: 100%;
     height: 100%;
 
+    display: flex;
     flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
+    align-items: stretch;
 
-    gap: 8px;
+    gap: 4px;
+    padding: 0;
 
     overflow-x: auto;
     overflow-y: hidden;
 
+    scroll-snap-type: x proximity;
+
     scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
   }
 
   .company-sidebar-nav::-webkit-scrollbar {
     display: none;
   }
 
-  .company-sidebar-link {
-    min-width: 54px;
-    width: 54px;
-    height: 52px;
+  /* Links */
 
-    flex-shrink: 0;
+  .company-sidebar-link,
+  .company-sidebar-collapsed
+  .company-sidebar-link,
+  .company-sidebar-preview-open
+  .company-sidebar-link {
+    position: relative;
+
+    flex: 1 0 67px;
+
+    min-width: 67px;
+    min-height: 58px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    gap: 4px;
+
+    padding: 5px 4px;
+
+    box-sizing: border-box;
+    border-radius: 14px;
+
+    background: transparent;
+
+    color: #8f9aac;
+
+    overflow: visible;
+    transform: none;
+
+    scroll-snap-align: center;
+
+    transition:
+      background 0.2s ease,
+      color 0.2s ease,
+      transform 0.15s ease;
+  }
+
+  .company-sidebar-link:hover {
+    transform: none;
+
+    background:
+      rgba(255, 255, 255, 0.04);
+  }
+
+  .company-sidebar-link:active {
+    transform: scale(0.96);
+  }
+
+  /* Icons */
+
+  .company-sidebar-link-icon,
+  .company-sidebar-collapsed
+  .company-sidebar-link-icon,
+  .company-sidebar-preview-open
+  .company-sidebar-link-icon {
+    width: 30px;
+    min-width: 30px;
+    height: 27px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 9px;
+    background: transparent;
+
+    transition:
+      background 0.2s ease,
+      color 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  .company-sidebar-link-icon svg {
+    width: 20px;
+    height: 20px;
+
+    stroke-width: 1.85;
+  }
+
+  /* Labels */
+
+  .company-sidebar-link-text,
+  .company-sidebar-collapsed
+  .company-sidebar-link-text,
+  .company-sidebar-preview-open
+  .company-sidebar-link-text {
+    position: static;
+
+    display: block !important;
+
+    flex: initial;
+
+    width: 100%;
+    max-width: 66px;
+
+    opacity: 1;
+    color: inherit;
+
+    font-size: 8.5px;
+    font-weight: 600;
+    line-height: 10px;
+
+    text-align: center;
+    white-space: nowrap;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    pointer-events: auto;
+    transform: none;
+  }
+
+  /* Active link */
+
+  .company-sidebar-link-active,
+  .company-sidebar-collapsed
+  .company-sidebar-link-active,
+  .company-sidebar-preview-open
+  .company-sidebar-link-active {
+    background:
+      linear-gradient(
+        180deg,
+        rgba(105, 75, 183, 0.28),
+        rgba(84, 55, 164, 0.18)
+      );
+
+    color: #fff;
+
+    box-shadow:
+      inset 0 0 0 1px
+        rgba(159, 133, 222, 0.12);
+  }
+
+  .company-sidebar-link-active
+  .company-sidebar-link-icon {
+    background:
+      rgba(120, 87, 204, 0.24);
+
+    color: #d9ccff;
+  }
+
+  .company-sidebar-link-active
+  .company-sidebar-link-text {
+    color: #fff;
+    font-weight: 700;
+  }
+
+  /* Bottom active indicator */
+
+  .company-sidebar-active-indicator {
+    position: absolute;
+
+    top: auto;
+    right: auto;
+    bottom: 2px;
+    left: 50%;
+
+    width: 18px;
+    height: 2px;
+
+    border-radius: 999px;
+    background: #b69cf5;
+
+    opacity: 0;
+
+    transform:
+      translateX(-50%) scaleX(0);
+
+    transition:
+      opacity 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  .company-sidebar-link-active
+  .company-sidebar-active-indicator {
+    opacity: 1;
+
+    transform:
+      translateX(-50%) scaleX(1);
   }
 }
 
-/* =========================================
-   ACCESSIBILITÉ
-========================================= */
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
 
-.company-sidebar-link:focus-visible {
-  outline: 2px solid #b6a2ee;
-  outline-offset: 2px;
+@media (max-width: 430px) {
+  .company-sidebar,
+  .company-sidebar-collapsed,
+  .company-sidebar-preview-open {
+    right: 7px;
+    bottom: 7px;
+    left: 7px;
+
+    border-radius: 18px;
+
+    padding:
+      6px
+      6px
+      calc(6px + env(safe-area-inset-bottom));
+  }
+
+  .company-sidebar-link,
+  .company-sidebar-collapsed
+  .company-sidebar-link,
+  .company-sidebar-preview-open
+  .company-sidebar-link {
+    flex-basis: 62px;
+    min-width: 62px;
+  }
+
+  .company-sidebar-link-text,
+  .company-sidebar-collapsed
+  .company-sidebar-link-text,
+  .company-sidebar-preview-open
+  .company-sidebar-link-text {
+    max-width: 60px;
+    font-size: 8px;
+  }
+
+  .company-sidebar-link-icon svg {
+    width: 19px;
+    height: 19px;
+  }
+}
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .company-sidebar,
+  .company-sidebar *,
+  .company-sidebar *::before,
+  .company-sidebar *::after {
+    transition: none !important;
+  }
 }

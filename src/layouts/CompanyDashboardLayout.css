@@ -1,22 +1,61 @@
+
+/* =========================================================
+   COMPANY DASHBOARD LAYOUT
+========================================================= */
+
 .company-dashboard-layout {
+  --company-sidebar-width: 240px;
+
   min-height: 100vh;
+  min-height: 100dvh;
+
   background: #f7f8fb;
 }
 
-.company-dashboard-main {
-  min-height: 100vh;
-  margin-left: 240px;
+/* =========================================================
+   SIDEBAR COLLAPSED
+========================================================= */
+
+.company-dashboard-layout-sidebar-collapsed {
+  --company-sidebar-width: 76px;
 }
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+.company-dashboard-main {
+  min-width: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+
+  margin-left: var(--company-sidebar-width);
+
+  transition:
+    margin-left 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* =========================================================
+   CONTENT
+========================================================= */
 
 .company-dashboard-content {
   width: 100%;
+  min-width: 0;
+
   padding: 32px;
+
   box-sizing: border-box;
 }
 
+/* =========================================================
+   TABLET
+========================================================= */
+
 @media (max-width: 1100px) {
-  .company-dashboard-main {
-    margin-left: 86px;
+  .company-dashboard-layout,
+  .company-dashboard-layout-sidebar-collapsed {
+    --company-sidebar-width: 76px;
   }
 
   .company-dashboard-content {
@@ -24,12 +63,34 @@
   }
 }
 
+/* =========================================================
+   MOBILE
+========================================================= */
+
 @media (max-width: 700px) {
+  .company-dashboard-layout,
+  .company-dashboard-layout-sidebar-collapsed {
+    --company-sidebar-width: 0px;
+  }
+
   .company-dashboard-main {
     margin-left: 0;
   }
 
   .company-dashboard-content {
-    padding: 20px 14px 94px;
+    padding:
+      20px
+      14px
+      calc(112px + env(safe-area-inset-bottom));
+  }
+}
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .company-dashboard-main {
+    transition: none;
   }
 }

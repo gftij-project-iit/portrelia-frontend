@@ -21,6 +21,7 @@ import SubscriptionPage from "../pages/company/subscription/SubscriptionPage";
 import BillingPage from "../pages/company/billing/BillingPage";
 import CollaboratorsPage from "../pages/company/collaborators/CollaboratorsPage";
 import GalleryPage from "../pages/company/gallery/GalleryPage";
+import SettingsPage from "../pages/company/settings/SettingsPage";
 
 const CompanyRoutes = (
   <>
@@ -116,6 +117,10 @@ const CompanyRoutes = (
       <Route
         path="facturation"
         element={<BillingPage />}
+      />
+       <Route
+        path="parametres"
+        element={<SettingsPage />}
       />
     </Route>
   </>
