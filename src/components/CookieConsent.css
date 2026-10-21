@@ -1,0 +1,175 @@
+
+.portrelia-cookie-banner {
+  position: fixed;
+  z-index: 99999;
+  left: 50%;
+  bottom: 22px;
+  transform: translateX(-50%);
+
+  width: min(680px, calc(100% - 32px));
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+
+  padding: 22px;
+  box-sizing: border-box;
+
+  border: 1px solid #e4e1ed;
+  border-radius: 18px;
+  background: #fff;
+
+  box-shadow: 0 18px 60px rgba(18, 24, 44, 0.18);
+}
+
+.portrelia-cookie-icon {
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 12px;
+  background: #f0ebfa;
+  color: #5938a0;
+}
+
+.portrelia-cookie-icon svg {
+  width: 21px;
+  height: 21px;
+}
+
+.portrelia-cookie-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.portrelia-cookie-content h2 {
+  margin: 0 0 9px;
+  color: #20283a;
+  font-size: 17px;
+  font-weight: 750;
+}
+
+.portrelia-cookie-content p {
+  margin: 0;
+  color: #626c7c;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.portrelia-cookie-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.portrelia-cookie-actions button {
+  min-height: 42px;
+  flex: 1;
+
+  padding: 10px 15px;
+  border-radius: 10px;
+  border: 1px solid #5938a0;
+
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.portrelia-cookie-actions button:hover {
+  transform: translateY(-1px);
+}
+
+.portrelia-cookie-refuse {
+  background: #fff;
+  color: #5938a0;
+}
+
+.portrelia-cookie-refuse:hover {
+  background: #f4effb;
+}
+
+.portrelia-cookie-accept {
+  background: #5938a0;
+  color: #fff;
+}
+
+.portrelia-cookie-accept:hover {
+  background: #45277f;
+}
+
+.portrelia-cookie-settings {
+  position: fixed;
+  z-index: 99998;
+
+  left: 18px;
+  bottom: 18px;
+
+  width: 39px;
+  height: 39px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 50%;
+  border: 1px solid #ded8ec;
+
+  background: #fff;
+  color: #5938a0;
+
+  box-shadow: 0 5px 20px rgba(20, 24, 40, 0.14);
+
+  cursor: pointer;
+}
+
+.portrelia-cookie-settings svg {
+  width: 18px;
+  height: 18px;
+}
+
+@media (max-width: 700px) {
+  .portrelia-cookie-banner {
+    bottom: 90px;
+    padding: 18px 15px;
+    gap: 11px;
+    border-radius: 15px;
+  }
+
+  .portrelia-cookie-icon {
+    width: 34px;
+    height: 34px;
+  }
+
+  .portrelia-cookie-content h2 {
+    font-size: 15px;
+  }
+
+  .portrelia-cookie-content p {
+    font-size: 12px;
+    line-height: 1.55;
+  }
+
+  .portrelia-cookie-actions {
+    flex-direction: column;
+  }
+
+  .portrelia-cookie-settings {
+    bottom: 95px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portrelia-cookie-actions button {
+    transition: none;
+  }
+
+  .portrelia-cookie-actions button:hover {
+    transform: none;
+  }
+}

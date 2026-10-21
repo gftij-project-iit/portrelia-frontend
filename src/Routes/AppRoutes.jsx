@@ -12,10 +12,12 @@ import ParticipantRoutes from "./ParticipantRoutes";
 import PublicGalleryPage from "../pages/company/gallery/PublicGalleryPage";
 import ForgotPasswordPage from "../pages/ForgotPasswordPage";
 import ResetPasswordPage from "../pages/ResetPasswordPage";
+import CookieConsent from "../components/CookieConsent";
 
 function AppRoutes() {
   return (
     <BrowserRouter>
+    <CookieConsent />
       <Routes>
         {/* PUBLIC */}
         <Route path="/" element={<PublicRoute><HomePage /></PublicRoute>} />
