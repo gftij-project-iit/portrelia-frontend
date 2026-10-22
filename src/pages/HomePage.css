@@ -619,20 +619,23 @@
   object-position: center;
 }
 
-.trust-logo-loreal,
-.trust-logo-accenture {
-  height: 46px;
-}
-
-.trust-logo-bnp {
+.trust-logo-assermentis {
   height: 60px;
 }
 
-.trust-logo-doctolib {
+.trust-logo-ofti {
+  height: 70px;
+}
+
+.trust-logo-gftij {
+  height: 60px;
+}
+
+.trust-logo-intertrad {
   height: 56px;
 }
 
-.trust-logo-veolia {
+.trust-logo-calamelle {
   height: 52px;
 }
 

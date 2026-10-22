@@ -6,11 +6,11 @@ import { FiMenu, FiX, FiArrowRight } from "react-icons/fi";
 import logo from "../assets/logo.png";
 import portraitImage from "../assets/home-portrait.png";
 
-import lorealLogo from "../assets/brands/loreal.png";
-import accentureLogo from "../assets/brands/accenture.png";
-import bnpLogo from "../assets/brands/bnp-paribas.png";
-import doctolibLogo from "../assets/brands/doctolib.png";
-import veoliaLogo from "../assets/brands/veolia.png";
+import ofti from "../assets/brands/ofti.png";
+import assermentis from "../assets/brands/assermentis.png";
+import gftij from "../assets/brands/gftij.png";
+import intertrad from "../assets/brands/intertrad.png";
+import calamelle from "../assets/brands/calamelle.png";
 
 import "./HomePage.css";
 
@@ -328,41 +328,41 @@ function HomePage() {
                 <div className="home-trust-logos">
                   <div className="trust-logo-item">
                     <img
-                      src={lorealLogo}
-                      alt="L'Oréal"
-                      className="trust-logo trust-logo-loreal"
+                      src={ofti}
+                      alt="ofti"
+                      className="trust-logo trust-logo-ofti"
                     />
                   </div>
 
                   <div className="trust-logo-item">
                     <img
-                      src={accentureLogo}
-                      alt="Accenture"
-                      className="trust-logo trust-logo-accenture"
+                      src={assermentis}
+                      alt="Assermentis"
+                      className="trust-logo trust-logo-assermentis"
                     />
                   </div>
 
                   <div className="trust-logo-item">
                     <img
-                      src={bnpLogo}
-                      alt="BNP Paribas"
-                      className="trust-logo trust-logo-bnp"
+                      src={gftij}
+                      alt="gftij"
+                      className="trust-logo trust-logo-gftij"
                     />
                   </div>
 
                   <div className="trust-logo-item">
                     <img
-                      src={doctolibLogo}
-                      alt="Doctolib"
-                      className="trust-logo trust-logo-doctolib"
+                      src={intertrad}
+                      alt="Intertrader"
+                      className="trust-logo trust-logo-intertrad"
                     />
                   </div>
 
                   <div className="trust-logo-item">
                     <img
-                      src={veoliaLogo}
-                      alt="Veolia"
-                      className="trust-logo trust-logo-veolia"
+                      src={calamelle}
+                      alt="Calamelle"
+                      className="trust-logo trust-logo-calamelle"
                     />
                   </div>
                 </div>
