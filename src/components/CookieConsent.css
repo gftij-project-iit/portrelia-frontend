@@ -104,41 +104,14 @@
   background: #45277f;
 }
 
-.portrelia-cookie-settings {
-  position: fixed;
-  z-index: 99998;
-
-  left: 18px;
-  bottom: 18px;
-
-  width: 39px;
-  height: 39px;
-
-  display: grid;
-  place-items: center;
-
-  border-radius: 50%;
-  border: 1px solid #ded8ec;
-
-  background: #fff;
-  color: #5938a0;
-
-  box-shadow: 0 5px 20px rgba(20, 24, 40, 0.14);
-
-  cursor: pointer;
-}
-
-.portrelia-cookie-settings svg {
-  width: 18px;
-  height: 18px;
-}
-
 @media (max-width: 700px) {
   .portrelia-cookie-banner {
-    bottom: 90px;
+    bottom: 20px;
     padding: 18px 15px;
     gap: 11px;
     border-radius: 15px;
+    max-height: calc(100dvh - 40px);
+    overflow-y: auto;
   }
 
   .portrelia-cookie-icon {
@@ -157,10 +130,6 @@
 
   .portrelia-cookie-actions {
     flex-direction: column;
-  }
-
-  .portrelia-cookie-settings {
-    bottom: 95px;
   }
 }
 

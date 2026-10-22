@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { FiShield, FiSettings } from "react-icons/fi";
+import { FiShield } from "react-icons/fi";
 
 import "./CookieConsent.css";
 
@@ -80,7 +80,6 @@ function enableAnalytics() {
 
   window.gtag("js", new Date());
 
-  // Les pages vues sont envoyées manuellement par React Router.
   window.gtag("config", GA_ID, {
     send_page_view: false,
   });
@@ -90,7 +89,6 @@ function enableAnalytics() {
   script.id = "portrelia-ga-script";
   script.async = true;
 
-  // Charge la nouvelle balise Google dédiée à Portrélia.
   script.src =
     `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(
       GOOGLE_TAG_ID
@@ -115,7 +113,6 @@ function disableAnalytics() {
 }
 
 function getSafePagePath(pathname) {
-  // Exclure les pages contenant des tokens sensibles.
   const sensitivePaths = [
     /galerie-partagee/i,
     /reset.password/i,
@@ -128,12 +125,8 @@ function getSafePagePath(pathname) {
     return null;
   }
 
-  // Remplacer les segments d'URL dynamiques sensibles.
   return pathname
-    .replace(
-      /\/[0-9a-f]{8}-[0-9a-f-]{27,}/gi,
-      "/:id"
-    )
+    .replace(/\/[0-9a-f]{8}-[0-9a-f-]{27,}/gi, "/:id")
     .replace(/\/\d+(?=\/|$)/g, "/:id");
 }
 
@@ -144,6 +137,24 @@ export default function CookieConsent() {
   const [settingsOpen, setSettingsOpen] = useState(false);
 
   const bannerOpen = consent === null || settingsOpen;
+
+  useEffect(() => {
+    const openPreferences = () => {
+      setSettingsOpen(true);
+    };
+
+    window.addEventListener(
+      "portrelia:open-cookie-settings",
+      openPreferences
+    );
+
+    return () => {
+      window.removeEventListener(
+        "portrelia:open-cookie-settings",
+        openPreferences
+      );
+    };
+  }, []);
 
   useEffect(() => {
     if (consent === "accepted") {
@@ -193,61 +204,49 @@ export default function CookieConsent() {
     setSettingsOpen(false);
   };
 
+  if (!bannerOpen) {
+    return null;
+  }
+
   return (
-    <>
-      {bannerOpen && (
-        <div
-          className="portrelia-cookie-banner"
-          role="region"
-          aria-label="Gestion des cookies"
-        >
-          <div className="portrelia-cookie-icon">
-            <FiShield />
-          </div>
+    <div
+      className="portrelia-cookie-banner"
+      role="region"
+      aria-label="Gestion des cookies"
+    >
+      <div className="portrelia-cookie-icon">
+        <FiShield />
+      </div>
 
-          <div className="portrelia-cookie-content">
-            <h2>Votre confidentialité compte</h2>
+      <div className="portrelia-cookie-content">
+        <h2>Votre confidentialité compte</h2>
 
-            <p>
-              Portrélia utilise des cookies de mesure
-              d'audience Google Analytics pour comprendre
-              la fréquentation et améliorer le site.
-              Vous pouvez accepter ou refuser ces cookies,
-              sans conséquence sur votre accès aux services.
-            </p>
+        <p>
+          Portrélia utilise des cookies de mesure
+          d'audience Google Analytics pour comprendre
+          la fréquentation et améliorer le site.
+          Vous pouvez accepter ou refuser ces cookies,
+          sans conséquence sur votre accès aux services.
+        </p>
 
-            <div className="portrelia-cookie-actions">
-              <button
-                type="button"
-                className="portrelia-cookie-refuse"
-                onClick={() => saveConsent("rejected")}
-              >
-                Tout refuser
-              </button>
+        <div className="portrelia-cookie-actions">
+          <button
+            type="button"
+            className="portrelia-cookie-refuse"
+            onClick={() => saveConsent("rejected")}
+          >
+            Tout refuser
+          </button>
 
-              <button
-                type="button"
-                className="portrelia-cookie-accept"
-                onClick={() => saveConsent("accepted")}
-              >
-                Tout accepter
-              </button>
-            </div>
-          </div>
+          <button
+            type="button"
+            className="portrelia-cookie-accept"
+            onClick={() => saveConsent("accepted")}
+          >
+            Tout accepter
+          </button>
         </div>
-      )}
-
-      {!bannerOpen && (
-        <button
-          type="button"
-          className="portrelia-cookie-settings"
-          onClick={() => setSettingsOpen(true)}
-          aria-label="Modifier mes préférences de cookies"
-          title="Préférences des cookies"
-        >
-          <FiSettings />
-        </button>
-      )}
-    </>
+      </div>
+    </div>
   );
 }
