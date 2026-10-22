@@ -10,10 +10,9 @@ import ofti from "../assets/brands/ofti.png";
 import assermentis from "../assets/brands/assermentis.png";
 import gftij from "../assets/brands/gftij.png";
 import intertrad from "../assets/brands/intertrad.png";
-import calamelle from "../assets/brands/calamelle.png";
+import calamelle from "../assets/brands/calamelle.webp";
 
 import "./HomePage.css";
-
 
 const NAV_ITEMS = [
   { label: "Solutions", href: "#solutions" },
@@ -45,6 +44,39 @@ const LEGAL_ITEMS = [
   },
 ];
 
+const PARTNER_LOGOS = [
+  {
+    name: "OFTI",
+    image: ofti,
+    url: "https://ofti.fr/",
+    className: "trust-logo-ofti",
+  },
+  {
+    name: "Assermentis",
+    image: assermentis,
+    url: "https://www.assermentis.com/",
+    className: "trust-logo-assermentis",
+  },
+  {
+    name: "GFTIJ",
+    image: gftij,
+    url: "https://www.gftij.fr/",
+    className: "trust-logo-gftij",
+  },
+  {
+    name: "InterTrad",
+    image: intertrad,
+    url: "https://intertrad.fr/",
+    className: "trust-logo-intertrad",
+  },
+  {
+    name: "Calamelle",
+    image: calamelle,
+    url: "https://calamelle.fr/",
+    className: "trust-logo-calamelle",
+  },
+];
+
 function HomePage() {
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -70,6 +102,7 @@ function HomePage() {
 
   return (
     <div className="home-page">
+
       {/* NAVBAR */}
       <header className="home-navbar">
         <Link
@@ -93,10 +126,7 @@ function HomePage() {
           aria-label="Navigation principale"
         >
           {NAV_ITEMS.map((item) => (
-            <a
-              href={item.href}
-              key={item.href}
-            >
+            <a href={item.href} key={item.href}>
               {item.label}
             </a>
           ))}
@@ -122,9 +152,7 @@ function HomePage() {
           type="button"
           className="home-mobile-toggle"
           aria-label={
-            menuOpen
-              ? "Fermer le menu"
-              : "Ouvrir le menu"
+            menuOpen ? "Fermer le menu" : "Ouvrir le menu"
           }
           aria-expanded={menuOpen}
           aria-controls="home-mobile-menu"
@@ -205,6 +233,7 @@ function HomePage() {
       )}
 
       <main>
+
         {/* HERO */}
         <section
           id="accueil"
@@ -212,6 +241,7 @@ function HomePage() {
         >
           <div className="home-hero-card">
             <div className="home-hero-content">
+
               {/* HERO GAUCHE */}
               <div className="home-hero-left">
                 <div className="home-hero-copy">
@@ -231,40 +261,28 @@ function HomePage() {
 
                   <ul className="home-benefits">
                     <li>
-                      <span className="benefit-check">
-                        ✓
-                      </span>
-
+                      <span className="benefit-check">✓</span>
                       <span>
                         Expérience guidée pour vos collaborateurs
                       </span>
                     </li>
 
                     <li>
-                      <span className="benefit-check">
-                        ✓
-                      </span>
-
+                      <span className="benefit-check">✓</span>
                       <span>
                         Direction artistique et retouche humaine
                       </span>
                     </li>
 
                     <li>
-                      <span className="benefit-check">
-                        ✓
-                      </span>
-
+                      <span className="benefit-check">✓</span>
                       <span>
                         Résultats cohérents et fidèles
                       </span>
                     </li>
 
                     <li>
-                      <span className="benefit-check">
-                        ✓
-                      </span>
-
+                      <span className="benefit-check">✓</span>
                       <span>
                         Livraison rapide en 48 à 72 h
                       </span>
@@ -290,13 +308,8 @@ function HomePage() {
                           });
                       }}
                     >
-                      <span className="video-play">
-                        ▶
-                      </span>
-
-                      <span>
-                        Découvrir la solution
-                      </span>
+                      <span className="video-play">▶</span>
+                      <span>Découvrir la solution</span>
                     </button>
                   </div>
                 </div>
@@ -319,54 +332,37 @@ function HomePage() {
                 </div>
               </div>
 
-              {/* LOGOS */}
+              {/* LOGOS PARTENAIRES CLIQUABLES */}
               <div className="home-trust-bar">
                 <p className="home-trust-title">
                   Ils nous font confiance
                 </p>
 
                 <div className="home-trust-logos">
-                  <div className="trust-logo-item">
-                    <img
-                      src={ofti}
-                      alt="ofti"
-                      className="trust-logo trust-logo-ofti"
-                    />
-                  </div>
-
-                  <div className="trust-logo-item">
-                    <img
-                      src={assermentis}
-                      alt="Assermentis"
-                      className="trust-logo trust-logo-assermentis"
-                    />
-                  </div>
-
-                  <div className="trust-logo-item">
-                    <img
-                      src={gftij}
-                      alt="gftij"
-                      className="trust-logo trust-logo-gftij"
-                    />
-                  </div>
-
-                  <div className="trust-logo-item">
-                    <img
-                      src={intertrad}
-                      alt="Intertrader"
-                      className="trust-logo trust-logo-intertrad"
-                    />
-                  </div>
-
-                  <div className="trust-logo-item">
-                    <img
-                      src={calamelle}
-                      alt="Calamelle"
-                      className="trust-logo trust-logo-calamelle"
-                    />
-                  </div>
+                  {PARTNER_LOGOS.map((partner) => (
+                    <a
+                      key={partner.name}
+                      href={partner.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`trust-logo-item ${
+                        partner.name === "GFTIJ"
+                          ? "trust-logo-item-gftij"
+                          : ""
+                      }`}
+                      aria-label={`Visiter le site de ${partner.name}`}
+                      title={`Visiter ${partner.name}`}
+                    >
+                      <img
+                        src={partner.image}
+                        alt={partner.name}
+                        className={`trust-logo ${partner.className}`}
+                      />
+                    </a>
+                  ))}
                 </div>
               </div>
+
             </div>
           </div>
         </section>
@@ -394,14 +390,8 @@ function HomePage() {
 
             <div className="home-info-grid">
               <article className="home-info-card">
-                <span className="home-step">
-                  01
-                </span>
-
-                <h3>
-                  Créer une campagne
-                </h3>
-
+                <span className="home-step">01</span>
+                <h3>Créer une campagne</h3>
                 <p>
                   Organisez vos besoins en portraits depuis
                   un espace dédié à votre entreprise.
@@ -409,14 +399,8 @@ function HomePage() {
               </article>
 
               <article className="home-info-card">
-                <span className="home-step">
-                  02
-                </span>
-
-                <h3>
-                  Inviter les collaborateurs
-                </h3>
-
+                <span className="home-step">02</span>
+                <h3>Inviter les collaborateurs</h3>
                 <p>
                   Chaque participant suit un parcours
                   guidé pour transmettre sa photographie.
@@ -424,14 +408,8 @@ function HomePage() {
               </article>
 
               <article className="home-info-card">
-                <span className="home-step">
-                  03
-                </span>
-
-                <h3>
-                  Retrouver les portraits
-                </h3>
-
+                <span className="home-step">03</span>
+                <h3>Retrouver les portraits</h3>
                 <p>
                   Consultez les galeries produites et
                   suivez l'avancement de votre campagne.
@@ -487,10 +465,7 @@ function HomePage() {
 
             <div className="home-info-grid">
               <article className="home-info-card">
-                <h3>
-                  Protection des données
-                </h3>
-
+                <h3>Protection des données</h3>
                 <p>
                   Comprenez comment les informations
                   et les photographies sont traitées.
@@ -503,10 +478,7 @@ function HomePage() {
               </article>
 
               <article className="home-info-card">
-                <h3>
-                  Utilisation de la plateforme
-                </h3>
-
+                <h3>Utilisation de la plateforme</h3>
                 <p>
                   Retrouvez les principales conditions
                   d'utilisation de Portrélia.
@@ -519,10 +491,7 @@ function HomePage() {
               </article>
 
               <article className="home-info-card">
-                <h3>
-                  Cookies et confidentialité
-                </h3>
-
+                <h3>Cookies et confidentialité</h3>
                 <p>
                   Découvrez les outils de mesure d'audience
                   et les choix disponibles.
@@ -579,23 +548,20 @@ function HomePage() {
             </div>
           </div>
         </section>
+
       </main>
 
       {/* FOOTER */}
       <footer className="home-footer">
         <div className="home-footer-inner">
+
           <div className="home-footer-top">
+
             <div className="home-footer-brand">
-              <img
-                src={logo}
-                alt="Portrélia"
-              />
+              <img src={logo} alt="Portrélia" />
 
               <div>
-                <strong>
-                  Portrélia
-                </strong>
-
+                <strong>Portrélia</strong>
                 <p>
                   Des portraits professionnels pour vos équipes.
                 </p>
@@ -603,39 +569,27 @@ function HomePage() {
             </div>
 
             <div className="home-footer-column">
-              <h3>
-                Navigation
-              </h3>
+              <h3>Navigation</h3>
 
               {NAV_ITEMS.map((item) => (
-                <a
-                  href={item.href}
-                  key={item.href}
-                >
+                <a href={item.href} key={item.href}>
                   {item.label}
                 </a>
               ))}
             </div>
 
             <div className="home-footer-column">
-              <h3>
-                Informations légales
-              </h3>
+              <h3>Informations légales</h3>
 
               {LEGAL_ITEMS.map((item) => (
-                <Link
-                  to={item.to}
-                  key={item.to}
-                >
+                <Link to={item.to} key={item.to}>
                   {item.label}
                 </Link>
               ))}
             </div>
 
             <div className="home-footer-column">
-              <h3>
-                Portrélia
-              </h3>
+              <h3>Portrélia</h3>
 
               <Link to="/connexion">
                 Se connecter
@@ -645,6 +599,7 @@ function HomePage() {
                 Demander une démo
               </Link>
             </div>
+
           </div>
 
           <div className="home-footer-bottom">
@@ -656,8 +611,10 @@ function HomePage() {
               Vos données et votre confidentialité comptent.
             </span>
           </div>
+
         </div>
       </footer>
+
     </div>
   );
 }
