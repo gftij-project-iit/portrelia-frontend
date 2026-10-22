@@ -1,8 +1,8 @@
 
-/* ==================================================
+/* =========================================================
    PORTRÉLIA — HOME PAGE
    Desktop / Tablet / Mobile
-   ================================================== */
+   ========================================================= */
 
 .home-page {
   width: 100%;
@@ -10,6 +10,7 @@
   margin: 0;
   background: #ffffff;
   color: #241052;
+  overflow-x: clip;
 }
 
 .home-page *,
@@ -22,9 +23,14 @@
   scroll-margin-top: 84px;
 }
 
-/* ==================================================
+.home-page button,
+.home-page a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* =========================================================
    NAVBAR
-   ================================================== */
+   ========================================================= */
 
 .home-navbar {
   position: relative;
@@ -46,6 +52,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  min-width: 0;
   text-decoration: none;
 }
 
@@ -62,9 +69,10 @@
   font-size: 23px;
   font-weight: 700;
   line-height: 1;
+  white-space: nowrap;
 }
 
-/* NAVIGATION DESKTOP */
+/* DESKTOP NAVIGATION */
 
 .home-nav-links {
   display: flex;
@@ -86,7 +94,7 @@
   color: #4b2e83;
 }
 
-/* ACTIONS */
+/* NAVBAR ACTIONS */
 
 .home-nav-actions {
   display: flex;
@@ -130,6 +138,7 @@
   align-items: center;
   justify-content: center;
   padding: 0 24px;
+  border: 0;
   border-radius: 7px;
   background: linear-gradient(
     90deg,
@@ -155,9 +164,9 @@
   box-shadow: 0 6px 16px rgba(75, 46, 131, 0.22);
 }
 
-/* ==================================================
-   MOBILE TOGGLE
-   ================================================== */
+/* =========================================================
+   MOBILE NAVIGATION
+   ========================================================= */
 
 .home-mobile-toggle {
   display: none;
@@ -257,6 +266,7 @@
 .home-mobile-menu > a svg {
   width: 17px;
   height: 17px;
+  flex-shrink: 0;
   color: #71529b;
 }
 
@@ -282,6 +292,7 @@
 
 .home-mobile-menu > .home-mobile-demo:hover {
   background: #39206e;
+  color: #ffffff;
 }
 
 .home-mobile-menu > .home-mobile-legal-link {
@@ -292,13 +303,13 @@
   font-weight: 500;
 }
 
-/* ==================================================
+/* =========================================================
    MAIN HERO
-   ================================================== */
+   ========================================================= */
 
 .home-main-section {
   width: 100%;
-  min-height: 100vh;
+  min-height: calc(100vh - 88px);
   margin: 0;
   padding: 0;
   background: #ffffff;
@@ -316,11 +327,13 @@
   width: 100%;
   min-height: calc(100vh - 88px);
   display: grid;
-  grid-template-columns: 56% 44%;
+  grid-template-columns: minmax(0, 56%) minmax(0, 44%);
   background: #ffffff;
 }
 
-/* HERO LEFT */
+/* =========================================================
+   HERO LEFT
+   ========================================================= */
 
 .home-hero-left {
   position: relative;
@@ -346,6 +359,7 @@
   line-height: 1.06;
   letter-spacing: -0.035em;
   font-weight: 800;
+  overflow-wrap: break-word;
 }
 
 .home-hero-description {
@@ -369,10 +383,11 @@
 
 .home-benefits li {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 10px;
   color: #4a5364;
   font-size: 14px;
+  line-height: 1.45;
 }
 
 .benefit-check {
@@ -381,11 +396,13 @@
   flex-shrink: 0;
   display: grid;
   place-items: center;
+  margin-top: 1px;
   border-radius: 50%;
   background: #4b2e83;
   color: #ffffff;
   font-size: 11px;
   font-weight: 800;
+  line-height: 1;
 }
 
 /* HERO ACTIONS */
@@ -393,6 +410,7 @@
 .home-hero-actions {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 12px;
   margin-top: 28px;
 }
@@ -413,11 +431,16 @@
   font-size: 13px;
   font-weight: 700;
   text-decoration: none;
+  text-align: center;
+  transition:
+    background 0.16s ease,
+    transform 0.16s ease;
 }
 
 .home-primary-cta:hover {
   color: #ffffff;
   background: #3e246f;
+  transform: translateY(-1px);
 }
 
 .home-video-btn {
@@ -433,16 +456,22 @@
   color: #344054;
   font-size: 13px;
   font-weight: 500;
+  text-align: center;
   cursor: pointer;
+  transition:
+    background 0.16s ease,
+    border-color 0.16s ease;
 }
 
 .home-video-btn:hover {
   background: #f9fafb;
+  border-color: #aeb8c8;
 }
 
 .video-play {
   width: 23px;
   height: 23px;
+  flex-shrink: 0;
   display: grid;
   place-items: center;
   padding-left: 2px;
@@ -452,9 +481,9 @@
   font-size: 8px;
 }
 
-/* ==================================================
-   HERO PHOTO
-   ================================================== */
+/* =========================================================
+   HERO RIGHT / PORTRAIT
+   ========================================================= */
 
 .home-hero-right {
   position: relative;
@@ -475,7 +504,7 @@
   object-position: center top;
 }
 
-/* FADE LEFT */
+/* LEFT FADE */
 
 .home-hero-right::before {
   content: "";
@@ -483,7 +512,7 @@
   top: 0;
   bottom: 0;
   left: 0;
-  width: 200px;
+  width: min(200px, 35%);
   z-index: 3;
   pointer-events: none;
   background: linear-gradient(
@@ -499,7 +528,7 @@
   );
 }
 
-/* FADE BOTTOM */
+/* BOTTOM FADE */
 
 .home-hero-right::after {
   content: "";
@@ -552,9 +581,9 @@
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.34);
 }
 
-/* ==================================================
+/* =========================================================
    TRUST BAR
-   ================================================== */
+   ========================================================= */
 
 .home-trust-bar {
   position: absolute;
@@ -619,6 +648,8 @@
   object-position: center;
 }
 
+/* NEW JSX LOGOS */
+
 .trust-logo-assermentis {
   height: 60px;
 }
@@ -639,9 +670,9 @@
   height: 52px;
 }
 
-/* ==================================================
+/* =========================================================
    CONTENT SECTIONS
-   ================================================== */
+   ========================================================= */
 
 .home-info-section {
   width: 100%;
@@ -684,6 +715,8 @@
   line-height: 1.8;
 }
 
+/* CARDS */
+
 .home-info-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -697,6 +730,16 @@
   border: 1px solid #ece8f1;
   border-radius: 16px;
   background: #ffffff;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.home-info-card:hover {
+  transform: translateY(-3px);
+  border-color: #ded3ed;
+  box-shadow: 0 12px 28px rgba(43, 20, 80, 0.06);
 }
 
 .home-step {
@@ -748,6 +791,8 @@
   height: 16px;
 }
 
+/* CENTERED SECTIONS */
+
 .home-centered-section {
   display: flex;
   flex-direction: column;
@@ -790,7 +835,9 @@
   height: 17px;
 }
 
-/* ABOUT */
+/* =========================================================
+   ABOUT
+   ========================================================= */
 
 .home-about-layout {
   display: grid;
@@ -806,9 +853,9 @@
   line-height: 1.85;
 }
 
-/* ==================================================
+/* =========================================================
    FOOTER
-   ================================================== */
+   ========================================================= */
 
 .home-footer {
   width: 100%;
@@ -865,6 +912,7 @@
   flex-direction: column;
   align-items: flex-start;
   gap: 14px;
+  min-width: 0;
 }
 
 .home-footer-column h3 {
@@ -898,9 +946,47 @@
   font-size: 12px;
 }
 
-/* ==================================================
+/* =========================================================
+   MEDIUM DESKTOP
+   ========================================================= */
+
+@media (min-width: 992px) and (max-width: 1199.98px) {
+  .home-navbar {
+    gap: 20px;
+    padding-inline: 32px;
+  }
+
+  .home-nav-links {
+    gap: 20px;
+  }
+
+  .home-brand-name {
+    font-size: 20px;
+  }
+
+  .home-login-btn {
+    min-width: 110px;
+    padding-inline: 14px;
+  }
+
+  .home-demo-btn {
+    min-width: 150px;
+    padding-inline: 16px;
+  }
+
+  .home-hero-copy h1 {
+    font-size: clamp(38px, 4vw, 50px);
+  }
+
+  .home-hero-left {
+    padding-left: 42px;
+    padding-right: 30px;
+  }
+}
+
+/* =========================================================
    TABLET
-   ================================================== */
+   ========================================================= */
 
 @media (max-width: 991.98px) {
   .home-navbar {
@@ -921,12 +1007,17 @@
     display: inline-flex;
   }
 
+  .home-main-section {
+    min-height: auto;
+  }
+
   .home-hero-card {
     min-height: auto;
   }
 
   .home-hero-content {
-    display: block;
+    display: flex;
+    flex-direction: column;
     min-height: auto;
   }
 
@@ -935,13 +1026,28 @@
     padding: 60px 34px 50px;
   }
 
+  .home-hero-copy {
+    max-width: 700px;
+  }
+
+  .home-hero-copy h1 {
+    font-size: clamp(38px, 5.6vw, 54px);
+  }
+
   .home-hero-right {
+    width: 100%;
     min-height: 580px;
+  }
+
+  .home-portrait-image {
+    object-position: center 20%;
   }
 
   .home-hero-right::before {
     top: 0;
     bottom: auto;
+    left: 0;
+    right: 0;
     width: 100%;
     height: 150px;
     background: linear-gradient(
@@ -961,6 +1067,7 @@
 
   .home-image-quote {
     bottom: 30px;
+    width: 55%;
   }
 
   .home-trust-bar {
@@ -1002,9 +1109,9 @@
   }
 }
 
-/* ==================================================
+/* =========================================================
    MOBILE
-   ================================================== */
+   ========================================================= */
 
 @media (max-width: 767.98px) {
   .home-navbar {
@@ -1064,8 +1171,22 @@
     min-height: 500px;
   }
 
+  .home-portrait-image {
+    object-position: center 15%;
+  }
+
   .home-hero-right::after {
     height: 190px;
+  }
+
+  .home-image-quote {
+    width: 70%;
+    bottom: 35px;
+    padding: 35px 20px 20px;
+  }
+
+  .home-image-quote p {
+    font-size: 15px;
   }
 
   .home-trust-bar {
@@ -1077,21 +1198,24 @@
     gap: 30px 34px;
   }
 
-  .trust-logo-loreal,
-  .trust-logo-accenture {
-    height: 38px;
+  .trust-logo-assermentis {
+    height: 44px;
   }
 
-  .trust-logo-bnp {
-    height: 49px;
+  .trust-logo-ofti {
+    height: 50px;
   }
 
-  .trust-logo-doctolib {
-    height: 45px;
+  .trust-logo-gftij {
+    height: 44px;
   }
 
-  .trust-logo-veolia {
-    height: 43px;
+  .trust-logo-intertrad {
+    height: 42px;
+  }
+
+  .trust-logo-calamelle {
+    height: 40px;
   }
 
   .home-info-section {
@@ -1142,9 +1266,9 @@
   }
 }
 
-/* ==================================================
+/* =========================================================
    SMALL MOBILE
-   ================================================== */
+   ========================================================= */
 
 @media (max-width: 480px) {
   .home-navbar {
@@ -1171,16 +1295,20 @@
     padding: 14px;
   }
 
-  .home-hero-copy h1 {
-    font-size: 34px;
-  }
-
   .home-hero-left {
     padding: 42px 19px;
   }
 
+  .home-hero-copy h1 {
+    font-size: clamp(30px, 8.3vw, 34px);
+  }
+
   .home-hero-right {
     min-height: 450px;
+  }
+
+  .home-portrait-image {
+    object-position: 60% top;
   }
 
   .home-image-quote {
@@ -1197,21 +1325,24 @@
     gap: 28px 20px;
   }
 
-  .trust-logo-loreal,
-  .trust-logo-accenture {
-    height: 34px;
-  }
-
-  .trust-logo-bnp {
-    height: 43px;
-  }
-
-  .trust-logo-doctolib {
-    height: 40px;
-  }
-
-  .trust-logo-veolia {
+  .trust-logo-assermentis {
     height: 38px;
+  }
+
+  .trust-logo-ofti {
+    height: 44px;
+  }
+
+  .trust-logo-gftij {
+    height: 38px;
+  }
+
+  .trust-logo-intertrad {
+    height: 37px;
+  }
+
+  .trust-logo-calamelle {
+    height: 36px;
   }
 
   .home-info-container h2 {
@@ -1224,9 +1355,9 @@
   }
 }
 
-/* ==================================================
+/* =========================================================
    ACCESSIBILITY
-   ================================================== */
+   ========================================================= */
 
 .home-page a:focus-visible,
 .home-page button:focus-visible {
