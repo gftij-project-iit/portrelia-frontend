@@ -14,6 +14,7 @@ import ForgotPasswordPage from "../pages/ForgotPasswordPage";
 import ResetPasswordPage from "../pages/ResetPasswordPage";
 import CookieConsent from "../components/CookieConsent";
 import LegalPage from "../pages/legal/LegalPage";
+import ContactPage from "../pages/ContactPage";
 
 function AppRoutes() {
   return (
@@ -24,6 +25,7 @@ function AppRoutes() {
         <Route path="/" element={<PublicRoute><HomePage /></PublicRoute>} />
         <Route path="/connexion" element={<PublicRoute><LoginPage /></PublicRoute>} />
         <Route path="/demande-demo" element={<PublicRoute><DemoRequestPage /></PublicRoute>} />
+        <Route path="/contact" element={<PublicRoute><ContactPage /></PublicRoute>} />
         <Route path="/activation-compte" element={<PublicRoute><AccountActivationPage /></PublicRoute>} />
         <Route path="/galerie-partagee/:token" element={<PublicGalleryPage />} />
         <Route

@@ -19,6 +19,7 @@ const NAV_ITEMS = [
   { label: "Tarifs", href: "#tarifs" },
   { label: "Ressources", href: "#ressources" },
   { label: "À propos", href: "#apropos" },
+  { label: "Contact", href: "/contact" },
 ];
 
 const LEGAL_ITEMS = [
@@ -566,6 +567,7 @@ function HomePage() {
                   Des portraits professionnels pour vos équipes.
                 </p>
               </div>
+              
             </div>
 
             <div className="home-footer-column">
@@ -598,6 +600,7 @@ function HomePage() {
               <Link to="/demande-demo">
                 Demander une démo
               </Link>
+              <Link to="/contact">Nous contacter</Link>
             </div>
 
           </div>
