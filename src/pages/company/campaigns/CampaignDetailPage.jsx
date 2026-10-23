@@ -31,31 +31,77 @@ import api from "../../../services/api";
 import "./CampaignDetailPage.css";
 
 /*
- * Date minimale autorisée : demain, heure de Paris.
- * Les dates passées et aujourd'hui sont interdites.
+ * =========================================================
+ * GESTION DES DATES - HEURE DE PARIS
+ * =========================================================
  */
-const getTomorrowParis = () => {
+
+function getParisDate(date = new Date()) {
   const parts = new Intl.DateTimeFormat("en-GB", {
     timeZone: "Europe/Paris",
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
-  }).formatToParts(new Date());
+  }).formatToParts(date);
 
   const values = Object.fromEntries(
     parts.map(({ type, value }) => [type, value])
   );
 
+  return `${values.year}-${values.month}-${values.day}`;
+}
+
+function getTomorrowParis() {
+  const today = getParisDate();
+
   const tomorrow = new Date(
-    Date.UTC(
-      Number(values.year),
-      Number(values.month) - 1,
-      Number(values.day) + 1
-    )
+    `${today}T12:00:00Z`
   );
 
+  tomorrow.setUTCDate(tomorrow.getUTCDate() + 1);
+
   return tomorrow.toISOString().slice(0, 10);
-};
+}
+
+function toParisDateInputValue(value) {
+  if (!value) return "";
+
+  // Date simple reçue de l'API.
+  if (
+    typeof value === "string" &&
+    /^\d{4}-\d{2}-\d{2}$/.test(value)
+  ) {
+    return value;
+  }
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return "";
+  }
+
+  return getParisDate(date);
+}
+
+function isValidFutureDate(value) {
+  if (
+    typeof value !== "string" ||
+    !/^\d{4}-\d{2}-\d{2}$/.test(value)
+  ) {
+    return false;
+  }
+
+  const date = new Date(`${value}T12:00:00Z`);
+
+  return (
+    !Number.isNaN(date.getTime()) &&
+    date.toISOString().slice(0, 10) === value &&
+    value >= getTomorrowParis()
+  );
+}
+
+const DATE_ERROR =
+  "La date limite de participation est dépassée. Prolongez la campagne pour ajouter des collaborateurs ou relancer des invitations.";
 
 function CampaignDetailPage() {
   const navigate = useNavigate();
@@ -67,16 +113,25 @@ function CampaignDetailPage() {
   const [successMessage, setSuccessMessage] = useState("");
 
   const [search, setSearch] = useState("");
-  const [participantFilter, setParticipantFilter] = useState("ALL");
+  const [participantFilter, setParticipantFilter] =
+    useState("ALL");
   const [filterOpen, setFilterOpen] = useState(false);
 
   const [editOpen, setEditOpen] = useState(false);
-  const [addParticipantsOpen, setAddParticipantsOpen] = useState(false);
+  const [addParticipantsOpen, setAddParticipantsOpen] =
+    useState(false);
   const [cancelOpen, setCancelOpen] = useState(false);
 
   const [saving, setSaving] = useState(false);
   const [cancelling, setCancelling] = useState(false);
-  const [resendingInvitationId, setResendingInvitationId] = useState(null);
+  const [resendingInvitationId, setResendingInvitationId] =
+    useState(null);
+
+  // Actualisation périodique pour détecter
+  // le changement de jour sans rechargement.
+  const [currentTime, setCurrentTime] = useState(
+    () => Date.now()
+  );
 
   const [editForm, setEditForm] = useState({
     name: "",
@@ -98,12 +153,28 @@ function CampaignDetailPage() {
 
   /*
    * =========================================================
-   * CHARGEMENT INITIAL
+   * HORLOGE
+   * =========================================================
+   */
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(Date.now());
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  /*
+   * =========================================================
+   * CHARGEMENT CAMPAGNE
    * =========================================================
    */
 
   useEffect(() => {
     const controller = new AbortController();
+
+    
 
     api
       .get(`/company/campaigns/${id}`, {
@@ -137,16 +208,8 @@ function CampaignDetailPage() {
         }
       });
 
-    return () => {
-      controller.abort();
-    };
+    return () => controller.abort();
   }, [id]);
-
-  /*
-   * =========================================================
-   * RECHARGEMENT MANUEL
-   * =========================================================
-   */
 
   const reloadCampaign = async () => {
     try {
@@ -197,7 +260,73 @@ function CampaignDetailPage() {
 
   /*
    * =========================================================
-   * RECHERCHE ET FILTRES
+   * CONTRÔLE D'EXPIRATION
+   * =========================================================
+   *
+   * Une campagne est ouverte toute la journée
+   * de sa date limite, jusqu'à 23h59 à Paris.
+   *
+   * Si deadline_at contient un horodatage précis
+   * en fin de journée, on utilise cet instant.
+   *
+   * Le backend reste l'autorité définitive.
+   */
+
+  const isFinalCampaign =
+    campaign?.status === "COMPLETED" ||
+    campaign?.status === "CANCELLED";
+
+  const deadlineDate = toParisDateInputValue(
+    campaign?.deadlineAt
+  );
+
+  const todayParis = getParisDate(
+    new Date(currentTime)
+  );
+
+  const isCampaignExpired =
+    !deadlineDate || deadlineDate < todayParis;
+
+  const canSendInvitations =
+    Boolean(campaign) &&
+    !isFinalCampaign &&
+    !isCampaignExpired;
+
+  const cannotInviteReason = isFinalCampaign
+    ? "Cette campagne est terminée ou annulée."
+    : DATE_ERROR;
+
+  const validateInvitationAction = () => {
+    const deadline = toParisDateInputValue(
+      campaign?.deadlineAt
+    );
+
+    if (
+      !campaign ||
+      campaign.status === "COMPLETED" ||
+      campaign.status === "CANCELLED"
+    ) {
+      setError(
+        "Cette campagne n'accepte plus de nouvelles invitations."
+      );
+      return false;
+    }
+
+    if (
+      !deadline ||
+      deadline < getParisDate()
+    ) {
+      setError(DATE_ERROR);
+      setAddParticipantsOpen(false);
+      return false;
+    }
+
+    return true;
+  };
+
+  /*
+   * =========================================================
+   * FILTRES
    * =========================================================
    */
 
@@ -229,7 +358,7 @@ function CampaignDetailPage() {
 
   /*
    * =========================================================
-   * LABELS
+   * STATUTS
    * =========================================================
    */
 
@@ -323,7 +452,7 @@ function CampaignDetailPage() {
 
   /*
    * =========================================================
-   * DATES
+   * FORMATAGE
    * =========================================================
    */
 
@@ -362,29 +491,6 @@ function CampaignDetailPage() {
     }).format(parsedDate);
   };
 
-  const toDateInputValue = (date) => {
-    if (!date) return "";
-
-    const parsedDate = new Date(date);
-
-    if (Number.isNaN(parsedDate.getTime())) {
-      return "";
-    }
-
-    const parts = new Intl.DateTimeFormat("en-GB", {
-      timeZone: "Europe/Paris",
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    }).formatToParts(parsedDate);
-
-    const values = Object.fromEntries(
-      parts.map(({ type, value }) => [type, value])
-    );
-
-    return `${values.year}-${values.month}-${values.day}`;
-  };
-
   const getPortraitStyleValue = (slug) => {
     switch (slug) {
       case "moderne":
@@ -412,7 +518,9 @@ function CampaignDetailPage() {
     setEditForm({
       name: campaign.name || "",
       description: campaign.description || "",
-      deadline: toDateInputValue(campaign.deadlineAt),
+      deadline: toParisDateInputValue(
+        campaign.deadlineAt
+      ),
       targetDelay: String(
         campaign.targetDelayHours || 72
       ),
@@ -440,16 +548,9 @@ function CampaignDetailPage() {
 
     if (saving) return;
 
-    /*
-     * Vérification avant envoi au backend.
-     * La date doit être au minimum demain.
-     */
-    if (
-      !editForm.deadline ||
-      editForm.deadline < getTomorrowParis()
-    ) {
+    if (!isValidFutureDate(editForm.deadline)) {
       setError(
-        "La date limite de participation doit être à partir de demain."
+        "La nouvelle date limite doit être à partir de demain."
       );
       return;
     }
@@ -473,11 +574,13 @@ function CampaignDetailPage() {
 
       setEditOpen(false);
 
+      // Recharge la campagne pour recalculer
+      // l'état des invitations après prolongation.
+      await reloadCampaign();
+
       setSuccessMessage(
         "Campagne modifiée avec succès."
       );
-
-      await reloadCampaign();
     } catch (requestError) {
       console.error(
         "Erreur modification campagne :",
@@ -495,15 +598,22 @@ function CampaignDetailPage() {
 
   /*
    * =========================================================
-   * AJOUT DES PARTICIPANTS
+   * AJOUT COLLABORATEURS
    * =========================================================
    */
+
+  const openAddParticipants = () => {
+    if (!validateInvitationAction()) return;
+
+    setError("");
+    setAddParticipantsOpen(true);
+  };
 
   const addParticipantRow = () => {
     setNewParticipants((previous) => [
       ...previous,
       {
-        id: Date.now(),
+        id: Date.now() + Math.random(),
         firstName: "",
         lastName: "",
         email: "",
@@ -558,6 +668,12 @@ function CampaignDetailPage() {
 
     if (saving) return;
 
+    // Ne jamais envoyer une invitation
+    // si la campagne a déjà expiré.
+    if (!validateInvitationAction()) {
+      return;
+    }
+
     try {
       setSaving(true);
       setError("");
@@ -571,7 +687,8 @@ function CampaignDetailPage() {
             email: participant.email
               .trim()
               .toLowerCase(),
-            jobTitle: participant.jobTitle.trim() || null,
+            jobTitle:
+              participant.jobTitle.trim() || null,
           })
         ),
       };
@@ -584,11 +701,11 @@ function CampaignDetailPage() {
       resetNewParticipants();
       setAddParticipantsOpen(false);
 
+      await reloadCampaign();
+
       setSuccessMessage(
         "Collaborateurs ajoutés et invitations préparées."
       );
-
-      await reloadCampaign();
     } catch (requestError) {
       console.error(
         "Erreur ajout collaborateurs :",
@@ -606,12 +723,39 @@ function CampaignDetailPage() {
 
   /*
    * =========================================================
-   * RELANCE INVITATION
+   * RELANCE INVITATIONS
    * =========================================================
    */
 
-  const resendInvitation = async (invitationId) => {
+  const canResendParticipant = (participant) => {
+    return (
+      canSendInvitations &&
+      Boolean(participant.invitationId) &&
+      !["REVOKED", "EXPIRED"].includes(
+        participant.invitationStatus
+      )
+    );
+  };
+
+  const resendInvitation = async (participant) => {
+    const invitationId = participant?.invitationId;
+
     if (!invitationId || resendingInvitationId) {
+      return;
+    }
+
+    if (!validateInvitationAction()) {
+      return;
+    }
+
+    if (
+      ["REVOKED", "EXPIRED"].includes(
+        participant.invitationStatus
+      )
+    ) {
+      setError(
+        "Cette invitation est expirée ou révoquée. Une nouvelle invitation valide doit être créée avant toute relance."
+      );
       return;
     }
 
@@ -624,11 +768,11 @@ function CampaignDetailPage() {
         `/company/campaigns/${id}/invitations/${invitationId}/resend`
       );
 
+      await reloadCampaign();
+
       setSuccessMessage(
         "Invitation renvoyée avec succès."
       );
-
-      await reloadCampaign();
     } catch (requestError) {
       console.error(
         "Erreur renvoi invitation :",
@@ -646,7 +790,7 @@ function CampaignDetailPage() {
 
   /*
    * =========================================================
-   * ANNULATION CAMPAGNE
+   * ANNULATION
    * =========================================================
    */
 
@@ -664,11 +808,11 @@ function CampaignDetailPage() {
 
       setCancelOpen(false);
 
+      await reloadCampaign();
+
       setSuccessMessage(
         "La campagne a été annulée."
       );
-
-      await reloadCampaign();
     } catch (requestError) {
       console.error(
         "Erreur annulation campagne :",
@@ -705,7 +849,6 @@ function CampaignDetailPage() {
         <FiAlertTriangle />
 
         <h2>Campagne indisponible</h2>
-
         <p>{error}</p>
 
         <div>
@@ -733,10 +876,6 @@ function CampaignDetailPage() {
 
   if (!campaign) return null;
 
-  const isFinalCampaign =
-    campaign.status === "COMPLETED" ||
-    campaign.status === "CANCELLED";
-
   const attentionTotal =
     Number(attention.withoutPhotos || 0) +
     Number(attention.invitationsNotOpened || 0) +
@@ -746,7 +885,7 @@ function CampaignDetailPage() {
 
   /*
    * =========================================================
-   * RENDU
+   * INTERFACE
    * =========================================================
    */
 
@@ -777,6 +916,7 @@ function CampaignDetailPage() {
           <button
             type="button"
             onClick={() => setError("")}
+            aria-label="Fermer le message"
           >
             <FiX />
           </button>
@@ -791,6 +931,7 @@ function CampaignDetailPage() {
           <button
             type="button"
             onClick={() => setSuccessMessage("")}
+            aria-label="Fermer le message"
           >
             <FiX />
           </button>
@@ -831,8 +972,12 @@ function CampaignDetailPage() {
               <button
                 type="button"
                 className="campaign-detail-primary-btn"
-                onClick={() =>
-                  setAddParticipantsOpen(true)
+                onClick={openAddParticipants}
+                disabled={!canSendInvitations}
+                title={
+                  canSendInvitations
+                    ? "Ajouter des collaborateurs"
+                    : cannotInviteReason
                 }
               >
                 <FiPlus />
@@ -843,7 +988,24 @@ function CampaignDetailPage() {
         </div>
       </section>
 
-      {/* INFORMATIONS CAMPAGNE */}
+      {/* AVERTISSEMENT EXPIRATION */}
+      {isCampaignExpired && !isFinalCampaign && (
+        <div
+          className="campaign-detail-message campaign-detail-message-error"
+          role="status"
+        >
+          <FiAlertTriangle />
+
+          <span>
+            La date limite de participation est dépassée.
+            Vous ne pouvez plus ajouter de collaborateurs
+            ni relancer les invitations.
+            Cliquez sur « Modifier » pour prolonger la campagne.
+          </span>
+        </div>
+      )}
+
+      {/* INFORMATIONS */}
       <section className="campaign-detail-meta">
         <div>
           <FiCalendar />
@@ -900,7 +1062,9 @@ function CampaignDetailPage() {
           </div>
           <div>
             <span>Photos reçues</span>
-            <strong>{stats.photosReceived || 0}</strong>
+            <strong>
+              {stats.photosReceived || 0}
+            </strong>
           </div>
         </div>
 
@@ -910,7 +1074,9 @@ function CampaignDetailPage() {
           </div>
           <div>
             <span>Galeries prêtes</span>
-            <strong>{stats.galleriesReady || 0}</strong>
+            <strong>
+              {stats.galleriesReady || 0}
+            </strong>
           </div>
         </div>
 
@@ -1031,8 +1197,10 @@ function CampaignDetailPage() {
         <div className="campaign-detail-participants-header">
           <div>
             <h2>Collaborateurs</h2>
+
             <p>
-              Suivez les invitations et l’avancement de chaque participant.
+              Suivez les invitations et l’avancement
+              de chaque participant.
             </p>
           </div>
 
@@ -1040,8 +1208,12 @@ function CampaignDetailPage() {
             <button
               type="button"
               className="campaign-detail-primary-btn"
-              onClick={() =>
-                setAddParticipantsOpen(true)
+              onClick={openAddParticipants}
+              disabled={!canSendInvitations}
+              title={
+                canSendInvitations
+                  ? "Ajouter un collaborateur"
+                  : cannotInviteReason
               }
             >
               <FiPlus />
@@ -1050,7 +1222,7 @@ function CampaignDetailPage() {
           )}
         </div>
 
-        {/* SEARCH + FILTER */}
+        {/* RECHERCHE + FILTRE */}
         <div className="campaign-detail-toolbar">
           <div className="campaign-detail-search">
             <FiSearch />
@@ -1080,55 +1252,24 @@ function CampaignDetailPage() {
 
             {filterOpen && (
               <div className="campaign-detail-filter-menu">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setParticipantFilter("ALL");
-                    setFilterOpen(false);
-                  }}
-                >
-                  Tous
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    setParticipantFilter("INVITED");
-                    setFilterOpen(false);
-                  }}
-                >
-                  Invités
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    setParticipantFilter("PHOTOS_RECEIVED");
-                    setFilterOpen(false);
-                  }}
-                >
-                  Photos reçues
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    setParticipantFilter("GALLERY_READY");
-                    setFilterOpen(false);
-                  }}
-                >
-                  Galerie prête
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    setParticipantFilter("VALIDATED");
-                    setFilterOpen(false);
-                  }}
-                >
-                  Validés
-                </button>
+                {[
+                  ["ALL", "Tous"],
+                  ["INVITED", "Invités"],
+                  ["PHOTOS_RECEIVED", "Photos reçues"],
+                  ["GALLERY_READY", "Galerie prête"],
+                  ["VALIDATED", "Validés"],
+                ].map(([value, label]) => (
+                  <button
+                    type="button"
+                    key={value}
+                    onClick={() => {
+                      setParticipantFilter(value);
+                      setFilterOpen(false);
+                    }}
+                  >
+                    {label}
+                  </button>
+                ))}
               </div>
             )}
           </div>
@@ -1142,7 +1283,7 @@ function CampaignDetailPage() {
             : "collaborateur"}
         </div>
 
-        {/* DESKTOP TABLE */}
+        {/* TABLE DESKTOP */}
         <div className="campaign-detail-table-wrapper">
           <table className="campaign-detail-table">
             <thead>
@@ -1174,7 +1315,9 @@ function CampaignDetailPage() {
                           {participant.lastName}
                         </strong>
 
-                        <span>{participant.email}</span>
+                        <span>
+                          {participant.email}
+                        </span>
 
                         {participant.jobTitle && (
                           <small>
@@ -1236,13 +1379,18 @@ function CampaignDetailPage() {
                         type="button"
                         className="campaign-detail-resend-btn"
                         onClick={() =>
-                          resendInvitation(
-                            participant.invitationId
-                          )
+                          resendInvitation(participant)
                         }
                         disabled={
-                          resendingInvitationId ===
-                          participant.invitationId
+                          !canResendParticipant(participant) ||
+                          Boolean(resendingInvitationId)
+                        }
+                        title={
+                          isCampaignExpired
+                            ? DATE_ERROR
+                            : !canResendParticipant(participant)
+                            ? "Cette invitation ne peut pas être relancée."
+                            : "Renvoyer l'invitation"
                         }
                       >
                         {resendingInvitationId ===
@@ -1269,7 +1417,7 @@ function CampaignDetailPage() {
           </table>
         </div>
 
-        {/* MOBILE CARDS */}
+        {/* CARTES MOBILE */}
         <div className="campaign-detail-mobile-participants">
           {filteredParticipants.map((participant) => (
             <article
@@ -1297,6 +1445,7 @@ function CampaignDetailPage() {
               <div className="campaign-detail-mobile-person-info">
                 <div>
                   <span>Statut</span>
+
                   <strong>
                     {getParticipantStatusLabel(
                       participant.status
@@ -1306,6 +1455,7 @@ function CampaignDetailPage() {
 
                 <div>
                   <span>Invitation</span>
+
                   <strong>
                     {getInvitationLabel(
                       participant.invitationStatus
@@ -1315,6 +1465,7 @@ function CampaignDetailPage() {
 
                 <div>
                   <span>Photos</span>
+
                   <strong>
                     {participant.photoCount || 0}
                   </strong>
@@ -1327,16 +1478,28 @@ function CampaignDetailPage() {
                     type="button"
                     className="campaign-detail-resend-btn"
                     onClick={() =>
-                      resendInvitation(
-                        participant.invitationId
-                      )
+                      resendInvitation(participant)
                     }
                     disabled={
-                      resendingInvitationId ===
-                      participant.invitationId
+                      !canResendParticipant(participant) ||
+                      Boolean(resendingInvitationId)
+                    }
+                    title={
+                      isCampaignExpired
+                        ? DATE_ERROR
+                        : "Relancer l'invitation"
                     }
                   >
-                    <FiSend />
+                    {resendingInvitationId ===
+                    participant.invitationId ? (
+                      <ClipLoader
+                        size={13}
+                        color="#4f2e94"
+                      />
+                    ) : (
+                      <FiSend />
+                    )}
+
                     Relancer l'invitation
                   </button>
                 )}
@@ -1347,7 +1510,11 @@ function CampaignDetailPage() {
         {filteredParticipants.length === 0 && (
           <div className="campaign-detail-empty">
             <FiUsers />
-            <strong>Aucun collaborateur trouvé</strong>
+
+            <strong>
+              Aucun collaborateur trouvé
+            </strong>
+
             <span>
               Modifiez votre recherche ou ajoutez un collaborateur.
             </span>
@@ -1418,10 +1585,10 @@ function CampaignDetailPage() {
       {editOpen && (
         <div className="campaign-detail-modal-overlay">
           <div className="campaign-detail-modal">
-
             <div className="campaign-detail-modal-header">
               <div>
                 <h2>Modifier la campagne</h2>
+
                 <p>
                   Mettez à jour les paramètres principaux.
                 </p>
@@ -1430,6 +1597,7 @@ function CampaignDetailPage() {
               <button
                 type="button"
                 onClick={() => setEditOpen(false)}
+                aria-label="Fermer"
               >
                 <FiX />
               </button>
@@ -1480,6 +1648,10 @@ function CampaignDetailPage() {
                     onChange={handleEditChange}
                     required
                   />
+
+                  <small>
+                    Nouvelle date à partir de demain.
+                  </small>
                 </div>
 
                 <div className="campaign-detail-form-field">
@@ -1552,8 +1724,7 @@ function CampaignDetailPage() {
                   className="campaign-detail-primary-btn"
                   disabled={
                     saving ||
-                    !editForm.deadline ||
-                    editForm.deadline < getTomorrowParis()
+                    !isValidFutureDate(editForm.deadline)
                   }
                 >
                   {saving ? (
@@ -1578,15 +1749,15 @@ function CampaignDetailPage() {
       )}
 
       {/* =====================================================
-          MODAL AJOUT PARTICIPANTS
+          MODAL AJOUT DE COLLABORATEURS
           ===================================================== */}
-      {addParticipantsOpen && (
+      {addParticipantsOpen && canSendInvitations && (
         <div className="campaign-detail-modal-overlay">
           <div className="campaign-detail-modal campaign-detail-modal-large">
-
             <div className="campaign-detail-modal-header">
               <div>
                 <h2>Ajouter des collaborateurs</h2>
+
                 <p>
                   Une invitation sera envoyée sur leur adresse email.
                 </p>
@@ -1598,6 +1769,7 @@ function CampaignDetailPage() {
                   setAddParticipantsOpen(false);
                   resetNewParticipants();
                 }}
+                aria-label="Fermer"
               >
                 <FiX />
               </button>
@@ -1616,7 +1788,6 @@ function CampaignDetailPage() {
                       </div>
 
                       <div className="campaign-detail-new-participant-fields">
-
                         <div className="campaign-detail-form-field">
                           <label>Prénom</label>
 
@@ -1695,7 +1866,6 @@ function CampaignDetailPage() {
                             />
                           </div>
                         </div>
-
                       </div>
 
                       <button
@@ -1709,6 +1879,7 @@ function CampaignDetailPage() {
                         disabled={
                           newParticipants.length === 1
                         }
+                        aria-label="Supprimer ce collaborateur"
                       >
                         <FiTrash2 />
                       </button>
@@ -1742,7 +1913,10 @@ function CampaignDetailPage() {
                 <button
                   type="submit"
                   className="campaign-detail-primary-btn"
-                  disabled={saving}
+                  disabled={
+                    saving ||
+                    !canSendInvitations
+                  }
                 >
                   {saving ? (
                     <>
@@ -1771,7 +1945,6 @@ function CampaignDetailPage() {
       {cancelOpen && (
         <div className="campaign-detail-modal-overlay">
           <div className="campaign-detail-modal campaign-detail-confirm-modal">
-
             <div className="campaign-detail-confirm-icon">
               <FiAlertTriangle />
             </div>
