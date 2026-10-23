@@ -5,14 +5,26 @@
   gap: 24px;
 }
 
-/* HEADER */
+.company-home-page *,
+.company-home-page *::before,
+.company-home-page *::after {
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
 
 .company-home-header {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
   gap: 24px;
-  margin-bottom: 12px;
+  margin-bottom: 4px;
+}
+
+.company-home-header-copy {
+  min-width: 0;
 }
 
 .company-home-kicker {
@@ -40,6 +52,98 @@
   line-height: 1.5;
 }
 
+/* Sélecteur de campagne */
+
+.company-home-select {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 100%;
+  margin-top: 16px;
+  padding: 0 14px;
+  min-height: 42px;
+  border: 1px solid #e2e6ec;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #4f2e94;
+}
+
+.company-home-select svg {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+}
+
+.company-home-select select {
+  min-width: 0;
+  max-width: 320px;
+  padding: 0 4px 0 0;
+  border: 0;
+  background: transparent;
+  color: #111827;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+  text-overflow: ellipsis;
+}
+
+.company-home-select:focus-within {
+  border-color: #b9a6e4;
+  box-shadow: 0 0 0 3px rgba(79, 46, 148, 0.12);
+}
+
+/* Actions */
+
+.company-home-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.company-home-refresh-btn {
+  width: 46px;
+  height: 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid #e2e6ec;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #344054;
+  cursor: pointer;
+  transition: background 0.16s ease, border-color 0.16s ease;
+}
+
+.company-home-refresh-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.company-home-refresh-btn:hover:not(:disabled) {
+  background: #f9fafb;
+  border-color: #cfd4dc;
+}
+
+.company-home-refresh-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.company-home-spin {
+  animation: company-home-spin 0.9s linear infinite;
+}
+
+@keyframes company-home-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .company-home-create-btn {
   min-height: 46px;
   display: inline-flex;
@@ -48,15 +152,19 @@
   gap: 7px;
   padding: 0 20px;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   background: #4f2e94;
   color: #ffffff;
   font-size: 14px;
   font-weight: 700;
+  white-space: nowrap;
   cursor: pointer;
-  transition:
-    background 0.2s ease,
-    transform 0.2s ease;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.company-home-create-btn svg {
+  width: 17px;
+  height: 17px;
 }
 
 .company-home-create-btn:hover {
@@ -64,16 +172,108 @@
   transform: translateY(-1px);
 }
 
-/* KPI */
+/* =========================================================
+   ERREUR
+========================================================= */
+
+.company-home-error {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid #fecaca;
+  border-radius: 12px;
+  background: #fef2f2;
+  color: #b91c1c;
+  font-size: 14px;
+}
+
+.company-home-error svg {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+}
+
+.company-home-error span {
+  flex: 1;
+  min-width: 0;
+  line-height: 1.45;
+}
+
+.company-home-error button {
+  flex-shrink: 0;
+  border: 0;
+  border-radius: 8px;
+  padding: 8px 12px;
+  background: #b91c1c;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.company-home-error button:disabled {
+  opacity: 0.6;
+}
+
+/* =========================================================
+   ÉTAT VIDE
+========================================================= */
+
+.company-home-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 48px 24px;
+  border: 1px dashed #d8cfe8;
+  border-radius: 14px;
+  background: #fbfaff;
+  text-align: center;
+}
+
+.company-home-empty-icon {
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: #f1edfb;
+  color: #4f2e94;
+}
+
+.company-home-empty-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.company-home-empty h2 {
+  margin: 4px 0 0;
+  color: #111827;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.company-home-empty p {
+  max-width: 420px;
+  margin: 0 0 8px;
+  color: #667085;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* =========================================================
+   KPI
+========================================================= */
 
 .company-home-kpis {
   display: grid;
-  grid-template-columns:
-    repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 18px;
 }
 
 .company-home-kpi-card {
+  min-width: 0;
   min-height: 118px;
   display: flex;
   flex-direction: column;
@@ -82,9 +282,12 @@
   padding: 20px;
   background: #ffffff;
   border: 1px solid #e2e6ec;
-  border-radius: 10px;
-  box-shadow:
-    0 5px 16px rgba(17, 24, 39, 0.025);
+  border-radius: 12px;
+  box-shadow: 0 5px 16px rgba(17, 24, 39, 0.025);
+}
+
+.company-home-kpi-card.is-loading > strong {
+  color: #c4c7cf;
 }
 
 .company-home-kpi-card > span {
@@ -102,12 +305,15 @@
 }
 
 .company-home-kpi-badge {
-  width: fit-content;
-  margin-top: 7px;
+  max-width: 100%;
+  margin-top: 8px;
   padding: 4px 10px;
   border-radius: 999px;
   font-size: 11px;
   font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .company-home-kpi-purple {
@@ -125,28 +331,30 @@
   color: #168554;
 }
 
-/* BOTTOM */
+/* =========================================================
+   BAS DE PAGE
+========================================================= */
 
 .company-home-bottom-grid {
   display: grid;
-  grid-template-columns:
-    minmax(0, 1fr)
-    minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 18px;
 }
 
 .company-home-progress-card,
 .company-home-attention-card {
+  min-width: 0;
   min-height: 260px;
   padding: 24px;
   background: #ffffff;
   border: 1px solid #e2e6ec;
-  border-radius: 10px;
-  box-shadow:
-    0 7px 20px rgba(17, 24, 39, 0.025);
+  border-radius: 12px;
+  box-shadow: 0 7px 20px rgba(17, 24, 39, 0.025);
 }
 
-/* PROGRESS */
+/* =========================================================
+   PROGRESSION
+========================================================= */
 
 .company-home-section-header {
   display: flex;
@@ -166,12 +374,13 @@
 .company-home-section-header span {
   color: #667085;
   font-size: 13px;
+  white-space: nowrap;
 }
 
 .company-home-progress-track {
   width: 100%;
   height: 9px;
-  margin-top: 30px;
+  margin-top: 28px;
   overflow: hidden;
   background: #eaecf0;
   border-radius: 999px;
@@ -179,8 +388,9 @@
 
 .company-home-progress-fill {
   height: 100%;
-  background: #6742cf;
+  background: linear-gradient(90deg, #8b6be0, #4f2e94);
   border-radius: inherit;
+  transition: width 0.6s ease;
 }
 
 .company-home-progress-meta {
@@ -194,12 +404,44 @@
 .company-home-progress-meta strong {
   color: #1f2937;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .company-home-progress-meta span {
   color: #667085;
   font-size: 13px;
+}
+
+.company-home-progress-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.company-home-progress-steps > div {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+  border: 1px solid #eef0f4;
+  border-radius: 10px;
+  background: #fafbfc;
+}
+
+.company-home-progress-steps span {
+  color: #667085;
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.company-home-progress-steps strong {
+  color: #111827;
+  font-size: 18px;
+  font-weight: 800;
 }
 
 .company-home-progress-actions {
@@ -211,11 +453,26 @@
 
 .company-home-progress-actions button {
   min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   padding: 0 18px;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
+  transition: background 0.16s ease;
+}
+
+.company-home-progress-actions button svg {
+  width: 15px;
+  height: 15px;
+}
+
+.company-home-progress-actions button:disabled {
+  opacity: 0.55;
+  cursor: default;
 }
 
 .company-home-primary-action {
@@ -234,11 +491,13 @@
   color: #344054;
 }
 
-.company-home-secondary-action:hover {
+.company-home-secondary-action:hover:not(:disabled) {
   background: #f9fafb;
 }
 
-/* ATTENTION */
+/* =========================================================
+   POINTS D'ATTENTION
+========================================================= */
 
 .company-home-attention-card h2 {
   margin-bottom: 20px;
@@ -264,10 +523,10 @@
 .company-home-attention-item:not(:last-child)::after {
   content: "";
   position: absolute;
-  top: 32px;
+  top: 34px;
   left: 16px;
   width: 1px;
-  height: calc(100% - 18px);
+  height: calc(100% - 22px);
   background: #e4e7ec;
 }
 
@@ -280,16 +539,29 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
+  border-radius: 9px;
   background: #f4f0fb;
   color: #4f2e94;
-  font-size: 13px;
-  font-weight: 800;
 }
 
 .company-home-attention-icon svg {
   width: 16px;
   height: 16px;
+}
+
+.company-home-attention-icon.is-warning {
+  background: #fff4df;
+  color: #c56a00;
+}
+
+.company-home-attention-icon.is-danger {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.company-home-attention-icon.is-success {
+  background: #e8f9ef;
+  color: #168554;
 }
 
 .company-home-attention-item > div:last-child {
@@ -312,14 +584,46 @@
   line-height: 1.45;
 }
 
-/* RESPONSIVE */
+/* Chargement */
+
+.company-home-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.company-home-skeleton span {
+  display: block;
+  height: 44px;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #f1f2f5 0%, #f8f9fb 50%, #f1f2f5 100%);
+  background-size: 200% 100%;
+  animation: company-home-skeleton 1.2s ease-in-out infinite;
+}
+
+@keyframes company-home-skeleton {
+  from {
+    background-position: 200% 0;
+  }
+
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* =========================================================
+   PETIT DESKTOP
+========================================================= */
 
 @media (max-width: 1150px) {
   .company-home-kpis {
-    grid-template-columns:
-      repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* =========================================================
+   TABLETTE
+========================================================= */
 
 @media (max-width: 900px) {
   .company-home-bottom-grid {
@@ -327,69 +631,237 @@
   }
 }
 
+/* =========================================================
+   MOBILE
+========================================================= */
+
 @media (max-width: 700px) {
   .company-home-page {
-    gap: 18px;
+    gap: 16px;
   }
+
+  /* Header */
 
   .company-home-header {
     flex-direction: column;
-    align-items: flex-start;
-    margin-bottom: 2px;
+    align-items: stretch;
+    gap: 16px;
+    margin-bottom: 0;
+  }
+
+  .company-home-kicker {
+    font-size: 10px;
   }
 
   .company-home-header h1 {
-    font-size: 26px;
+    font-size: 24px;
   }
 
   .company-home-header p {
-    margin-top: 10px;
+    margin-top: 8px;
     font-size: 13px;
   }
 
-  .company-home-create-btn {
+  .company-home-select {
+    display: flex;
+    width: 100%;
+    margin-top: 14px;
+  }
+
+  .company-home-select select {
+    flex: 1;
+    max-width: none;
+  }
+
+  .company-home-header-actions {
     width: 100%;
   }
 
+  .company-home-refresh-btn {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+  }
+
+  .company-home-create-btn {
+    flex: 1;
+    min-height: 44px;
+  }
+
+  /* Erreur */
+
+  .company-home-error {
+    flex-wrap: wrap;
+    padding: 12px 14px;
+    font-size: 13px;
+  }
+
+  .company-home-error button {
+    margin-left: auto;
+  }
+
+  /* KPI en 2 x 2 */
+
   .company-home-kpis {
-    grid-template-columns: 1fr;
-    gap: 12px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
   }
 
   .company-home-kpi-card {
-    min-height: 100px;
-    padding: 17px;
+    min-height: auto;
+    padding: 14px;
+    border-radius: 12px;
+  }
+
+  .company-home-kpi-card > span {
+    font-size: 12px;
+  }
+
+  .company-home-kpi-card > strong {
+    margin-top: 6px;
+    font-size: 24px;
+  }
+
+  .company-home-kpi-badge {
+    margin-top: 6px;
+    padding: 3px 8px;
+    font-size: 10.5px;
+  }
+
+  /* Cartes */
+
+  .company-home-bottom-grid {
+    gap: 12px;
   }
 
   .company-home-progress-card,
   .company-home-attention-card {
     min-height: auto;
-    padding: 18px;
+    padding: 16px;
+    border-radius: 12px;
+  }
+
+  .company-home-section-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .company-home-section-header h2,
+  .company-home-attention-card h2 {
+    font-size: 16px;
+  }
+
+  .company-home-section-header span {
+    font-size: 12px;
+  }
+
+  .company-home-progress-track {
+    height: 8px;
+    margin-top: 18px;
   }
 
   .company-home-progress-meta {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 5px;
+    gap: 10px;
+  }
+
+  .company-home-progress-meta strong,
+  .company-home-progress-meta span {
+    font-size: 12px;
+  }
+
+  .company-home-progress-steps {
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .company-home-progress-steps > div {
+    padding: 10px;
+  }
+
+  .company-home-progress-steps span {
+    font-size: 11px;
+  }
+
+  .company-home-progress-steps strong {
+    font-size: 16px;
   }
 
   .company-home-progress-actions {
     flex-direction: column;
+    gap: 8px;
+    margin-top: 18px;
   }
 
   .company-home-progress-actions button {
     width: 100%;
   }
+
+  .company-home-attention-card h2 {
+    margin-bottom: 16px;
+  }
+
+  .company-home-attention-item {
+    gap: 12px;
+    padding-bottom: 18px;
+  }
+
+  .company-home-attention-item strong {
+    font-size: 13px;
+  }
+
+  .company-home-empty {
+    padding: 36px 18px;
+  }
+
+  .company-home-empty .company-home-create-btn {
+    width: 100%;
+  }
 }
 
+/* =========================================================
+   TRÈS PETIT MOBILE
+========================================================= */
+
 @media (max-width: 430px) {
-  .company-home-section-header {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 5px;
+  .company-home-header h1 {
+    font-size: 22px;
+  }
+
+  .company-home-kpis {
+    gap: 8px;
+  }
+
+  .company-home-kpi-card {
+    padding: 12px;
   }
 
   .company-home-kpi-card > strong {
-    font-size: 26px;
+    font-size: 22px;
+  }
+
+  .company-home-progress-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .company-home-progress-steps strong {
+    font-size: 15px;
+  }
+}
+
+/* =========================================================
+   ACCESSIBILITÉ
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .company-home-spin,
+  .company-home-skeleton span {
+    animation: none;
+  }
+
+  .company-home-progress-fill {
+    transition: none;
   }
 }
