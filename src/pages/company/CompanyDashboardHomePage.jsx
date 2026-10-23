@@ -346,7 +346,7 @@ function CompanyDashboardHomePage() {
           <button
             type="button"
             className="company-home-create-btn"
-            onClick={() => navigate("/dashboard/campagnes/nouvelle")}
+            onClick={() => navigate("/dashboard/campagnes")}
           >
             <FiPlus />
             Créer une campagne
