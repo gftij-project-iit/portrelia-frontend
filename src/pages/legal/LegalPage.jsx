@@ -18,7 +18,7 @@ const COMPANY = {
   operatorName: "OFTI",
   address: "23 rue du Départ, boîte 37, 75014 Paris, France",
   phone: "01 87 66 00 12",
-  website: "https://portrelia-frontend.vercel.app",
+  website: "https://www.portrelia.fr",
   analyticsId: "G-L4RVHLB0T7",
 };
 
