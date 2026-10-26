@@ -1,22 +1,48 @@
+/* =========================================
+   PORTRÉLIA — CHOIX DE L'ABONNEMENT (compatible thèmes)
+   Couleurs de base dans src/theme/theme.css
+   Couleurs d'état propres à la page : variables --pl-*
+
+   Important : ne pas redéfinir ici --text, --border,
+   --primary… sinon cela écrase le thème sur la page.
+========================================= */
 
 /* =========================================
    PAGE
 ========================================= */
 
 .company-plans-page {
-  --purple: #4f2e94;
-  --purple-light: #f3effb;
-  --text: #111827;
-  --muted: #667085;
-  --border: #e5e7eb;
+  /* Couleurs d'état (thème clair) */
+  --pl-success-bg: #ecfdf3;
+  --pl-success-border: #abefc6;
+  --pl-success-text: #027a48;
+
+  --pl-danger-bg: #fef3f2;
+  --pl-danger-border: #fecdca;
+  --pl-danger-text: #b42318;
 
   min-height: 100vh;
-  background: #f7f7fb;
+  background: var(--bg-soft);
   color: var(--text);
 
   display: flex;
   flex-direction: column;
   font-family: inherit;
+}
+
+/* Sombre / dégradé : états translucides + contrôles natifs sombres */
+
+[data-theme="dark"] .company-plans-page,
+[data-theme="gradient"] .company-plans-page {
+  --pl-success-bg: rgba(52, 211, 153, 0.14);
+  --pl-success-border: rgba(52, 211, 153, 0.4);
+  --pl-success-text: #6ee7b7;
+
+  --pl-danger-bg: rgba(248, 113, 113, 0.14);
+  --pl-danger-border: rgba(248, 113, 113, 0.4);
+  --pl-danger-text: #fca5a5;
+
+  color-scheme: dark;
 }
 
 .company-plans-page * {
@@ -31,8 +57,11 @@
   height: 68px;
   padding: 0 5%;
 
-  background: #fff;
-  border-bottom: 1px solid #eaecf0;
+  background: var(--header-bg);
+  border-bottom: 1px solid var(--border);
+
+  -webkit-backdrop-filter: saturate(180%) blur(14px);
+  backdrop-filter: saturate(180%) blur(14px);
 
   display: flex;
   align-items: center;
@@ -43,6 +72,8 @@
   display: flex;
   align-items: center;
   gap: 9px;
+
+  color: var(--text);
 
   font-size: 20px;
   font-weight: 800;
@@ -57,12 +88,12 @@
   display: grid;
   place-items: center;
 
-  background: var(--purple);
-  color: #fff;
+  background: var(--primary);
+  color: var(--on-primary);
 }
 
 .company-plans-brand-dot {
-  color: #7956d1;
+  color: var(--accent);
 }
 
 .company-plans-logout {
@@ -73,13 +104,19 @@
   padding: 9px 12px;
 
   border: 1px solid var(--border);
-  background: #fff;
+  background: var(--surface);
   border-radius: 8px;
 
-  color: #475467;
+  color: var(--text-soft);
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
+
+  transition: background 0.16s ease;
+}
+
+.company-plans-logout:hover {
+  background: var(--surface-2);
 }
 
 /* =========================================
@@ -103,7 +140,7 @@
 .company-plans-kicker {
   display: inline-block;
 
-  color: var(--purple);
+  color: var(--accent);
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.14em;
@@ -112,6 +149,7 @@
 .company-plans-intro h1 {
   margin: 10px 0 9px;
 
+  color: var(--text);
   font-size: 31px;
   font-weight: 800;
   letter-spacing: -0.035em;
@@ -122,7 +160,7 @@
   margin: 0 auto;
   max-width: 540px;
 
-  color: var(--muted);
+  color: var(--text-muted);
   font-size: 13px;
   line-height: 1.6;
 }
@@ -145,15 +183,15 @@
 }
 
 .company-plans-current {
-  color: #027a48;
-  background: #ecfdf3;
-  border: 1px solid #abefc6;
+  color: var(--pl-success-text);
+  background: var(--pl-success-bg);
+  border: 1px solid var(--pl-success-border);
 }
 
 .company-plans-error {
-  color: #b42318;
-  background: #fef3f2;
-  border: 1px solid #fecdca;
+  color: var(--pl-danger-text);
+  background: var(--pl-danger-bg);
+  border: 1px solid var(--pl-danger-border);
 }
 
 .company-plans-error span {
@@ -187,8 +225,8 @@
   min-width: 0;
   padding: 19px;
 
-  background: #fff;
-  border: 2px solid #e5e7eb;
+  background: var(--surface);
+  border: 2px solid var(--border);
   border-radius: 14px;
 
   transition:
@@ -198,13 +236,13 @@
 }
 
 .company-plan-card:hover {
-  border-color: #c8b7e7;
+  border-color: var(--border-strong);
 }
 
-.company-plan-card-selected {
-  border-color: #4f2e94;
-  box-shadow:
-    0 0 0 3px rgba(79, 46, 148, 0.07);
+.company-plan-card-selected,
+.company-plan-card-selected:hover {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
 /* =========================================
@@ -221,6 +259,7 @@
   border: none;
   background: transparent;
 
+  color: var(--text);
   text-align: left;
   cursor: pointer;
   font-family: inherit;
@@ -235,16 +274,20 @@
   display: grid;
   place-items: center;
 
-  border: 1.5px solid #d0d5dd;
+  border: 1.5px solid var(--border-strong);
   border-radius: 50%;
 
-  color: #fff;
+  color: var(--on-primary);
   margin-top: 2px;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .company-plan-card-selected .company-plan-radio {
-  border-color: #4f2e94;
-  background: #4f2e94;
+  border-color: var(--primary);
+  background: var(--primary);
 }
 
 .company-plan-radio svg {
@@ -270,7 +313,7 @@
 .company-plan-name-row strong {
   font-size: 17px;
   font-weight: 800;
-  color: #111827;
+  color: var(--text);
 }
 
 .company-plan-badge {
@@ -279,8 +322,8 @@
   gap: 4px;
 
   padding: 4px 7px;
-  background: #eee8fa;
-  color: #4f2e94;
+  background: var(--accent-soft);
+  color: var(--primary);
 
   border-radius: 6px;
   font-size: 9px;
@@ -288,7 +331,7 @@
 }
 
 .company-plan-subtitle {
-  color: #98a2b3;
+  color: var(--text-muted);
   font-size: 11px;
   line-height: 1.5;
 }
@@ -303,6 +346,7 @@
 }
 
 .company-plan-price strong {
+  color: var(--text);
   font-size: 19px;
   font-weight: 800;
   white-space: nowrap;
@@ -310,13 +354,13 @@
 }
 
 .company-plan-price small {
-  color: #98a2b3;
+  color: var(--text-muted);
   font-size: 11px;
 }
 
 .company-plan-divider {
   height: 1px;
-  background: #f0f1f3;
+  background: var(--border);
   margin: 18px 0;
 }
 
@@ -336,18 +380,18 @@
   align-items: center;
   gap: 9px;
 
-  color: #667085;
+  color: var(--text-muted);
   font-size: 12px;
 }
 
 .company-plan-feature > svg {
   width: 16px;
   height: 16px;
-  color: #7658af;
+  color: var(--accent);
 }
 
 .company-plan-feature strong {
-  color: #111827;
+  color: var(--text);
   font-size: 12px;
   font-weight: 800;
 }
@@ -356,7 +400,7 @@
   margin-top: 18px;
   padding-top: 17px;
 
-  border-top: 1px solid #f0f1f3;
+  border-top: 1px solid var(--border);
 
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -370,22 +414,23 @@
   align-items: center;
   gap: 7px;
 
-  color: #475467;
+  color: var(--text-soft);
   font-size: 11px;
   line-height: 1.4;
 }
 
 .company-plan-extra svg {
   flex-shrink: 0;
-  color: #4f2e94;
+  color: var(--primary);
 }
 
 .company-plan-extra-disabled {
-  color: #b4b9c2;
+  color: var(--text-muted);
+  opacity: 0.55;
 }
 
 .company-plan-extra-disabled svg {
-  color: #d0d5dd;
+  color: var(--text-muted);
 }
 
 /* =========================================
@@ -413,11 +458,11 @@
 }
 
 .company-plans-selection span {
-  color: #98a2b3;
+  color: var(--text-muted);
 }
 
 .company-plans-selection strong {
-  color: #344054;
+  color: var(--text-soft);
   font-weight: 750;
 }
 
@@ -431,8 +476,8 @@
 
   padding: 11px 18px;
 
-  background: #4f2e94;
-  color: #fff;
+  background: var(--primary);
+  color: var(--on-primary);
 
   border: none;
   border-radius: 9px;
@@ -442,11 +487,13 @@
   font-family: inherit;
 
   cursor: pointer;
-  transition: 0.2s ease;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
 }
 
 .company-plans-continue:hover:not(:disabled) {
-  background: #42247f;
+  background: var(--primary-hover);
   transform: translateY(-1px);
 }
 
@@ -456,7 +503,7 @@
 }
 
 .company-plans-action-note {
-  color: #98a2b3;
+  color: var(--text-muted);
   font-size: 11px;
   text-align: center;
 }
@@ -474,7 +521,7 @@
   justify-content: center;
   gap: 13px;
 
-  color: #667085;
+  color: var(--text-muted);
   font-size: 13px;
 }
 
@@ -488,10 +535,15 @@
   border: 0;
   border-radius: 8px;
 
-  background: #4f2e94;
-  color: #fff;
+  background: var(--primary);
+  color: var(--on-primary);
 
   cursor: pointer;
+  transition: background 0.16s ease;
+}
+
+.company-plans-loading button:hover {
+  background: var(--primary-hover);
 }
 
 /* =========================================
@@ -506,12 +558,12 @@
 
   margin-top: 29px;
 
-  color: #98a2b3;
+  color: var(--text-muted);
   font-size: 11px;
 }
 
 .company-plans-assurance svg {
-  color: #7658af;
+  color: var(--accent);
   font-size: 15px;
 }
 
@@ -523,11 +575,11 @@
   padding: 17px;
   text-align: center;
 
-  color: #98a2b3;
+  color: var(--text-muted);
   font-size: 11px;
 
-  background: #fff;
-  border-top: 1px solid #eaecf0;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
 }
 
 /* =========================================
@@ -672,8 +724,12 @@
   }
 }
 
+/* =========================================
+   ACCESSIBILITÉ
+========================================= */
+
 .company-plans-page button:focus-visible {
-  outline: 3px solid rgba(79, 46, 148, 0.3);
+  outline: 3px solid var(--accent);
   outline-offset: 3px;
 }
 

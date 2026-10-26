@@ -16,20 +16,15 @@ import {
   FiAperture,
   FiArrowRight,
   FiArrowUp,
+  FiArrowUpRight,
   FiCheck,
   FiClock,
-  FiCompass,
   FiEdit3,
-  FiFileText,
   FiLayers,
-  FiLock,
   FiMenu,
   FiPlus,
-  FiShield,
-  FiSliders,
   FiUsers,
   FiX,
-  FiZap,
 } from "react-icons/fi";
 
 import logo from "../assets/logo.png";
@@ -43,6 +38,7 @@ import intertrad from "../assets/brands/intertrad.png";
 import calamelle from "../assets/brands/calamelle.webp";
 
 import "./HomePage.css";
+import ThemeSwitcher from "../theme/ThemeSwitcher";
 
 /* =========================================================
    DATA
@@ -139,32 +135,26 @@ const SHOWCASE_POINTS = [
 
 const FEATURES = [
   {
-    icon: <FiCompass />,
     title: "Parcours guidé",
     text: "Chaque collaborateur est accompagné pas à pas pour transmettre sa photographie.",
   },
   {
-    icon: <FiAperture />,
     title: "Direction artistique",
     text: "Un cadre visuel commun, cohérent avec votre image de marque employeur.",
   },
   {
-    icon: <FiEdit3 />,
     title: "Retouche humaine",
     text: "Une retouche réalisée avec soin pour un résultat réaliste et fidèle.",
   },
   {
-    icon: <FiLayers />,
     title: "Résultats homogènes",
     text: "Des portraits harmonisés, quel que soit l'endroit où se trouvent vos équipes.",
   },
   {
-    icon: <FiZap />,
     title: "Livraison en 48 à 72 h",
     text: "Vos galeries sont disponibles rapidement dans votre espace entreprise.",
   },
   {
-    icon: <FiLock />,
     title: "Données respectées",
     text: "Une solution sécurisée, pensée pour le respect des données personnelles.",
   },
@@ -172,21 +162,18 @@ const FEATURES = [
 
 const RESOURCES = [
   {
-    icon: <FiShield />,
     title: "Protection des données",
     text: "Comprenez comment les informations et les photographies sont traitées.",
     to: "/politique-confidentialite",
     cta: "Consulter la politique",
   },
   {
-    icon: <FiSliders />,
     title: "Utilisation de la plateforme",
     text: "Retrouvez les principales conditions d'utilisation de Portrélia.",
     to: "/cgu",
     cta: "Consulter les CGU",
   },
   {
-    icon: <FiFileText />,
     title: "Cookies et confidentialité",
     text: "Découvrez les outils de mesure d'audience et les choix disponibles.",
     to: "/politique-cookies",
@@ -239,6 +226,8 @@ const NAV_GROUPS = {
 };
 
 const isRoute = (href) => href.startsWith("/");
+
+const formatIndex = (index) => String(index + 1).padStart(2, "0");
 
 /* =========================================================
    ANIMATION VARIANTS
@@ -630,6 +619,7 @@ function HomePage() {
           </nav>
 
           <div className="home-nav-actions">
+            <ThemeSwitcher />
             <Link to="/connexion" className="home-login-btn">
               Se connecter
             </Link>
@@ -716,6 +706,18 @@ function HomePage() {
                     </a>
                   )
                 )}
+
+                <div
+                  className="home-mobile-menu-divider"
+                  style={{ "--i": NAV_COUNT + 1 }}
+                />
+
+                <div
+                  className="home-mobile-theme"
+                  style={{ "--i": NAV_COUNT + 1 }}
+                >
+                  <ThemeSwitcher variant="menu" />
+                </div>
 
                 <div
                   className="home-mobile-menu-divider"
@@ -1239,23 +1241,25 @@ function HomePage() {
             </div>
           </section>
 
-          {/* ================= AVANTAGES ================= */}
+          {/* ================= AVANTAGES : LISTE CLASSIQUE ================= */}
           <section id="avantages" className="home-info-section home-info-soft">
             <div className="home-info-container">
               <motion.div
-                className="home-centered-section"
+                className="home-split-head"
                 variants={stagger(0.12)}
                 initial="hidden"
                 whileInView="show"
                 viewport={VIEWPORT}
               >
-                <motion.p className="home-eyebrow" variants={fadeUp}>
-                  POURQUOI PORTRÉLIA
-                </motion.p>
+                <div>
+                  <motion.p className="home-eyebrow" variants={fadeUp}>
+                    POURQUOI PORTRÉLIA
+                  </motion.p>
 
-                <motion.h2 variants={fadeUp}>
-                  Tout ce qu'il faut pour des portraits réussis
-                </motion.h2>
+                  <motion.h2 variants={fadeUp}>
+                    Tout ce qu'il faut pour des portraits réussis
+                  </motion.h2>
+                </div>
 
                 <motion.p className="home-info-intro" variants={fadeUp}>
                   Une expérience pensée pour les entreprises, de l'invitation
@@ -1263,39 +1267,25 @@ function HomePage() {
                 </motion.p>
               </motion.div>
 
-              <motion.div
-                className="home-info-grid home-features-grid"
-                variants={stagger(0.1)}
+              <motion.ol
+                className="home-points"
+                variants={stagger(0.08)}
                 initial="hidden"
                 whileInView="show"
                 viewport={{ once: true, amount: 0.15 }}
               >
-                {FEATURES.map((feature) => (
-                  <motion.article
+                {FEATURES.map((feature, index) => (
+                  <motion.li
                     key={feature.title}
-                    className="home-info-card home-feature-card"
+                    className="home-point"
                     variants={fadeUp}
-                    whileHover={{ y: -6 }}
-                    transition={HOVER_SPRING}
-                    onMouseMove={handleSpotlight}
                   >
-                    <motion.span
-                      className="home-info-card-accent"
-                      variants={accentBar}
-                      aria-hidden="true"
-                    />
-
-                    <motion.span className="home-feature-icon-wrap" variants={popIn}>
-                      <span className="home-feature-icon" aria-hidden="true">
-                        {feature.icon}
-                      </span>
-                    </motion.span>
-
+                    <span className="home-point-number">{formatIndex(index)}</span>
                     <h3>{feature.title}</h3>
                     <p>{feature.text}</p>
-                  </motion.article>
+                  </motion.li>
                 ))}
-              </motion.div>
+              </motion.ol>
             </div>
           </section>
 
@@ -1335,7 +1325,7 @@ function HomePage() {
             </motion.div>
           </section>
 
-          {/* ================= RESSOURCES ================= */}
+          {/* ================= RESSOURCES : LISTE DE LIENS ================= */}
           <section id="ressources" className="home-info-section home-info-soft">
             <div className="home-info-container">
               <motion.div
@@ -1353,46 +1343,30 @@ function HomePage() {
                 </motion.h2>
               </motion.div>
 
-              <motion.div
-                className="home-info-grid"
-                variants={stagger(0.14)}
+              <motion.ul
+                className="home-resource-list"
+                variants={stagger(0.1)}
                 initial="hidden"
                 whileInView="show"
                 viewport={VIEWPORT}
               >
                 {RESOURCES.map((resource) => (
-                  <motion.article
-                    key={resource.title}
-                    className="home-info-card"
-                    variants={fadeUp}
-                    whileHover={{ y: -6 }}
-                    transition={HOVER_SPRING}
-                    onMouseMove={handleSpotlight}
-                  >
-                    <motion.span
-                      className="home-info-card-accent"
-                      variants={accentBar}
-                      aria-hidden="true"
-                    />
+                  <motion.li key={resource.title} variants={fadeUp}>
+                    <Link to={resource.to} className="home-resource-row">
+                      <strong className="home-resource-title">
+                        {resource.title}
+                      </strong>
 
-                    <motion.span
-                      className="home-resource-icon"
-                      variants={popIn}
-                      aria-hidden="true"
-                    >
-                      {resource.icon}
-                    </motion.span>
+                      <span className="home-resource-text">{resource.text}</span>
 
-                    <h3>{resource.title}</h3>
-                    <p>{resource.text}</p>
-
-                    <Link to={resource.to}>
-                      {resource.cta}
-                      <FiArrowRight />
+                      <span className="home-resource-cta">
+                        {resource.cta}
+                        <FiArrowUpRight aria-hidden="true" />
+                      </span>
                     </Link>
-                  </motion.article>
+                  </motion.li>
                 ))}
-              </motion.div>
+              </motion.ul>
             </div>
           </section>
 

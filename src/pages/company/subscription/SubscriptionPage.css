@@ -1,16 +1,43 @@
+/* =========================================
+   PORTRÉLIA — ABONNEMENT (compatible thèmes)
+   Couleurs de base dans src/theme/theme.css
+   Couleurs d'état propres à la page : variables --sub-*
+========================================= */
 
 /* =========================================
    PAGE
 ========================================= */
 
 .company-subscription-page {
+  /* Couleurs d'état (thème clair) */
+  --sub-success-bg: #ecfdf3;
+  --sub-success-text: #027a48;
+
+  --sub-danger-bg: #fef3f2;
+  --sub-danger-border: #fecdca;
+  --sub-danger-text: #b42318;
+
   width: 100%;
 
   display: flex;
   flex-direction: column;
   gap: 24px;
 
-  color: #111827;
+  color: var(--text);
+}
+
+/* Sombre / dégradé : états translucides */
+
+[data-theme="dark"] .company-subscription-page,
+[data-theme="gradient"] .company-subscription-page {
+  --sub-success-bg: rgba(52, 211, 153, 0.16);
+  --sub-success-text: #6ee7b7;
+
+  --sub-danger-bg: rgba(248, 113, 113, 0.14);
+  --sub-danger-border: rgba(248, 113, 113, 0.4);
+  --sub-danger-text: #fca5a5;
+
+  color-scheme: dark;
 }
 
 .company-subscription-page * {
@@ -33,7 +60,7 @@
   display: block;
   margin-bottom: 6px;
 
-  color: #4f2e94;
+  color: var(--accent);
 
   font-size: 11px;
   font-weight: 800;
@@ -43,7 +70,7 @@
 .company-subscription-header h1 {
   margin: 0;
 
-  color: #111827;
+  color: var(--text);
 
   font-size: 30px;
   font-weight: 800;
@@ -55,7 +82,7 @@
 .company-subscription-header p {
   margin: 8px 0 0;
 
-  color: #667085;
+  color: var(--text-muted);
 
   font-size: 14px;
   line-height: 1.5;
@@ -71,23 +98,24 @@
   gap: 8px;
   padding: 0 14px;
 
-  background: #ffffff;
-  border: 1px solid #d0d5dd;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
   border-radius: 9px;
 
-  color: #344054;
+  color: var(--text-soft);
 
   font-size: 12px;
   font-weight: 650;
 
   cursor: pointer;
 
-  transition: 0.2s ease;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
 }
 
-.company-subscription-refresh:hover {
-  background: #f9fafb;
-  border-color: #b9bdc7;
+.company-subscription-refresh:hover:not(:disabled) {
+  background: var(--surface-2);
 }
 
 .company-subscription-refresh:disabled {
@@ -116,11 +144,11 @@
 
   padding: 14px 16px;
 
-  background: #fef3f2;
-  border: 1px solid #fecdca;
+  background: var(--sub-danger-bg);
+  border: 1px solid var(--sub-danger-border);
   border-radius: 10px;
 
-  color: #b42318;
+  color: var(--sub-danger-text);
   font-size: 13px;
 }
 
@@ -134,11 +162,11 @@
 
   gap: 14px;
 
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 14px;
 
-  color: #667085;
+  color: var(--text-muted);
   font-size: 13px;
 }
 
@@ -154,9 +182,9 @@
   gap: 30px;
   padding: 27px 30px;
 
-  background: #ffffff;
+  background: var(--surface);
 
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border);
   border-radius: 14px;
 }
 
@@ -178,10 +206,10 @@
 
   flex-shrink: 0;
 
-  background: #f1ecfb;
+  background: var(--accent-soft);
   border-radius: 12px;
 
-  color: #4f2e94;
+  color: var(--primary);
   font-size: 21px;
 }
 
@@ -194,7 +222,7 @@
 
   margin-bottom: 7px;
 
-  color: #7658af;
+  color: var(--accent);
 
   font-size: 10px;
   font-weight: 800;
@@ -211,6 +239,8 @@
 
 .company-subscription-plan-title h2 {
   margin: 0;
+
+  color: var(--text);
 
   font-size: 25px;
   font-weight: 800;
@@ -230,13 +260,13 @@
 }
 
 .company-subscription-status-active {
-  background: #ecfdf3;
-  color: #027a48;
+  background: var(--sub-success-bg);
+  color: var(--sub-success-text);
 }
 
 .company-subscription-status-inactive {
-  background: #fef3f2;
-  color: #b42318;
+  background: var(--sub-danger-bg);
+  color: var(--sub-danger-text);
 }
 
 .company-subscription-plan-info p {
@@ -244,7 +274,7 @@
 
   margin: 9px 0 0;
 
-  color: #667085;
+  color: var(--text-muted);
   font-size: 13px;
   line-height: 1.6;
 }
@@ -266,7 +296,7 @@
 }
 
 .company-subscription-price strong {
-  color: #111827;
+  color: var(--text);
 
   font-size: 30px;
   font-weight: 800;
@@ -274,12 +304,12 @@
 }
 
 .company-subscription-price span {
-  color: #98a2b3;
+  color: var(--text-muted);
   font-size: 12px;
 }
 
 .company-subscription-period {
-  color: #98a2b3;
+  color: var(--text-muted);
   font-size: 11px;
 }
 
@@ -294,23 +324,25 @@
 
   padding: 0 14px;
 
-  background: #4f2e94;
+  background: var(--primary);
 
   border: none;
   border-radius: 9px;
 
-  color: #ffffff;
+  color: var(--on-primary);
 
   font-size: 12px;
   font-weight: 700;
 
   cursor: pointer;
 
-  transition: 0.2s ease;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
 }
 
 .company-subscription-upgrade-btn:hover {
-  background: #42247f;
+  background: var(--primary-hover);
   transform: translateY(-1px);
 }
 
@@ -319,7 +351,7 @@
   align-items: center;
   gap: 7px;
 
-  color: #027a48;
+  color: var(--sub-success-text);
   font-size: 12px;
   font-weight: 700;
 }
@@ -339,7 +371,7 @@
 .company-subscription-section-heading h2 {
   margin: 0;
 
-  color: #111827;
+  color: var(--text);
 
   font-size: 17px;
   font-weight: 750;
@@ -348,7 +380,7 @@
 .company-subscription-section-heading p {
   margin: 6px 0 0;
 
-  color: #667085;
+  color: var(--text-muted);
   font-size: 12px;
   line-height: 1.5;
 }
@@ -374,9 +406,9 @@
   gap: 11px;
   padding: 20px;
 
-  background: #ffffff;
+  background: var(--surface);
 
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border);
   border-radius: 12px;
 
   transition:
@@ -385,7 +417,7 @@
 }
 
 .company-subscription-limit-card:hover {
-  border-color: #d7cbea;
+  border-color: var(--border-strong);
   transform: translateY(-1px);
 }
 
@@ -396,10 +428,10 @@
   display: grid;
   place-items: center;
 
-  background: #f1ecfb;
+  background: var(--accent-soft);
   border-radius: 9px;
 
-  color: #4f2e94;
+  color: var(--primary);
   font-size: 17px;
 }
 
@@ -408,11 +440,11 @@
   font-weight: 800;
   letter-spacing: -0.035em;
 
-  color: #111827;
+  color: var(--text);
 }
 
 .company-subscription-limit-card > span:last-child {
-  color: #667085;
+  color: var(--text-muted);
   font-size: 12px;
   line-height: 1.5;
 }
@@ -438,9 +470,9 @@
   gap: 12px;
   padding: 15px 16px;
 
-  background: #ffffff;
+  background: var(--surface);
 
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border);
   border-radius: 10px;
 }
 
@@ -453,10 +485,10 @@
 
   flex-shrink: 0;
 
-  background: #f5f2fb;
+  background: var(--accent-soft);
   border-radius: 8px;
 
-  color: #4f2e94;
+  color: var(--primary);
   font-size: 16px;
 }
 
@@ -464,7 +496,7 @@
   min-width: 0;
   flex: 1;
 
-  color: #344054;
+  color: var(--text-soft);
 
   font-size: 12px;
   font-weight: 600;
@@ -483,11 +515,11 @@
 }
 
 .company-subscription-feature-enabled {
-  color: #027a48;
+  color: var(--sub-success-text);
 }
 
 .company-subscription-feature-disabled {
-  color: #98a2b3;
+  color: var(--text-muted);
 }
 
 /* =========================================
@@ -501,9 +533,9 @@
   gap: 20px;
   padding: 23px 25px;
 
-  background: #f2edfc;
+  background: var(--accent-soft);
 
-  border: 1px solid #e1d6f6;
+  border: 1px solid var(--border-strong);
   border-radius: 13px;
 }
 
@@ -516,11 +548,11 @@
 
   flex-shrink: 0;
 
-  background: #4f2e94;
+  background: var(--primary);
 
   border-radius: 12px;
 
-  color: #ffffff;
+  color: var(--on-primary);
   font-size: 20px;
 }
 
@@ -530,7 +562,7 @@
 }
 
 .company-subscription-upgrade-content > span {
-  color: #7658af;
+  color: var(--accent);
 
   font-size: 10px;
   font-weight: 800;
@@ -540,7 +572,7 @@
 .company-subscription-upgrade-content h2 {
   margin: 6px 0;
 
-  color: #251640;
+  color: var(--text);
 
   font-size: 18px;
   font-weight: 800;
@@ -551,7 +583,7 @@
 
   margin: 0;
 
-  color: #667085;
+  color: var(--text-muted);
 
   font-size: 12px;
   line-height: 1.6;
@@ -569,19 +601,21 @@
 
   padding: 0 15px;
 
-  background: #4f2e94;
+  background: var(--primary);
   border: none;
   border-radius: 9px;
 
-  color: #ffffff;
+  color: var(--on-primary);
 
   font-size: 12px;
   font-weight: 700;
   cursor: pointer;
+
+  transition: background 0.16s ease;
 }
 
 .company-subscription-upgrade > button:hover {
-  background: #42247f;
+  background: var(--primary-hover);
 }
 
 /* =========================================
@@ -595,7 +629,7 @@
 
   padding: 5px 0;
 
-  color: #98a2b3;
+  color: var(--text-muted);
 
   font-size: 11px;
   line-height: 1.6;
@@ -606,7 +640,7 @@
   height: 17px;
 
   flex-shrink: 0;
-  color: #7658af;
+  color: var(--accent);
 }
 
 /* =========================================
@@ -825,8 +859,12 @@
   }
 }
 
+/* =========================================
+   ACCESSIBILITÉ
+========================================= */
+
 .company-subscription-page button:focus-visible {
-  outline: 3px solid rgba(79, 46, 148, 0.3);
+  outline: 3px solid var(--accent);
   outline-offset: 3px;
 }
 

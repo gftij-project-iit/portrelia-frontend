@@ -1,33 +1,33 @@
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
 
 import {
-  FiPlus,
   FiAlertCircle,
+  FiArrowRight,
   FiCheck,
   FiClock,
-  FiLoader,
-  FiUserPlus,
-  FiRefreshCw,
   FiLayers,
-  FiArrowRight,
+  FiLoader,
+  FiPlus,
+  FiRefreshCw,
+  FiUserPlus,
 } from "react-icons/fi";
 
+import { useAuth } from "../../context/AuthContext";
 import api from "../../services/api";
+
+
 import "./CompanyDashboardHomePage.css";
+import { PageSkeleton } from "../../Routes/RouteLoaders";
 
 /* =========================================================
    HELPERS
 ========================================================= */
 
 const ALL = "ALL";
+
+/* Adresse de la page de création (route "campagnes/creer") */
+const CREATE_CAMPAIGN_PATH = "/dashboard/campagnes/creer";
 
 const pct = (part, total) =>
   total > 0 ? Math.round((part / total) * 100) : 0;
@@ -153,7 +153,11 @@ function CompanyDashboardHomePage() {
 
   const defaultId = useMemo(() => {
     const active = campaigns.find((campaign) => !campaign.isCancelled);
-    return active ? String(active.id) : campaigns[0] ? String(campaigns[0].id) : ALL;
+
+    if (active) return String(active.id);
+    if (campaigns[0]) return String(campaigns[0].id);
+
+    return ALL;
   }, [campaigns]);
 
   const currentId =
@@ -216,11 +220,11 @@ function CompanyDashboardHomePage() {
         key: "in-progress",
         tone: "info",
         icon: <FiLoader />,
-        title: `${plural(
+        title: plural(
           stats.inProgress,
           "portrait en préparation",
           "portraits en préparation"
-        )}`,
+        ),
         text: "Photo en attente ou portraits en cours de création.",
       });
     }
@@ -275,10 +279,21 @@ function CompanyDashboardHomePage() {
     return items;
   }, [stats, currentCampaign]);
 
+  /* =========================================================
+     CHARGEMENT
+     - premier chargement
+     - « Réessayer » après un échec (aucune donnée à afficher)
+     Même skeleton que le router : pas de saut visuel
+  ========================================================= */
+
+  if (loading || (refreshing && !data)) {
+    return <PageSkeleton variant="home" />;
+  }
+
   /* TEXTE D'INTRO */
 
-  const intro = loading
-    ? "Chargement de votre activité..."
+  const intro = !data
+    ? "Votre activité n'a pas pu être chargée."
     : !hasCampaigns
       ? "Créez votre première campagne pour commencer."
       : currentCampaign
@@ -288,8 +303,6 @@ function CompanyDashboardHomePage() {
             "campagne",
             "campagnes"
           )}.`;
-
-  const show = (value) => (loading ? "—" : formatNumber(value));
 
   /* RENDU */
 
@@ -334,19 +347,21 @@ function CompanyDashboardHomePage() {
             type="button"
             className="company-home-refresh-btn"
             onClick={handleRefresh}
-            disabled={loading || refreshing}
+            disabled={refreshing}
+            aria-busy={refreshing}
             aria-label="Actualiser"
             title="Actualiser"
           >
             <FiRefreshCw
-              className={loading || refreshing ? "company-home-spin" : ""}
+              className={refreshing ? "company-home-spin" : ""}
             />
           </button>
 
+          {/* Si tu préfères passer par la liste : "/dashboard/campagnes" */}
           <button
             type="button"
             className="company-home-create-btn"
-            onClick={() => navigate("/dashboard/campagnes")}
+            onClick={() => navigate(CREATE_CAMPAIGN_PATH)}
           >
             <FiPlus />
             Créer une campagne
@@ -370,7 +385,7 @@ function CompanyDashboardHomePage() {
       )}
 
       {/* AUCUNE CAMPAGNE */}
-      {!loading && !error && !hasCampaigns && (
+      {data && !hasCampaigns && (
         <section className="company-home-empty">
           <div className="company-home-empty-icon">
             <FiLayers />
@@ -386,7 +401,7 @@ function CompanyDashboardHomePage() {
           <button
             type="button"
             className="company-home-create-btn"
-            onClick={() => navigate("/dashboard/campagnes/nouvelle")}
+            onClick={() => navigate(CREATE_CAMPAIGN_PATH)}
           >
             <FiPlus />
             Créer une campagne
@@ -394,44 +409,42 @@ function CompanyDashboardHomePage() {
         </section>
       )}
 
-      {(loading || hasCampaigns) && (
+      {hasCampaigns && (
         <>
           {/* KPI */}
           <div className="company-home-kpis">
 
-            <div className={`company-home-kpi-card${loading ? " is-loading" : ""}`}>
+            <div className="company-home-kpi-card">
               <span>Participants</span>
-              <strong>{show(stats.participants)}</strong>
+              <strong>{formatNumber(stats.participants)}</strong>
               <div className="company-home-kpi-badge company-home-kpi-purple">
-                {loading
-                  ? "…"
-                  : currentCampaign
-                    ? currentCampaign.isCancelled
-                      ? "Campagne annulée"
-                      : "Campagne sélectionnée"
-                    : plural(campaigns.length, "campagne", "campagnes")}
+                {currentCampaign
+                  ? currentCampaign.isCancelled
+                    ? "Campagne annulée"
+                    : "Campagne sélectionnée"
+                  : plural(campaigns.length, "campagne", "campagnes")}
               </div>
             </div>
 
-            <div className={`company-home-kpi-card${loading ? " is-loading" : ""}`}>
+            <div className="company-home-kpi-card">
               <span>Galeries prêtes</span>
-              <strong>{show(stats.galleriesReady)}</strong>
+              <strong>{formatNumber(stats.galleriesReady)}</strong>
               <div className="company-home-kpi-badge company-home-kpi-green">
-                {loading ? "…" : `${readyPct} %`}
+                {readyPct} %
               </div>
             </div>
 
-            <div className={`company-home-kpi-card${loading ? " is-loading" : ""}`}>
+            <div className="company-home-kpi-card">
               <span>Portraits choisis</span>
-              <strong>{show(stats.finalSelected)}</strong>
+              <strong>{formatNumber(stats.finalSelected)}</strong>
               <div className="company-home-kpi-badge company-home-kpi-purple">
-                {loading ? "…" : `${progress} %`}
+                {progress} %
               </div>
             </div>
 
-            <div className={`company-home-kpi-card${loading ? " is-loading" : ""}`}>
+            <div className="company-home-kpi-card">
               <span>En attente du choix</span>
-              <strong>{show(stats.waitingChoice)}</strong>
+              <strong>{formatNumber(stats.waitingChoice)}</strong>
               <div
                 className={`company-home-kpi-badge ${
                   stats.waitingChoice > 0
@@ -439,11 +452,7 @@ function CompanyDashboardHomePage() {
                     : "company-home-kpi-green"
                 }`}
               >
-                {loading
-                  ? "…"
-                  : stats.waitingChoice > 0
-                    ? "À relancer"
-                    : "Rien à relancer"}
+                {stats.waitingChoice > 0 ? "À relancer" : "Rien à relancer"}
               </div>
             </div>
 
@@ -467,36 +476,33 @@ function CompanyDashboardHomePage() {
               <div className="company-home-progress-track">
                 <div
                   className="company-home-progress-fill"
-                  style={{ width: `${loading ? 0 : progress}%` }}
+                  style={{ width: `${progress}%` }}
                 />
               </div>
 
               <div className="company-home-progress-meta">
-                <strong>{loading ? "—" : `${progress} % terminé`}</strong>
+                <strong>{progress} % terminé</strong>
 
                 <span>
-                  {loading
-                    ? ""
-                    : `${formatNumber(stats.finalSelected)} / ${formatNumber(
-                        stats.participants
-                      )} portraits choisis`}
+                  {formatNumber(stats.finalSelected)} /{" "}
+                  {formatNumber(stats.participants)} portraits choisis
                 </span>
               </div>
 
               <div className="company-home-progress-steps">
                 <div>
                   <span>En préparation</span>
-                  <strong>{show(stats.inProgress)}</strong>
+                  <strong>{formatNumber(stats.inProgress)}</strong>
                 </div>
 
                 <div>
                   <span>Galeries prêtes</span>
-                  <strong>{show(stats.galleriesReady)}</strong>
+                  <strong>{formatNumber(stats.galleriesReady)}</strong>
                 </div>
 
                 <div>
                   <span>Choisis</span>
-                  <strong>{show(stats.finalSelected)}</strong>
+                  <strong>{formatNumber(stats.finalSelected)}</strong>
                 </div>
               </div>
 
@@ -513,7 +519,6 @@ function CompanyDashboardHomePage() {
                   type="button"
                   className="company-home-secondary-action"
                   onClick={() => navigate(campaignLink)}
-                  disabled={loading || !hasCampaigns}
                 >
                   {currentCampaign
                     ? "Relancer les collaborateurs"
@@ -527,30 +532,22 @@ function CompanyDashboardHomePage() {
             <section className="company-home-attention-card">
               <h2>Points d’attention</h2>
 
-              {loading ? (
-                <div className="company-home-skeleton">
-                  <span />
-                  <span />
-                  <span />
-                </div>
-              ) : (
-                <div className="company-home-attention-list">
-                  {attentionItems.map((item) => (
-                    <div className="company-home-attention-item" key={item.key}>
-                      <div
-                        className={`company-home-attention-icon is-${item.tone}`}
-                      >
-                        {item.icon}
-                      </div>
-
-                      <div>
-                        <strong>{item.title}</strong>
-                        <span>{item.text}</span>
-                      </div>
+              <div className="company-home-attention-list">
+                {attentionItems.map((item) => (
+                  <div className="company-home-attention-item" key={item.key}>
+                    <div
+                      className={`company-home-attention-icon is-${item.tone}`}
+                    >
+                      {item.icon}
                     </div>
-                  ))}
-                </div>
-              )}
+
+                    <div>
+                      <strong>{item.title}</strong>
+                      <span>{item.text}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </section>
 
           </div>

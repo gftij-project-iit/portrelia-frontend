@@ -1,8 +1,18 @@
+/* =========================================
+   PORTRÉLIA — PAGES LÉGALES (compatible thèmes)
+   Confidentialité, mentions légales, CGU, CGV, cookies
+   Couleurs dans src/theme/theme.css
+========================================= */
 
 .legal-page {
   min-height: 100vh;
-  background: #faf9fc;
-  color: #231d35;
+  background: var(--bg-soft);
+  color: var(--text);
+}
+
+[data-theme="dark"] .legal-page,
+[data-theme="gradient"] .legal-page {
+  color-scheme: dark;
 }
 
 .legal-page *,
@@ -11,21 +21,33 @@
   box-sizing: border-box;
 }
 
+.legal-page a:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* =========================================
+   HEADER
+========================================= */
+
 .legal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   min-height: 83px;
   padding: 14px max(25px, calc((100vw - 1180px) / 2));
-  border-bottom: 1px solid #ece8f0;
-  background: white;
+  border-bottom: 1px solid var(--border);
+  background: var(--header-bg);
+  -webkit-backdrop-filter: saturate(180%) blur(14px);
+  backdrop-filter: saturate(180%) blur(14px);
 }
 
 .legal-logo {
   display: inline-flex;
   align-items: center;
   gap: 11px;
-  color: #2b1450;
+  color: var(--text);
   font-size: 22px;
   font-weight: 750;
   text-decoration: none;
@@ -37,11 +59,20 @@
   object-fit: contain;
 }
 
+/* Le logo a un fond blanc : pastille blanche assumée en sombre / dégradé */
+
+[data-theme="dark"] .legal-logo img,
+[data-theme="gradient"] .legal-logo img {
+  padding: 3px;
+  border-radius: 9px;
+  background: #ffffff;
+}
+
 .legal-back {
   display: inline-flex;
   align-items: center;
   gap: 9px;
-  color: #4b2e83;
+  color: var(--primary);
   font-size: 13px;
   font-weight: 650;
   text-decoration: none;
@@ -50,6 +81,10 @@
 .legal-back:hover {
   text-decoration: underline;
 }
+
+/* =========================================
+   CONTENU
+========================================= */
 
 .legal-main {
   padding: 68px 24px 100px;
@@ -73,8 +108,8 @@
   height: 54px;
   margin: 0 auto 22px;
   border-radius: 15px;
-  background: #eee8f8;
-  color: #4b2e83;
+  background: var(--accent-soft);
+  color: var(--primary);
 }
 
 .legal-heading-icon svg {
@@ -84,7 +119,7 @@
 
 .legal-eyebrow {
   margin: 0 0 13px;
-  color: #71539d;
+  color: var(--accent);
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.12em;
@@ -92,7 +127,7 @@
 
 .legal-heading h1 {
   margin: 0;
-  color: #27144f;
+  color: var(--text);
   font-size: clamp(32px, 4vw, 51px);
   letter-spacing: -0.035em;
   line-height: 1.13;
@@ -101,7 +136,7 @@
 .legal-intro {
   max-width: 650px;
   margin: 20px auto;
-  color: #676375;
+  color: var(--text-soft);
   font-size: 15px;
   line-height: 1.8;
 }
@@ -111,8 +146,8 @@
   margin: 0;
   padding: 7px 13px;
   border-radius: 20px;
-  background: #f2edf9;
-  color: #71539d;
+  background: var(--accent-soft);
+  color: var(--accent);
   font-size: 11px;
   font-weight: 600;
 }
@@ -124,18 +159,22 @@
   gap: 25px;
 }
 
+/* =========================================
+   SOMMAIRE
+========================================= */
+
 .legal-sidebar {
   position: sticky;
   top: 22px;
   padding: 23px 15px;
-  border: 1px solid #ece8f0;
+  border: 1px solid var(--border);
   border-radius: 16px;
-  background: white;
+  background: var(--surface);
 }
 
 .legal-sidebar h2 {
   margin: 0 10px 18px;
-  color: #2a1c45;
+  color: var(--text);
   font-size: 14px;
 }
 
@@ -153,10 +192,11 @@
   min-height: 43px;
   padding: 11px 12px;
   border-radius: 9px;
-  color: #696478;
+  color: var(--text-soft);
   font-size: 12px;
   font-weight: 550;
   text-decoration: none;
+  transition: background 0.16s ease, color 0.16s ease;
 }
 
 .legal-sidebar a svg {
@@ -167,27 +207,31 @@
 
 .legal-sidebar a:hover,
 .legal-sidebar a.legal-active {
-  background: #f1ebfa;
-  color: #4b2e83;
+  background: var(--accent-soft);
+  color: var(--primary);
 }
+
+/* =========================================
+   ARTICLE
+========================================= */
 
 .legal-article {
   min-width: 0;
   padding: 45px 48px;
-  border: 1px solid #ece8f0;
+  border: 1px solid var(--border);
   border-radius: 16px;
-  background: white;
+  background: var(--surface);
 }
 
 .legal-article section + section {
   margin-top: 38px;
   padding-top: 35px;
-  border-top: 1px solid #f0edf3;
+  border-top: 1px solid var(--border);
 }
 
 .legal-article h2 {
   margin: 0 0 17px;
-  color: #28164f;
+  color: var(--text);
   font-size: 19px;
   font-weight: 750;
   line-height: 1.4;
@@ -195,7 +239,7 @@
 
 .legal-article p,
 .legal-article li {
-  color: #626075;
+  color: var(--text-soft);
   font-size: 14px;
   line-height: 1.9;
   overflow-wrap: anywhere;
@@ -214,9 +258,30 @@
   margin-top: 9px;
 }
 
+.legal-article strong {
+  color: var(--text);
+}
+
+/* Liens dans le texte (e-mail, renvoi vers une autre page) */
+
+.legal-article a {
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.legal-article a:hover {
+  color: var(--primary-hover);
+}
+
+/* =========================================
+   FOOTER (reste foncé dans les 3 thèmes)
+========================================= */
+
 .legal-footer {
   padding: 30px 24px;
-  background: #211638;
+  background: var(--footer-bg);
 }
 
 .legal-footer-inner {
@@ -239,11 +304,16 @@
 .legal-footer a {
   color: #bfb5d0;
   text-decoration: none;
+  transition: color 0.16s ease;
 }
 
 .legal-footer a:hover {
-  color: white;
+  color: #ffffff;
 }
+
+/* =========================================
+   TABLETTE
+========================================= */
 
 @media (max-width: 800px) {
   .legal-layout {
@@ -263,6 +333,10 @@
     padding: 29px 24px;
   }
 }
+
+/* =========================================
+   MOBILE
+========================================= */
 
 @media (max-width: 520px) {
   .legal-header {
@@ -306,5 +380,13 @@
   .legal-footer-inner {
     flex-direction: column;
     align-items: flex-start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .legal-page *,
+  .legal-page *::before,
+  .legal-page *::after {
+    transition: none !important;
   }
 }

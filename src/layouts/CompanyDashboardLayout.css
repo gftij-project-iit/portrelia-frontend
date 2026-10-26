@@ -1,6 +1,6 @@
-
 /* =========================================================
-   COMPANY DASHBOARD LAYOUT
+   COMPANY DASHBOARD LAYOUT (compatible thèmes)
+   Couleurs dans src/theme/theme.css
 ========================================================= */
 
 .company-dashboard-layout {
@@ -9,7 +9,11 @@
   min-height: 100vh;
   min-height: 100dvh;
 
-  background: #f7f8fb;
+  /* Fond du thème actif : gris très clair en clair,
+     noir violacé en sombre, dégradé visible en dégradé */
+  background: var(--bg-soft);
+
+  color: var(--text);
 }
 
 /* =========================================================

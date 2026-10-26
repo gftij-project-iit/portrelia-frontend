@@ -1,22 +1,27 @@
 import { useContext } from "react";
 import { Navigate } from "react-router-dom";
+
 import { AuthContext } from "../context/AuthContext";
+import { PageLoader } from "./RouteLoaders";
 
-
+/* =========================================================
+   ROUTE PROTÉGÉE — réservée aux utilisateurs connectés
+========================================================= */
 
 export default function ProtectedRoute({ children }) {
   const { user, loading } = useContext(AuthContext);
 
-  // ⏳ attend check auth
+  // Vérification de la session en cours :
+  // on affiche déjà le skeleton de la page demandée
   if (loading) {
-    return <div className="text-center mt-5">Loading...</div>;
+    return <PageLoader />;
   }
 
-  // ❌ pas connecté → login
+  // Pas connecté → retour à l'accueil
   if (!user) {
     return <Navigate to="/" replace />;
   }
 
-  // ✅ connecté
+  // Connecté → la page s'affiche
   return children;
 }

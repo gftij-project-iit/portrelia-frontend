@@ -7,7 +7,6 @@ import {
   useState,
 } from "react";
 
-import { ClipLoader } from "react-spinners";
 import api from "../services/api";
 
 export const AuthContext = createContext(null);
@@ -81,22 +80,12 @@ export function AuthProvider({ children }) {
     };
   }, []);
 
-  if (loading) {
-    return (
-      <div
-        style={{
-          minHeight: "100vh",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          background: "#fff",
-        }}
-      >
-        <ClipLoader size={42} color="#111827" />
-      </div>
-    );
-  }
-
+  /*
+   * Plus de loader plein écran ici : le site s'affiche tout de suite.
+   * L'attente de la session est gérée par les routes :
+   * - PublicRoute  : affiche la page directement
+   * - ProtectedRoute : affiche le skeleton du dashboard
+   */
   return (
     <AuthContext.Provider
       value={{

@@ -1,10 +1,39 @@
+/* =========================================
+   PORTRÉLIA — PARAMÈTRES ENTREPRISE (compatible thèmes)
+   Couleurs de base dans src/theme/theme.css
+   Couleurs d'état propres à la page : variables --set-*
+========================================= */
 
 .company-settings-page {
+  /* Couleurs d'état (thème clair) */
+  --set-danger-bg: #fff5f5;
+  --set-danger-border: #f0d0d0;
+  --set-danger-text: #a32e2e;
+
+  --set-success-bg: #edf8f1;
+  --set-success-border: #cce8d5;
+  --set-success-text: #267a49;
+
   width: 100%;
   max-width: 1100px;
   margin: 0 auto;
   padding: 30px 32px 50px;
-  color: #211b2d;
+  color: var(--text);
+}
+
+/* Sombre / dégradé : états translucides + contrôles natifs sombres */
+
+[data-theme="dark"] .company-settings-page,
+[data-theme="gradient"] .company-settings-page {
+  --set-danger-bg: rgba(248, 113, 113, 0.14);
+  --set-danger-border: rgba(248, 113, 113, 0.4);
+  --set-danger-text: #fca5a5;
+
+  --set-success-bg: rgba(52, 211, 153, 0.14);
+  --set-success-border: rgba(52, 211, 153, 0.4);
+  --set-success-text: #6ee7b7;
+
+  color-scheme: dark;
 }
 
 .company-settings-page *,
@@ -13,6 +42,15 @@
   box-sizing: border-box;
 }
 
+.company-settings-page button:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* =========================================
+   HEADER
+========================================= */
+
 .company-settings-header {
   margin-bottom: 28px;
 }
@@ -20,7 +58,7 @@
 .company-settings-header > span {
   display: block;
   margin-bottom: 10px;
-  color: #56319a;
+  color: var(--accent);
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.1em;
@@ -28,6 +66,7 @@
 
 .company-settings-header h1 {
   margin: 0;
+  color: var(--text);
   font-size: 32px;
   font-weight: 800;
   letter-spacing: -0.04em;
@@ -35,10 +74,14 @@
 
 .company-settings-header p {
   margin: 9px 0 0;
-  color: #777184;
+  color: var(--text-muted);
   font-size: 13px;
   line-height: 1.7;
 }
+
+/* =========================================
+   CARTES
+========================================= */
 
 .company-settings-content {
   display: grid;
@@ -47,9 +90,9 @@
 
 .company-settings-card {
   padding: 26px;
-  border: 1px solid #ece8f1;
+  border: 1px solid var(--border);
   border-radius: 16px;
-  background: #fff;
+  background: var(--surface);
   box-shadow: 0 5px 20px rgba(35, 22, 59, 0.025);
 }
 
@@ -68,8 +111,8 @@
   width: 47px;
   height: 47px;
   border-radius: 13px;
-  background: #f0eafa;
-  color: #56319a;
+  background: var(--accent-soft);
+  color: var(--primary);
 }
 
 .company-settings-icon svg {
@@ -79,16 +122,21 @@
 
 .company-settings-card-heading h2 {
   margin: 0;
+  color: var(--text);
   font-size: 18px;
   font-weight: 800;
 }
 
 .company-settings-card-heading p {
   margin: 6px 0 0;
-  color: #777184;
+  color: var(--text-muted);
   font-size: 12px;
   line-height: 1.6;
 }
+
+/* =========================================
+   CHAMPS EN LECTURE SEULE
+========================================= */
 
 .company-settings-fields {
   display: grid;
@@ -101,7 +149,7 @@
   display: flex;
   flex-direction: column;
   gap: 9px;
-  color: #3c3449;
+  color: var(--text-soft);
   font-size: 12px;
   font-weight: 750;
 }
@@ -111,10 +159,11 @@
   min-width: 0;
   height: 46px;
   padding: 0 14px;
-  border: 1px solid #ece8f1;
+  border: 1px solid var(--border);
   border-radius: 10px;
-  background: #f9f8fb;
-  color: #625a6d;
+  background: var(--surface-2);
+  color: var(--text-soft);
+  font-family: inherit;
   font-size: 13px;
 }
 
@@ -126,11 +175,11 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  border: 1px solid #ece8f1;
+  border: 1px solid var(--border);
   border-radius: 10px;
-  background: #f9f8fb;
+  background: var(--surface-2);
   padding-left: 14px;
-  color: #8a8296;
+  color: var(--text-muted);
 }
 
 .company-settings-readonly-icon input {
@@ -139,6 +188,10 @@
   padding-left: 0;
   outline: none;
 }
+
+/* =========================================
+   MOT DE PASSE
+========================================= */
 
 .company-settings-password-fields {
   display: grid;
@@ -151,14 +204,16 @@
   gap: 10px;
   min-height: 46px;
   padding: 0 13px;
-  border: 1px solid #e8e2ed;
+  border: 1px solid var(--border-strong);
   border-radius: 10px;
-  background: #fff;
-  color: #82768f;
+  background: var(--surface);
+  color: var(--text-muted);
+  transition: border-color 0.16s ease, box-shadow 0.16s ease;
 }
 
 .company-settings-password-input:focus-within {
-  border-color: #9b80c4;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
 .company-settings-password-input input {
@@ -169,8 +224,23 @@
   border: none;
   outline: none;
   background: transparent;
-  color: #211b2d;
+  color: var(--text);
+  font-family: inherit;
   font-size: 13px;
+}
+
+.company-settings-password-input input::placeholder {
+  color: var(--text-muted);
+}
+
+/* Remplissage automatique : champ transparent et texte lisible */
+
+.company-settings-password-input input:-webkit-autofill,
+.company-settings-password-input input:-webkit-autofill:hover,
+.company-settings-password-input input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--text);
+  caret-color: var(--text);
+  transition: background-color 9999s ease-out;
 }
 
 .company-settings-password-input button {
@@ -180,10 +250,20 @@
   width: 32px;
   height: 32px;
   border: none;
+  border-radius: 8px;
   background: transparent;
-  color: #82768f;
+  color: var(--text-muted);
   cursor: pointer;
+  transition: color 0.16s ease;
 }
+
+.company-settings-password-input button:hover {
+  color: var(--primary);
+}
+
+/* =========================================
+   PIED DE FORMULAIRE
+========================================= */
 
 .company-settings-form-footer {
   display: flex;
@@ -193,14 +273,14 @@
   gap: 16px;
   margin-top: 24px;
   padding-top: 20px;
-  border-top: 1px solid #ece8f1;
+  border-top: 1px solid var(--border);
 }
 
 .company-settings-form-footer > span {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #827a8d;
+  color: var(--text-muted);
   font-size: 12px;
 }
 
@@ -213,21 +293,26 @@
   padding: 11px 18px;
   border: none;
   border-radius: 10px;
-  background: #56319a;
-  color: #fff;
+  background: var(--primary);
+  color: var(--on-primary);
   font-size: 12px;
   font-weight: 750;
   cursor: pointer;
+  transition: background 0.16s ease;
 }
 
 .company-settings-form-footer > button:hover:not(:disabled) {
-  background: #45247e;
+  background: var(--primary-hover);
 }
 
 .company-settings-form-footer > button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
+
+/* =========================================
+   ALERTES
+========================================= */
 
 .company-settings-alert {
   display: flex;
@@ -241,15 +326,15 @@
 }
 
 .company-settings-alert.error {
-  border: 1px solid #f0d0d0;
-  background: #fff5f5;
-  color: #a32e2e;
+  border: 1px solid var(--set-danger-border);
+  background: var(--set-danger-bg);
+  color: var(--set-danger-text);
 }
 
 .company-settings-alert.success {
-  border: 1px solid #cce8d5;
-  background: #edf8f1;
-  color: #267a49;
+  border: 1px solid var(--set-success-border);
+  background: var(--set-success-bg);
+  color: var(--set-success-text);
 }
 
 .company-settings-loading {
@@ -257,6 +342,10 @@
   justify-content: center;
   padding: 30px;
 }
+
+/* =========================================
+   TABLETTE
+========================================= */
 
 @media (max-width: 768px) {
   .company-settings-page {
@@ -271,6 +360,10 @@
     font-size: 28px;
   }
 }
+
+/* =========================================
+   MOBILE
+========================================= */
 
 @media (max-width: 550px) {
   .company-settings-page {
@@ -301,5 +394,13 @@
 
   .company-settings-form-footer > button {
     width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .company-settings-page *,
+  .company-settings-page *::before,
+  .company-settings-page *::after {
+    transition: none !important;
   }
 }

@@ -1,4 +1,13 @@
+/* =========================================================
+   COMPANY TOPBAR — PORTRÉLIA (compatible thèmes)
+   Couleurs dans src/theme/theme.css
+========================================================= */
+
 .company-topbar {
+  /* Couleurs du bouton "Se déconnecter" (thème clair) */
+  --topbar-danger: #dc2626;
+  --topbar-danger-bg: #fef2f2;
+
   height: 72px;
   position: sticky;
   top: 0;
@@ -7,16 +16,46 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 28px;
-  background: #ffffff;
-  border-bottom: 1px solid #e5e7eb;
+  background: var(--header-bg);
+  border-bottom: 1px solid var(--border);
+  -webkit-backdrop-filter: saturate(180%) blur(14px);
+  backdrop-filter: saturate(180%) blur(14px);
+  color: var(--text);
+}
+
+[data-theme="dark"] .company-topbar,
+[data-theme="gradient"] .company-topbar {
+  --topbar-danger: #fca5a5;
+  --topbar-danger-bg: rgba(248, 113, 113, 0.14);
+}
+
+/* Si le navigateur ne gère pas le flou : fond opaque */
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .company-topbar {
+    background: var(--surface-solid);
+  }
 }
 
 .company-topbar-actions {
   margin-left: auto;
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
 }
+
+/* =========================================================
+   BOUTON DE THÈME (dans la barre : un peu plus compact)
+========================================================= */
+
+.company-topbar .theme-dropdown-trigger {
+  height: 38px;
+  padding: 0 10px;
+}
+
+/* =========================================================
+   NOTIFICATIONS
+========================================================= */
 
 .company-topbar-notification {
   width: 38px;
@@ -25,15 +64,26 @@
   align-items: center;
   justify-content: center;
   border: none;
+  border-radius: 10px;
   background: transparent;
-  color: #374151;
+  color: var(--text-soft);
   cursor: pointer;
+  transition: background 0.16s ease, color 0.16s ease;
+}
+
+.company-topbar-notification:hover {
+  background: var(--surface-2);
+  color: var(--text);
 }
 
 .company-topbar-notification svg {
   width: 19px;
   height: 19px;
 }
+
+/* =========================================================
+   UTILISATEUR
+========================================================= */
 
 .company-topbar-user-wrapper {
   position: relative;
@@ -45,19 +95,29 @@
   gap: 9px;
   padding: 5px 7px;
   border: none;
+  border-radius: 10px;
   background: transparent;
+  color: var(--text);
+  font: inherit;
   cursor: pointer;
+  transition: background 0.16s ease;
+}
+
+.company-topbar-user:hover,
+.company-topbar-user.is-open {
+  background: var(--surface-2);
 }
 
 .company-topbar-avatar {
   width: 34px;
   height: 34px;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background: #4f2e94;
-  color: #ffffff;
+  background: var(--primary);
+  color: var(--on-primary);
   font-size: 12px;
   font-weight: 700;
 }
@@ -70,19 +130,28 @@
 
 .company-topbar-user-info strong {
   font-size: 12px;
-  color: #111827;
+  color: var(--text);
 }
 
 .company-topbar-user-info span {
   font-size: 10px;
-  color: #8b8f98;
+  color: var(--text-muted);
 }
 
-.company-topbar-user > svg {
+.company-topbar-caret {
   width: 14px;
   height: 14px;
-  color: #6b7280;
+  color: var(--text-muted);
+  transition: transform 0.2s ease;
 }
+
+.company-topbar-user.is-open .company-topbar-caret {
+  transform: rotate(180deg);
+}
+
+/* =========================================================
+   MENU UTILISATEUR
+========================================================= */
 
 .company-topbar-menu {
   width: 190px;
@@ -90,12 +159,10 @@
   top: calc(100% + 8px);
   right: 0;
   padding: 7px;
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
+  background: var(--surface-solid);
+  border: 1px solid var(--border);
   border-radius: 10px;
-  box-shadow:
-    0 12px 30px
-    rgba(17, 24, 39, 0.12);
+  box-shadow: 0 12px 30px rgba(17, 24, 39, 0.16);
 }
 
 .company-topbar-menu button {
@@ -108,14 +175,31 @@
   border: none;
   border-radius: 7px;
   background: transparent;
-  color: #dc2626;
+  color: var(--topbar-danger);
+  font: inherit;
   font-size: 12px;
   cursor: pointer;
+  transition: background 0.16s ease;
 }
 
 .company-topbar-menu button:hover {
-  background: #fef2f2;
+  background: var(--topbar-danger-bg);
 }
+
+/* =========================================================
+   ACCESSIBILITÉ
+========================================================= */
+
+.company-topbar-notification:focus-visible,
+.company-topbar-user:focus-visible,
+.company-topbar-menu button:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
 
 @media (max-width: 700px) {
   .company-topbar {
@@ -123,8 +207,34 @@
     padding: 0 14px;
   }
 
+  .company-topbar-actions {
+    gap: 8px;
+  }
+
   .company-topbar-user-info,
-  .company-topbar-user > svg {
+  .company-topbar-caret {
     display: none;
+  }
+
+  .company-topbar-user {
+    padding: 4px;
+  }
+
+  /* Bouton de thème : juste l'icône, sans la flèche */
+
+  .company-topbar .theme-dropdown-trigger {
+    width: 38px;
+    padding: 0;
+  }
+
+  .company-topbar .theme-dropdown-caret {
+    display: none;
+  }
+
+  /* Le petit menu des thèmes reste dans l'écran */
+
+  .company-topbar .theme-dropdown-panel {
+    right: -46px;
+    width: min(220px, calc(100vw - 28px));
   }
 }

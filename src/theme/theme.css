@@ -1,0 +1,155 @@
+/* =========================================================
+   PORTRÉLIA — THÈMES : clair / sombre / dégradé
+   Toutes les couleurs du site doivent utiliser ces variables.
+   ========================================================= */
+
+:root,
+[data-theme="light"] {
+  color-scheme: light;
+
+  --page-bg: #ffffff;
+  --bg-base: #ffffff;
+  --bg: #ffffff;
+  --bg-soft: #f7f5fb;
+  --surface: #ffffff;
+  --surface-2: #faf8fd;
+  --surface-solid: #ffffff;
+
+  --border: #ece8f1;
+  --border-strong: #d0d5dd;
+
+  --text: #241052;
+  --text-soft: #5c6475;
+  --text-muted: #8b8f98;
+
+  --primary: #4b2e83;
+  --primary-hover: #39206e;
+  --on-primary: #ffffff;
+
+  --accent: #684398;
+  --accent-soft: #f0eafa;
+
+  --inverse-bg: #241052;
+  --inverse-text: #ffffff;
+
+  --header-bg: rgba(255, 255, 255, 0.86);
+  --footer-bg: #201638;
+  --shadow: 0 16px 34px rgba(43, 20, 80, 0.08);
+
+  --grid-dot: rgba(75, 46, 131, 0.16);
+  --ring: rgba(75, 46, 131, 0.22);
+
+  --band-bg: linear-gradient(90deg, #241052, #4b2e83);
+  --band-edge-left: #241052;
+  --band-edge-right: #4b2e83;
+
+  --logo-filter: grayscale(1);
+  --logo-filter-hover: none;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --page-bg: #0f0b17;
+  --bg-base: #0f0b17;
+  --bg: #0f0b17;
+  --bg-soft: #151021;
+  --surface: #1a1426;
+  --surface-2: #211a30;
+  --surface-solid: #1a1426;
+
+  --border: #2c2440;
+  --border-strong: #3b3154;
+
+  --text: #f4f0fa;
+  --text-soft: #c9c0d8;
+  --text-muted: #8f86a3;
+
+  --primary: #9f81d6;
+  --primary-hover: #b59be3;
+  --on-primary: #160d25;
+
+  --accent: #c9b5ee;
+  --accent-soft: #2a2140;
+
+  --inverse-bg: #f4f0fa;
+  --inverse-text: #160d25;
+
+  --header-bg: rgba(15, 11, 23, 0.82);
+  --footer-bg: #0a0710;
+  --shadow: 0 16px 34px rgba(0, 0, 0, 0.35);
+
+  --grid-dot: rgba(201, 181, 238, 0.12);
+  --ring: rgba(201, 181, 238, 0.22);
+
+  --band-bg: linear-gradient(90deg, #1a1030, #2d1a52);
+  --band-edge-left: #1a1030;
+  --band-edge-right: #2d1a52;
+
+  --logo-filter: brightness(0) invert(1);
+  --logo-filter-hover: brightness(0) invert(1);
+}
+
+[data-theme="gradient"] {
+  color-scheme: dark;
+
+  --page-bg: linear-gradient(115deg, #361b53 0%, #864662 55%, #be6267 100%);
+  --bg-base: #361b53;
+  --bg: transparent;
+  --bg-soft: rgba(255, 255, 255, 0.04);
+  --surface: rgba(255, 255, 255, 0.10);
+  --surface-2: rgba(255, 255, 255, 0.14);
+  --surface-solid: #4a2560;
+
+  --border: rgba(255, 255, 255, 0.18);
+  --border-strong: rgba(255, 255, 255, 0.35);
+
+  --text: #ffffff;
+  --text-soft: rgba(255, 255, 255, 0.86);
+  --text-muted: rgba(255, 255, 255, 0.65);
+
+  --primary: #ffffff;
+  --primary-hover: #fbf3f4;
+  --on-primary: #361b53;
+
+  --accent: #f3c6c4;
+  --accent-soft: rgba(255, 255, 255, 0.14);
+
+  --inverse-bg: #ffffff;
+  --inverse-text: #361b53;
+
+  --header-bg: rgba(54, 27, 83, 0.55);
+  --footer-bg: rgba(20, 8, 35, 0.45);
+  --shadow: 0 16px 34px rgba(20, 8, 35, 0.30);
+
+  --grid-dot: rgba(255, 255, 255, 0.18);
+  --ring: rgba(255, 255, 255, 0.30);
+
+  --band-bg: rgba(20, 8, 35, 0.28);
+  --band-edge-left: transparent;
+  --band-edge-right: transparent;
+
+  --logo-filter: brightness(0) invert(1);
+  --logo-filter-hover: brightness(0) invert(1);
+}
+
+/* Fond de tout le site (fixe, fonctionne aussi sur mobile) */
+
+html {
+  background: var(--bg-base);
+}
+
+body {
+  margin: 0;
+  color: var(--text);
+  background: transparent;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: var(--page-bg);
+  pointer-events: none;
+}

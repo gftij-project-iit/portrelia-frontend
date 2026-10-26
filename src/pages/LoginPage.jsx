@@ -217,15 +217,9 @@ function LoginPage() {
 
           </div>
 
-          {/* ERROR */}
+          {/* ERROR — couleur gérée par le thème */}
           {errorMessage && (
-            <p
-              style={{
-                color: "#d64545",
-                fontSize: "14px",
-                margin: "8px 0 0",
-              }}
-            >
+            <p className="login-error" role="alert">
               {errorMessage}
             </p>
           )}
@@ -257,14 +251,22 @@ function LoginPage() {
 
           </div>
 
-          {/* LOGIN BUTTON */}
+          {/* LOGIN BUTTON — petit cercle pendant la connexion */}
           <button
             type="submit"
             className="login-submit"
             disabled={loading}
+            aria-busy={loading}
           >
+            {loading && (
+              <span
+                className="login-spinner"
+                aria-hidden="true"
+              />
+            )}
+
             {loading
-              ? "Connexion..."
+              ? "Connexion…"
               : "Se connecter"}
           </button>
 

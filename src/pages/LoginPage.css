@@ -1,4 +1,12 @@
+/* ==================================================
+   PORTRÉLIA — LOGIN (compatible thèmes)
+   Les couleurs viennent de src/theme/theme.css
+================================================== */
+
 .login-page {
+  /* Couleur des erreurs selon le thème */
+  --login-error: #c62828;
+
   min-height: 100vh;
 
   display: flex;
@@ -7,12 +15,19 @@
 
   padding: 32px 16px;
 
-  background:
-    linear-gradient(
-      180deg,
-      #f9fafb 0%,
-      #f3f4f6 100%
-    );
+  background: var(--bg-soft);
+
+  color: var(--text);
+}
+
+
+[data-theme="dark"] .login-page {
+  --login-error: #ff8a80;
+}
+
+
+[data-theme="gradient"] .login-page {
+  --login-error: #fff1f0;
 }
 
 
@@ -26,15 +41,16 @@
 
   padding: 26px 34px 22px;
 
-  background: #ffffff;
+  background: var(--surface);
 
-  border: 1px solid #e4e7ec;
+  border: 1px solid var(--border);
 
   border-radius: 8px;
 
-  box-shadow:
-    0 12px 35px
-    rgba(17, 24, 39, 0.08);
+  box-shadow: var(--shadow);
+
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
 }
 
 
@@ -65,8 +81,21 @@
 }
 
 
+/* Le logo a un fond blanc : en sombre / dégradé on l'assume
+   avec une pastille blanche arrondie, comme dans le footer */
+
+[data-theme="dark"] .login-logo,
+[data-theme="gradient"] .login-logo {
+  padding: 4px;
+
+  border-radius: 10px;
+
+  background: #ffffff;
+}
+
+
 .login-brand-name {
-  color: #2d1150;
+  color: var(--text);
 
   font-size: 18px;
 
@@ -90,7 +119,7 @@
 .login-header h1 {
   margin: 0 0 6px;
 
-  color: #111827;
+  color: var(--text);
 
   font-size: 26px;
 
@@ -103,7 +132,7 @@
 .login-header p {
   margin: 0;
 
-  color: #667085;
+  color: var(--text-muted);
 
   font-size: 13px;
 }
@@ -129,7 +158,7 @@
 
 
 .login-field label {
-  color: #475467;
+  color: var(--text-soft);
 
   font-size: 12px;
 
@@ -144,13 +173,13 @@
 
   padding: 0 12px;
 
-  border: 1px solid #d0d5dd;
+  border: 1px solid var(--border-strong);
 
   border-radius: 5px;
 
-  background: #ffffff;
+  background: var(--surface);
 
-  color: #111827;
+  color: var(--text);
 
   font-size: 13px;
 
@@ -163,16 +192,34 @@
 
 
 .login-field input::placeholder {
-  color: #98a2b3;
+  color: var(--text-muted);
 }
 
 
 .login-field input:focus {
-  border-color: #4b2e83;
+  border-color: var(--primary);
 
   box-shadow:
     0 0 0 3px
-    rgba(75, 46, 131, 0.08);
+    var(--accent-soft);
+}
+
+
+/* Remplissage automatique du navigateur :
+   évite le fond jaune / bleu clair en mode sombre */
+
+.login-field input:-webkit-autofill,
+.login-field input:-webkit-autofill:hover,
+.login-field input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--text);
+
+  box-shadow:
+    0 0 0 1000px
+    var(--surface-solid) inset;
+
+  caret-color: var(--text);
+
+  transition: background-color 9999s ease-out;
 }
 
 
@@ -213,7 +260,7 @@
 
   background: transparent;
 
-  color: #667085;
+  color: var(--text-muted);
 
   cursor: pointer;
 
@@ -222,7 +269,27 @@
 
 
 .password-toggle:hover {
-  color: #4b2e83;
+  color: var(--primary);
+}
+
+
+/* ==================================================
+   ERROR
+================================================== */
+
+.login-error {
+  margin: 8px 0 0;
+
+  color: var(--login-error);
+
+  font-size: 14px;
+
+  font-weight: 500;
+}
+
+
+[data-theme="gradient"] .login-error {
+  font-weight: 600;
 }
 
 
@@ -249,7 +316,7 @@
 
   gap: 8px;
 
-  color: #475467;
+  color: var(--text-soft);
 
   font-size: 11px;
 
@@ -263,14 +330,14 @@
 
   margin: 0;
 
-  accent-color: #4b2e83;
+  accent-color: var(--primary);
 
   cursor: pointer;
 }
 
 
 .forgot-password {
-  color: #4b2e83;
+  color: var(--primary);
 
   font-size: 11px;
 
@@ -299,18 +366,15 @@
   align-items: center;
   justify-content: center;
 
+  gap: 10px;
+
   border: none;
 
   border-radius: 5px;
 
-  background:
-    linear-gradient(
-      90deg,
-      #4b2e83 0%,
-      #3d206f 100%
-    );
+  background: var(--primary);
 
-  color: #ffffff;
+  color: var(--on-primary);
 
   font-size: 13px;
 
@@ -324,13 +388,55 @@
 }
 
 
-.login-submit:hover {
-  background: #3e246f;
+.login-submit:hover:not(:disabled) {
+  background: var(--primary-hover);
 }
 
 
-.login-submit:active {
+.login-submit:active:not(:disabled) {
   transform: translateY(1px);
+}
+
+
+.login-submit:disabled {
+  opacity: 0.7;
+
+  cursor: wait;
+}
+
+
+/* Petit cercle qui tourne (prend la couleur du texte du bouton) */
+
+.login-spinner {
+  width: 16px;
+  height: 16px;
+
+  flex-shrink: 0;
+
+  border: 2px solid currentColor;
+
+  border-right-color: transparent;
+
+  border-radius: 50%;
+
+  animation: login-spin 0.7s linear infinite;
+}
+
+
+@keyframes login-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+.login-submit:focus-visible,
+.password-toggle:focus-visible,
+.forgot-password:focus-visible,
+.login-card-footer a:focus-visible {
+  outline: 3px solid var(--accent);
+
+  outline-offset: 2px;
 }
 
 
@@ -348,14 +454,14 @@
 
   margin-top: 17px;
 
-  color: #667085;
+  color: var(--text-muted);
 
   font-size: 11px;
 }
 
 
 .login-card-footer a {
-  color: #4b2e83;
+  color: var(--primary);
 
   font-weight: 500;
 
@@ -405,6 +511,24 @@
     flex-direction: column;
 
     gap: 10px;
+  }
+
+}
+
+
+/* ==================================================
+   ANIMATIONS RÉDUITES
+================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .login-spinner {
+    animation-duration: 1.6s;
+  }
+
+
+  .login-submit {
+    transition: none;
   }
 
 }

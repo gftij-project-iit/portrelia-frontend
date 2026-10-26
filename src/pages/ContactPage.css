@@ -1,26 +1,41 @@
-
 /* =========================================================
-   PORTRÉLIA — CONTACT PAGE
+   PORTRÉLIA — CONTACT PAGE (compatible thèmes)
    Desktop / Tablet / Mobile
+   Couleurs dans src/theme/theme.css
    ========================================================= */
 
 .contact-page {
-  --contact-primary: #4b2e83;
-  --contact-primary-dark: #39206e;
-  --contact-heading: #241052;
-  --contact-text: #5c6475;
-  --contact-muted: #7b8190;
-  --contact-border: #e7e1ef;
-  --contact-soft: #f7f5fb;
+  /* Variables de la page branchées sur le thème */
+  --contact-primary: var(--primary);
+  --contact-primary-dark: var(--primary-hover);
+  --contact-heading: var(--text);
+  --contact-text: var(--text-soft);
+  --contact-muted: var(--text-muted);
+  --contact-border: var(--border);
+  --contact-soft: var(--surface-2);
+
+  /* Couleurs propres à la page (thème clair) */
+  --contact-input-hover: #bdb0d2;
+  --contact-error: #c26b6b;
 
   width: 100%;
   min-height: 100vh;
   padding: 0 clamp(20px, 5vw, 80px);
   display: flex;
   flex-direction: column;
-  background: #fff;
+  background: transparent;
   color: var(--contact-heading);
   overflow-x: clip;
+}
+
+/* Sombre / dégradé : ajustements + contrôles natifs sombres */
+
+[data-theme="dark"] .contact-page,
+[data-theme="gradient"] .contact-page {
+  --contact-input-hover: rgba(255, 255, 255, 0.35);
+  --contact-error: #f19999;
+
+  color-scheme: dark;
 }
 
 .contact-page *,
@@ -38,7 +53,7 @@
 .contact-page button:focus-visible,
 .contact-page input:focus-visible,
 .contact-page textarea:focus-visible {
-  outline: 3px solid #a990d4;
+  outline: 3px solid var(--accent);
   outline-offset: 3px;
 }
 
@@ -72,6 +87,15 @@
   object-fit: contain;
 }
 
+/* Le logo a un fond blanc : pastille blanche assumée en sombre / dégradé */
+
+[data-theme="dark"] .contact-brand img,
+[data-theme="gradient"] .contact-brand img {
+  padding: 3px;
+  border-radius: 9px;
+  background: #ffffff;
+}
+
 .contact-brand span {
   color: var(--contact-heading);
   font-size: 23px;
@@ -83,7 +107,7 @@
   display: inline-flex;
   align-items: center;
   gap: 9px;
-  color: #696478;
+  color: var(--contact-text);
   font-size: 14px;
   font-weight: 550;
   text-decoration: none;
@@ -127,7 +151,7 @@
 .contact-eyebrow {
   display: inline-block;
   margin-bottom: 23px;
-  color: var(--contact-primary);
+  color: var(--accent);
   font-size: 12px;
   font-weight: 800;
   letter-spacing: 0.12em;
@@ -178,7 +202,7 @@
   flex: 0 0 43px;
   display: grid;
   place-items: center;
-  border: 1px solid #e7def5;
+  border: 1px solid var(--contact-border);
   border-radius: 12px;
   background: var(--contact-soft);
   color: var(--contact-primary);
@@ -216,12 +240,12 @@
   width: 18px;
   height: 18px;
   flex-shrink: 0;
-  color: #9785b5;
+  color: var(--contact-muted);
   transition: transform 0.2s ease;
 }
 
 .contact-email-card:hover .contact-email-icon {
-  background: #eee6fa;
+  background: var(--accent-soft);
 }
 
 .contact-email-card:hover .contact-email-arrow {
@@ -255,7 +279,7 @@
   gap: 11px;
   margin-top: 35px;
   padding: 17px 18px;
-  border: 1px solid #ece6f5;
+  border: 1px solid var(--contact-border);
   border-radius: 12px;
   background: var(--contact-soft);
 }
@@ -271,7 +295,7 @@
 
 .contact-note p {
   margin: 0;
-  color: #625b70;
+  color: var(--contact-text);
   font-size: 13px;
   line-height: 1.75;
 }
@@ -283,10 +307,12 @@
 .contact-form-card {
   min-width: 0;
   padding: clamp(25px, 3.2vw, 42px);
-  border: 1px solid #e9e3f0;
+  border: 1px solid var(--contact-border);
   border-radius: 22px;
-  background: #fff;
-  box-shadow: 0 18px 60px rgba(43, 20, 80, 0.065);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
 }
 
 .contact-form-heading {
@@ -296,7 +322,7 @@
 .contact-form-kicker {
   display: none;
   margin-bottom: 9px;
-  color: var(--contact-primary);
+  color: var(--accent);
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.12em;
@@ -338,7 +364,7 @@
 .contact-field label {
   display: block;
   margin-bottom: 9px;
-  color: #302047;
+  color: var(--contact-heading);
   font-size: 13px;
   font-weight: 750;
   line-height: 1.5;
@@ -357,10 +383,10 @@
 .contact-field textarea {
   width: 100%;
   min-width: 0;
-  border: 1px solid #ddd6e7;
+  border: 1px solid var(--border-strong);
   border-radius: 11px;
-  background: #fff;
-  color: #302047;
+  background: var(--surface);
+  color: var(--contact-heading);
   font-family: inherit;
   font-size: 14px;
   line-height: 1.6;
@@ -383,20 +409,20 @@
 
 .contact-field input::placeholder,
 .contact-field textarea::placeholder {
-  color: #97909f;
+  color: var(--contact-muted);
   opacity: 1;
 }
 
 .contact-field input:hover,
 .contact-field textarea:hover {
-  border-color: #bdb0d2;
+  border-color: var(--contact-input-hover);
 }
 
 .contact-field input:focus,
 .contact-field textarea:focus {
   outline: none;
   border-color: var(--contact-primary);
-  box-shadow: 0 0 0 3px rgba(75, 46, 131, 0.09);
+  box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
 .contact-field input:focus-visible,
@@ -406,12 +432,24 @@
 
 .contact-field input:focus:invalid,
 .contact-field textarea:focus:invalid {
-  border-color: #c26b6b;
+  border-color: var(--contact-error);
+}
+
+/* Remplissage automatique du navigateur :
+   évite le fond jaune / bleu clair en mode sombre */
+
+.contact-field input:-webkit-autofill,
+.contact-field input:-webkit-autofill:hover,
+.contact-field input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--contact-heading);
+  box-shadow: 0 0 0 1000px var(--surface-solid) inset;
+  caret-color: var(--contact-heading);
+  transition: background-color 9999s ease-out;
 }
 
 .contact-char-count {
   margin-top: 8px;
-  color: #81798c;
+  color: var(--contact-muted);
   font-size: 11px;
   line-height: 1.5;
   text-align: right;
@@ -423,7 +461,7 @@
 
 .contact-privacy {
   margin: 1px 0 22px;
-  color: #777184;
+  color: var(--contact-muted);
   font-size: 12px;
   line-height: 1.85;
 }
@@ -439,17 +477,13 @@
   padding: 12px 44px;
   border: 0;
   border-radius: 9px;
-  background: linear-gradient(
-    100deg,
-    var(--contact-primary),
-    var(--contact-primary-dark)
-  );
-  color: #fff;
+  background: var(--contact-primary);
+  color: var(--on-primary);
   font-family: inherit;
   font-size: 14px;
   font-weight: 750;
   cursor: pointer;
-  box-shadow: 0 7px 18px rgba(75, 46, 131, 0.16);
+  box-shadow: var(--shadow);
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease,
@@ -475,7 +509,6 @@
 .contact-submit:hover {
   transform: translateY(-2px);
   background: var(--contact-primary-dark);
-  box-shadow: 0 10px 24px rgba(75, 46, 131, 0.23);
 }
 
 .contact-submit:hover .contact-submit-arrow {
@@ -487,12 +520,18 @@
   transform: translateY(0);
 }
 
+.contact-submit:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+}
+
 .contact-feedback {
   display: flex;
   align-items: flex-start;
   gap: 9px;
   margin: 17px 0 0;
-  color: #4d3974;
+  color: var(--contact-text);
   font-size: 12px;
   line-height: 1.7;
 }
@@ -518,8 +557,8 @@
   gap: 15px 30px;
   margin: 0 auto;
   padding: 22px 0;
-  border-top: 1px solid #f0edf4;
-  color: #898393;
+  border-top: 1px solid var(--contact-border);
+  color: var(--contact-muted);
   font-size: 12px;
 }
 
@@ -532,7 +571,7 @@
 }
 
 .contact-footer a {
-  color: #777184;
+  color: var(--contact-muted);
   text-decoration: none;
   transition: color 0.18s ease;
 }
@@ -669,7 +708,6 @@
   .contact-form-card {
     padding: 27px 21px;
     border-radius: 17px;
-    box-shadow: 0 12px 38px rgba(43, 20, 80, 0.055);
   }
 
   .contact-form-heading {

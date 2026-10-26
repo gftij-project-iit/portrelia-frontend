@@ -1,17 +1,39 @@
-
 /* =========================================
-   FACTURATION — PORTRÉLIA
+   FACTURATION — PORTRÉLIA (compatible thèmes)
+   Couleurs de base dans src/theme/theme.css
+   Couleurs d'état propres à la page : variables --bil-*
 ========================================= */
 
 .company-billing-page {
-  --billing-primary: #56319a;
-  --billing-primary-hover: #45247e;
-  --billing-text: #191626;
-  --billing-muted: #777386;
-  --billing-border: #ece9f1;
-  --billing-surface: #ffffff;
-  --billing-soft: #f8f7fb;
+  /* Variables de la page branchées sur le thème */
+  --billing-primary: var(--primary);
+  --billing-primary-hover: var(--primary-hover);
+  --billing-text: var(--text);
+  --billing-muted: var(--text-muted);
+  --billing-border: var(--border);
+  --billing-surface: var(--surface);
+  --billing-soft: var(--surface-2);
   --billing-radius: 16px;
+
+  /* Couleurs d'état (thème clair) */
+  --bil-danger-bg: #fff7f7;
+  --bil-danger-border: #f5cdcc;
+  --bil-danger-text: #a12626;
+
+  --bil-success-bg: #edf9f1;
+  --bil-success-border: #d1eddb;
+  --bil-success-text: #237749;
+
+  --bil-warn-bg: #fff8e9;
+  --bil-warn-border: #f4e1b6;
+  --bil-warn-text: #996a16;
+
+  --bil-info-bg: #eaf1ff;
+  --bil-info-text: #3974c5;
+
+  --bil-neutral-bg: #f4f3f7;
+  --bil-neutral-border: #e6e3eb;
+  --bil-neutral-text: #746c7d;
 
   width: 100%;
   min-width: 0;
@@ -20,6 +42,32 @@
   padding: 30px 32px 50px;
   color: var(--billing-text);
   box-sizing: border-box;
+}
+
+/* Sombre / dégradé : états translucides */
+
+[data-theme="dark"] .company-billing-page,
+[data-theme="gradient"] .company-billing-page {
+  --bil-danger-bg: rgba(248, 113, 113, 0.14);
+  --bil-danger-border: rgba(248, 113, 113, 0.4);
+  --bil-danger-text: #fca5a5;
+
+  --bil-success-bg: rgba(52, 211, 153, 0.14);
+  --bil-success-border: rgba(52, 211, 153, 0.35);
+  --bil-success-text: #6ee7b7;
+
+  --bil-warn-bg: rgba(251, 146, 60, 0.14);
+  --bil-warn-border: rgba(251, 146, 60, 0.35);
+  --bil-warn-text: #fdba74;
+
+  --bil-info-bg: rgba(96, 165, 250, 0.16);
+  --bil-info-text: #93c5fd;
+
+  --bil-neutral-bg: rgba(255, 255, 255, 0.08);
+  --bil-neutral-border: rgba(255, 255, 255, 0.14);
+  --bil-neutral-text: var(--text-muted);
+
+  color-scheme: dark;
 }
 
 .company-billing-page *,
@@ -33,7 +81,7 @@
 }
 
 .company-billing-page button:focus-visible {
-  outline: 3px solid rgba(86, 49, 154, 0.32);
+  outline: 3px solid var(--accent);
   outline-offset: 3px;
 }
 
@@ -56,7 +104,7 @@
 .company-billing-kicker {
   display: block;
   margin-bottom: 10px;
-  color: var(--billing-primary);
+  color: var(--accent);
   font-size: 11px;
   font-weight: 800;
   line-height: 1.4;
@@ -90,8 +138,8 @@
   padding: 10px 15px;
   border: 1px solid var(--billing-border);
   border-radius: 11px;
-  background: #fff;
-  color: #494354;
+  background: var(--billing-surface);
+  color: var(--text-soft);
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
@@ -103,7 +151,7 @@
 
 .company-billing-refresh:hover:not(:disabled) {
   background: var(--billing-soft);
-  border-color: #d8d0e8;
+  border-color: var(--border-strong);
 }
 
 .company-billing-refresh:disabled {
@@ -137,10 +185,10 @@
   min-height: 50px;
   margin-bottom: 20px;
   padding: 13px 16px;
-  border: 1px solid #f5cdcc;
+  border: 1px solid var(--bil-danger-border);
   border-radius: 12px;
-  background: #fff7f7;
-  color: #a12626;
+  background: var(--bil-danger-bg);
+  color: var(--bil-danger-text);
   font-size: 13px;
   line-height: 1.6;
 }
@@ -215,18 +263,18 @@
 }
 
 .company-billing-summary-icon.purple {
-  background: #f0eaf9;
-  color: #6b41ae;
+  background: var(--accent-soft);
+  color: var(--primary);
 }
 
 .company-billing-summary-icon.blue {
-  background: #eaf1ff;
-  color: #3974c5;
+  background: var(--bil-info-bg);
+  color: var(--bil-info-text);
 }
 
 .company-billing-summary-icon.green {
-  background: #e7f7ed;
-  color: #26814c;
+  background: var(--bil-success-bg);
+  color: var(--bil-success-text);
 }
 
 .company-billing-summary-caption {
@@ -293,8 +341,8 @@
   padding: 7px 11px;
   border: 1px solid var(--billing-border);
   border-radius: 999px;
-  background: #fff;
-  color: #625970;
+  background: var(--billing-surface);
+  color: var(--text-soft);
   font-size: 12px;
   font-weight: 700;
 }
@@ -325,13 +373,13 @@
 }
 
 .company-billing-table thead {
-  background: #faf9fc;
+  background: var(--billing-soft);
 }
 
 .company-billing-table th {
   padding: 16px 19px;
   border-bottom: 1px solid var(--billing-border);
-  color: #827b8d;
+  color: var(--billing-muted);
   font-size: 11px;
   font-weight: 800;
   white-space: nowrap;
@@ -341,8 +389,8 @@
 
 .company-billing-table td {
   padding: 19px;
-  border-bottom: 1px solid #f0edf4;
-  color: #494452;
+  border-bottom: 1px solid var(--billing-border);
+  color: var(--text-soft);
   font-size: 13px;
   vertical-align: middle;
 }
@@ -356,7 +404,7 @@
 }
 
 .company-billing-table tbody tr:hover {
-  background: #fcfbfe;
+  background: var(--billing-soft);
 }
 
 .company-billing-actions-heading {
@@ -377,10 +425,10 @@
   flex-shrink: 0;
   width: 39px;
   height: 42px;
-  border: 1px solid #e9e3f2;
+  border: 1px solid var(--billing-border);
   border-radius: 10px;
-  background: #f5f1fb;
-  color: #7952af;
+  background: var(--accent-soft);
+  color: var(--accent);
 }
 
 .company-billing-document-icon svg {
@@ -396,14 +444,14 @@
 }
 
 .company-billing-invoice-name strong {
-  color: #24202d;
+  color: var(--billing-text);
   font-size: 13px;
   font-weight: 750;
   overflow-wrap: anywhere;
 }
 
 .company-billing-invoice-name > div > span {
-  color: #938c9a;
+  color: var(--billing-muted);
   font-size: 12px;
   line-height: 1.4;
 }
@@ -412,7 +460,7 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: #645d70;
+  color: var(--text-soft);
   font-size: 12px;
   white-space: nowrap;
 }
@@ -421,11 +469,11 @@
   flex-shrink: 0;
   width: 15px;
   height: 15px;
-  color: #958da5;
+  color: var(--billing-muted);
 }
 
 .company-billing-amount {
-  color: #211d2a;
+  color: var(--billing-text);
   font-size: 14px;
   font-weight: 800;
   white-space: nowrap;
@@ -458,33 +506,28 @@
 }
 
 .company-billing-status.paid {
-  border-color: #d1eddb;
-  background: #edf9f1;
-  color: #237749;
+  border-color: var(--bil-success-border);
+  background: var(--bil-success-bg);
+  color: var(--bil-success-text);
 }
 
 .company-billing-status.pending {
-  border-color: #f4e1b6;
-  background: #fff8e9;
-  color: #996a16;
+  border-color: var(--bil-warn-border);
+  background: var(--bil-warn-bg);
+  color: var(--bil-warn-text);
 }
 
-.company-billing-status.draft {
-  border-color: #e6e3eb;
-  background: #f4f3f7;
-  color: #746c7d;
-}
-
+.company-billing-status.draft,
 .company-billing-status.void {
-  border-color: #e6e3eb;
-  background: #f5f4f6;
-  color: #79747e;
+  border-color: var(--bil-neutral-border);
+  background: var(--bil-neutral-bg);
+  color: var(--bil-neutral-text);
 }
 
 .company-billing-status.failed {
-  border-color: #f2cccc;
-  background: #fff0f0;
-  color: #b23939;
+  border-color: var(--bil-danger-border);
+  background: var(--bil-danger-bg);
+  color: var(--bil-danger-text);
 }
 
 /* =========================================
@@ -506,10 +549,10 @@
   gap: 6px;
   min-height: 35px;
   padding: 8px 10px;
-  border: 1px solid #eae5f0;
+  border: 1px solid var(--border-strong);
   border-radius: 9px;
-  background: #fff;
-  color: #62517e;
+  background: var(--billing-surface);
+  color: var(--text-soft);
   font-size: 12px;
   font-weight: 700;
   white-space: nowrap;
@@ -521,8 +564,7 @@
 }
 
 .company-billing-action-btn:hover {
-  border-color: #cdbde3;
-  background: #f7f3fc;
+  background: var(--accent-soft);
   color: var(--billing-primary);
 }
 
@@ -532,7 +574,7 @@
 }
 
 .company-billing-no-document {
-  color: #a59fad;
+  color: var(--billing-muted);
   font-size: 12px;
   font-style: italic;
 }
@@ -568,7 +610,7 @@
 }
 
 .company-billing-mobile-invoice-top strong {
-  color: #272230;
+  color: var(--billing-text);
   font-size: 13px;
   font-weight: 750;
   line-height: 1.5;
@@ -596,13 +638,13 @@
 }
 
 .company-billing-mobile-invoice-details > div > span:first-child {
-  color: #928b9c;
+  color: var(--billing-muted);
   font-size: 11px;
   font-weight: 650;
 }
 
 .company-billing-mobile-invoice-details strong {
-  color: #201b2a;
+  color: var(--billing-text);
   font-size: 16px;
   font-weight: 800;
 }
@@ -622,17 +664,18 @@
   flex: 1;
   min-height: 40px;
   padding: 10px 12px;
-  border: 1px solid #e7e0f0;
+  border: 1px solid var(--border-strong);
   border-radius: 10px;
-  background: #fff;
+  background: var(--billing-surface);
   color: var(--billing-primary);
   font-size: 12px;
   font-weight: 750;
   cursor: pointer;
+  transition: background 0.16s ease;
 }
 
 .company-billing-mobile-invoice-actions button:hover {
-  background: #f7f4fb;
+  background: var(--accent-soft);
 }
 
 .company-billing-mobile-invoice-actions button svg {
@@ -668,9 +711,9 @@
   width: 64px;
   height: 64px;
   margin-bottom: 19px;
-  border: 1px solid #e9e1f3;
+  border: 1px solid var(--billing-border);
   border-radius: 19px;
-  background: #f7f3fc;
+  background: var(--accent-soft);
   color: var(--billing-primary);
 }
 
@@ -701,13 +744,18 @@
   gap: 8px;
   min-height: 40px;
   padding: 9px 17px;
-  border: 1px solid #ddd3eb;
+  border: 1px solid var(--border-strong);
   border-radius: 10px;
-  background: #fff;
+  background: var(--billing-surface);
   color: var(--billing-primary);
   font-size: 12px;
   font-weight: 750;
   cursor: pointer;
+  transition: background 0.16s ease;
+}
+
+.company-billing-empty button:hover {
+  background: var(--accent-soft);
 }
 
 .company-billing-empty button svg {
@@ -734,17 +782,18 @@
   gap: 10px;
   min-height: 43px;
   padding: 11px 19px;
-  border: 1px solid #ddd3ec;
+  border: 1px solid var(--border-strong);
   border-radius: 10px;
-  background: #fff;
+  background: var(--billing-surface);
   color: var(--billing-primary);
   font-size: 13px;
   font-weight: 750;
   cursor: pointer;
+  transition: background 0.16s ease;
 }
 
 .company-billing-pagination button:hover:not(:disabled) {
-  background: #f8f4fc;
+  background: var(--accent-soft);
 }
 
 .company-billing-pagination button:disabled {
@@ -768,7 +817,7 @@
   padding: 23px;
   border: 1px solid var(--billing-border);
   border-radius: var(--billing-radius);
-  background: #fff;
+  background: var(--billing-surface);
   box-shadow: 0 4px 18px rgba(35, 22, 59, 0.025);
 }
 
@@ -779,9 +828,9 @@
   flex-shrink: 0;
   width: 54px;
   height: 54px;
-  border: 1px solid #e7def2;
+  border: 1px solid var(--billing-border);
   border-radius: 15px;
-  background: #f4eefb;
+  background: var(--accent-soft);
   color: var(--billing-primary);
 }
 
@@ -822,7 +871,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: #5d4b76;
+  color: var(--text-soft);
   font-size: 12px;
   font-weight: 700;
 }
@@ -847,7 +896,7 @@
   border: 1px solid var(--billing-primary);
   border-radius: 10px;
   background: var(--billing-primary);
-  color: #fff;
+  color: var(--on-primary);
   font-size: 12px;
   font-weight: 750;
   white-space: nowrap;
@@ -883,10 +932,10 @@
   align-items: flex-start;
   gap: 11px;
   padding: 15px 17px;
-  border: 1px solid #e8e9ef;
+  border: 1px solid var(--billing-border);
   border-radius: 11px;
-  background: #f9fafd;
-  color: #797889;
+  background: var(--billing-soft);
+  color: var(--billing-muted);
   font-size: 12px;
   line-height: 1.7;
 }
@@ -896,7 +945,7 @@
   width: 17px;
   height: 17px;
   margin-top: 1px;
-  color: #71809c;
+  color: var(--billing-muted);
 }
 
 .company-billing-back-link {

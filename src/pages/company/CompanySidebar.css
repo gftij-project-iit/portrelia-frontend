@@ -1,12 +1,55 @@
-
 /* =========================================================
-   COMPANY SIDEBAR — PORTRÉLIA
+   COMPANY SIDEBAR — PORTRÉLIA (compatible thèmes)
    Desktop : 240px / collapsed : 76px
    Tablette : 76px / preview : 240px
    Mobile : navigation inférieure
+
+   La sidebar reste une barre foncée dans les 3 thèmes :
+   seule sa teinte s'accorde au thème (variables --sb-*).
 ========================================================= */
 
 .company-sidebar {
+  /* Teinte par défaut = thème clair (bleu nuit) */
+  --sb-bg:
+    radial-gradient(
+      circle at 15% 5%,
+      rgba(103, 76, 190, 0.18),
+      transparent 30%
+    ),
+    linear-gradient(
+      180deg,
+      #202938 0%,
+      #171f2e 56%,
+      #141c29 100%
+    );
+
+  --sb-border: rgba(255, 255, 255, 0.055);
+
+  --sb-handle-bg:
+    linear-gradient(
+      180deg,
+      rgba(43, 53, 72, 0.98),
+      rgba(28, 37, 53, 0.98)
+    );
+
+  --sb-active-bg:
+    linear-gradient(
+      90deg,
+      rgba(100, 70, 184, 0.92),
+      rgba(77, 52, 153, 0.78)
+    );
+
+  --sb-active-bg-hover:
+    linear-gradient(
+      90deg,
+      rgba(107, 78, 191, 0.96),
+      rgba(86, 58, 167, 0.84)
+    );
+
+  --sb-mobile-bg: rgba(23, 31, 46, 0.96);
+
+  --sb-dot-border: #171f2e;
+
   position: fixed;
   inset: 0 auto 0 0;
 
@@ -20,21 +63,9 @@
   padding: 18px 13px 15px;
   box-sizing: border-box;
 
-  background:
-    radial-gradient(
-      circle at 15% 5%,
-      rgba(103, 76, 190, 0.18),
-      transparent 30%
-    ),
-    linear-gradient(
-      180deg,
-      #202938 0%,
-      #171f2e 56%,
-      #141c29 100%
-    );
+  background: var(--sb-bg);
 
-  border-right: 1px solid
-    rgba(255, 255, 255, 0.055);
+  border-right: 1px solid var(--sb-border);
 
   color: #fff;
   z-index: 1000;
@@ -47,6 +78,71 @@
   transition:
     width 0.3s cubic-bezier(0.22, 1, 0.36, 1),
     box-shadow 0.3s ease;
+}
+
+/* =========================================================
+   TEINTES PAR THÈME
+========================================================= */
+
+/* Sombre : noir violacé, assorti au fond du thème */
+
+[data-theme="dark"] .company-sidebar {
+  --sb-bg:
+    radial-gradient(
+      circle at 15% 5%,
+      rgba(159, 129, 214, 0.16),
+      transparent 30%
+    ),
+    linear-gradient(
+      180deg,
+      #1a1324 0%,
+      #140f1c 56%,
+      #110c18 100%
+    );
+
+  --sb-border: rgba(255, 255, 255, 0.06);
+
+  --sb-handle-bg:
+    linear-gradient(
+      180deg,
+      rgba(40, 30, 55, 0.98),
+      rgba(27, 20, 38, 0.98)
+    );
+
+  --sb-mobile-bg: rgba(22, 16, 31, 0.96);
+
+  --sb-dot-border: #140f1c;
+}
+
+/* Dégradé : verre dépoli violet, le dégradé reste visible */
+
+[data-theme="gradient"] .company-sidebar {
+  --sb-bg:
+    linear-gradient(
+      180deg,
+      rgba(36, 16, 58, 0.55) 0%,
+      rgba(36, 16, 58, 0.4) 100%
+    );
+
+  --sb-border: rgba(255, 255, 255, 0.12);
+
+  --sb-handle-bg:
+    linear-gradient(
+      180deg,
+      rgba(70, 35, 90, 0.95),
+      rgba(55, 26, 75, 0.95)
+    );
+
+  --sb-active-bg: rgba(255, 255, 255, 0.18);
+
+  --sb-active-bg-hover: rgba(255, 255, 255, 0.24);
+
+  --sb-mobile-bg: rgba(40, 18, 58, 0.82);
+
+  --sb-dot-border: #3a1d55;
+
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
 }
 
 /* =========================================================
@@ -102,12 +198,7 @@
   position: absolute;
   inset: 2px 4px;
 
-  background:
-    linear-gradient(
-      180deg,
-      rgba(43, 53, 72, 0.98),
-      rgba(28, 37, 53, 0.98)
-    );
+  background: var(--sb-handle-bg);
 
   border: 1px solid
     rgba(255, 255, 255, 0.08);
@@ -263,7 +354,7 @@
 }
 
 .company-sidebar-brand-subtitle {
-  color: #778295;
+  color: rgba(255, 255, 255, 0.5);
 
   font-size: 9px;
   font-weight: 600;
@@ -312,7 +403,7 @@
   box-sizing: border-box;
   border-radius: 11px;
 
-  color: #b7bfcc;
+  color: rgba(255, 255, 255, 0.72);
   text-decoration: none;
 
   overflow: hidden;
@@ -328,7 +419,7 @@
   color: #fff;
 
   background:
-    rgba(255, 255, 255, 0.045);
+    rgba(255, 255, 255, 0.06);
 }
 
 .company-sidebar-link-icon {
@@ -376,12 +467,7 @@
 .company-sidebar-link-active {
   color: #fff;
 
-  background:
-    linear-gradient(
-      90deg,
-      rgba(100, 70, 184, 0.92),
-      rgba(77, 52, 153, 0.78)
-    );
+  background: var(--sb-active-bg);
 
   box-shadow:
     inset 0 0 0 1px
@@ -393,12 +479,7 @@
 .company-sidebar-link-active:hover {
   color: #fff;
 
-  background:
-    linear-gradient(
-      90deg,
-      rgba(107, 78, 191, 0.96),
-      rgba(86, 58, 167, 0.84)
-    );
+  background: var(--sb-active-bg-hover);
 }
 
 .company-sidebar-link-active
@@ -442,7 +523,7 @@
   padding-top: 13px;
 
   border-top:
-    1px solid rgba(255, 255, 255, 0.055);
+    1px solid var(--sb-border);
 
   overflow: hidden;
   flex-shrink: 0;
@@ -462,7 +543,7 @@
 
 .company-sidebar-user:hover {
   background:
-    rgba(255, 255, 255, 0.035);
+    rgba(255, 255, 255, 0.04);
 }
 
 .company-sidebar-avatar-wrap {
@@ -505,7 +586,7 @@
   width: 9px;
   height: 9px;
 
-  border: 2px solid #171f2e;
+  border: 2px solid var(--sb-dot-border);
   border-radius: 50%;
 
   background: #65d391;
@@ -536,7 +617,7 @@
 .company-sidebar-user-info span {
   overflow: hidden;
 
-  color: #768195;
+  color: rgba(255, 255, 255, 0.5);
   font-size: 10px;
 
   white-space: nowrap;
@@ -782,8 +863,7 @@
 
     border-radius: 20px;
 
-    background:
-      rgba(23, 31, 46, 0.96);
+    background: var(--sb-mobile-bg);
 
     box-shadow:
       0 16px 42px rgba(8, 13, 22, 0.28);
@@ -857,7 +937,7 @@
 
     background: transparent;
 
-    color: #8f9aac;
+    color: rgba(255, 255, 255, 0.6);
 
     overflow: visible;
     transform: none;
@@ -874,7 +954,7 @@
     transform: none;
 
     background:
-      rgba(255, 255, 255, 0.04);
+      rgba(255, 255, 255, 0.05);
   }
 
   .company-sidebar-link:active {
@@ -966,12 +1046,27 @@
         rgba(159, 133, 222, 0.12);
   }
 
+  [data-theme="gradient"] .company-sidebar-link-active {
+    background: rgba(255, 255, 255, 0.16);
+
+    box-shadow:
+      inset 0 0 0 1px
+        rgba(255, 255, 255, 0.14);
+  }
+
   .company-sidebar-link-active
   .company-sidebar-link-icon {
     background:
       rgba(120, 87, 204, 0.24);
 
     color: #d9ccff;
+  }
+
+  [data-theme="gradient"] .company-sidebar-link-active
+  .company-sidebar-link-icon {
+    background: rgba(255, 255, 255, 0.16);
+
+    color: #fff;
   }
 
   .company-sidebar-link-active
@@ -1004,6 +1099,10 @@
     transition:
       opacity 0.2s ease,
       transform 0.2s ease;
+  }
+
+  [data-theme="gradient"] .company-sidebar-active-indicator {
+    background: #fff;
   }
 
   .company-sidebar-link-active
