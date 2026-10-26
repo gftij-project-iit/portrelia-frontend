@@ -98,7 +98,7 @@
   grid-template-columns: auto 1fr auto;
   align-items: center;
   gap: 40px;
-  padding: 0 clamp(36px, 5vw, 90px);
+  padding: 0 max(28px, calc((100% - 1160px) / 2));
   background: rgba(255, 255, 255, 0.86);
   border-bottom: 1px solid #eef0f3;
   -webkit-backdrop-filter: saturate(180%) blur(14px);
