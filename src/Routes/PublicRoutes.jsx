@@ -3,14 +3,11 @@ import { Navigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 
 export default function PublicRoute({ children }) {
-  const { user, loading } = useContext(AuthContext);
+  const { user,  } = useContext(AuthContext);
 
-  // Session en cours de vérification
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
-  // Déjà connecté
+
+// Déjà connecté
   if (user) {
     if (user.role === "ADMIN") {
       return <Navigate to="/admin" replace />;
