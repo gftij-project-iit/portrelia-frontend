@@ -394,8 +394,11 @@ function ChoosePlanPage() {
                       </span>
 
                       <span className="company-plan-price">
+                        {premium && (
+                          <><span>19,99 € HT </span><small>+ TVA 20 % </small></>
+                        )}
                         <strong>{formatPrice(plan)}</strong>
-                        <small>/mois</small>
+                        <small>{premium ? "TTC / mois" : "/mois"}</small>
                       </span>
                     </button>
 
